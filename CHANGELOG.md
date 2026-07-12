@@ -30,4 +30,4 @@ the `[Unreleased]` section below becomes the first tagged release (`0.1.0`).
 - CI (build/test/coverage-gate on a Linux+Windows matrix) and a tag-triggered release
   workflow publishing to NuGet via Trusted Publishing (OIDC).
 
-[Unreleased]: https://github.com/jjopensoftworks-blip/Scrubkit-/commits/main
+[Unreleased]: https://github.com/jjopensoftworks-blip/Scrubkit/commits/main
