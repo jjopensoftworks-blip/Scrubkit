@@ -80,6 +80,31 @@ be thread-safe (the built-ins are).
 
 ---
 
+## Recipe: prepare a folder for RAG
+
+Stream a document folder straight into a vector store — sensitive values already scrubbed,
+rows with no text skipped:
+
+```csharp
+var scrubber = new FolderScrubber(new ReadOptions
+{
+    Redaction     = RedactionLevel.Standard,
+    MaxTextLength = 8_000,   // keep chunks index-friendly
+});
+
+await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
+{
+    if (doc.Text.Length == 0) continue;   // skip metadata-only rows
+
+    await index.UpsertAsync(
+        id: doc.Path,
+        text: doc.Text,                   // clean text, ready to embed
+        metadata: doc.Metadata);
+}
+```
+
+---
+
 ## Extend it
 
 Add a format by implementing `IFileExtractor` — it's tried before the built-ins, so you
