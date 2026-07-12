@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <PackageId>Scrubkit.Abstractions</PackageId>
+    <Description>Dependency-free contracts for Scrubkit: IFileExtractor, IRedactor, FileRecord, ReadOptions and friends. Reference this (not the full Scrubkit package) when authoring add-on extractors or redactors so you don't pull in PdfPig or MetadataExtractor.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Modern C# (records, required, init, ranges) on netstandard2.0 via generated polyfills. -->
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

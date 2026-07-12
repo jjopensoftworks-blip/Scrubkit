@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Scrubkit.Playground/Scrubkit.Playground.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Scrubkit.Abstractions/Scrubkit.Abstractions.csproj" />
+    <Project Path="src/Scrubkit/Scrubkit.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />
+  </Folder>
+</Solution>

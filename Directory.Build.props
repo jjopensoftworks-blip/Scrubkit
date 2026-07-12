@@ -1,0 +1,60 @@
+<Project>
+
+  <!-- Shared settings for every project in the repo. Project-specific settings
+       (TargetFramework(s), PackageId, Description) live in the individual .csproj. -->
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <!-- Strict in Release (what CI builds); friendlier for local Debug iteration. -->
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Deterministic, source-linked, reproducible builds (applies to all). -->
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Reproducible, auditable restore: commit packages.lock.json; CI restores in
+         locked mode so a drifted lock file fails the build instead of silently
+         resolving new versions. -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <!-- Shared package metadata for shipping (packable) projects only. -->
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+    <Authors>jjopensoftworks</Authors>
+    <Company>jjopensoftworks</Company>
+    <Copyright>Copyright © jjopensoftworks</Copyright>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/jjopensoftworks-blip/Scrubkit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jjopensoftworks-blip/Scrubkit.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>See the changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageTags>files;extraction;offline;text;metadata;pdf;docx;privacy;redaction;pii;rag</PackageTags>
+
+    <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+    <MinVerDefaultPreReleaseIdentifiers>alpha.0</MinVerDefaultPreReleaseIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="README.md" Pack="true" PackagePath="\" Condition="Exists('README.md')" />
+    <!-- Shared icon lives at the repo root; every package bundles it. -->
+    <None Include="$(MSBuildThisFileDirectory)build\icon.png" Pack="true" PackagePath="\" Visible="false" />
+    <PackageReference Include="MinVer" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
