@@ -1,5 +1,10 @@
 # Scrubkit
 
+[![CI](https://github.com/jjopensoftworks-blip/Scrubkit-/actions/workflows/ci.yml/badge.svg)](https://github.com/jjopensoftworks-blip/Scrubkit-/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
+[![Downloads](https://img.shields.io/nuget/dt/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
+
 **Point at a folder, get a clean table of file text + metadata back — fully offline.**
 Scrubkit walks a directory, extracts text and metadata from common file types, and
 quietly scrubs common sensitive values (emails, phones, card/SSN-like numbers, IPs)
@@ -64,13 +69,18 @@ samples/Scrubkit.Playground runnable demo
 
 Package versions come from Git tags via [MinVer](https://github.com/adamralph/minver)
 (e.g. tag `v0.1.0` → package `0.1.0`); dependency versions are centralized in
-`Directory.Packages.props`. See [`ROADMAP.md`](ROADMAP.md) for the full plan.
+`Directory.Packages.props`.
 
 ## A note on scrubbing
 
 The built-in redactor is best-effort pattern matching. It reduces incidental
 exposure of common personal data; **it is not a compliance tool** and is not a
 substitute for a DLP/PHI review. For stronger guarantees, implement `IRedactor`.
+
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

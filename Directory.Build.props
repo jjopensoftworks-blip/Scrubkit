@@ -37,6 +37,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>See the changelog: https://github.com/jjopensoftworks-blip/Scrubkit-/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;offline;text;metadata;pdf;docx;privacy;redaction;pii;rag</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
