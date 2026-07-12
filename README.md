@@ -37,6 +37,29 @@ IReadOnlyList<FileRecord> table = await scrubber.ReadAsync(@"C:\Docs");
 
 See [`src/Scrubkit/README.md`](src/Scrubkit/README.md) for the full API.
 
+## Recipe: prepare a folder for RAG
+
+Stream a document folder straight into a vector store — sensitive values already scrubbed,
+rows with no text skipped:
+
+```csharp
+var scrubber = new FolderScrubber(new ReadOptions
+{
+    Redaction     = RedactionLevel.Standard,
+    MaxTextLength = 8_000,   // keep chunks index-friendly
+});
+
+await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
+{
+    if (doc.Text.Length == 0) continue;   // skip metadata-only rows
+
+    await index.UpsertAsync(
+        id: doc.Path,
+        text: doc.Text,                   // clean text, ready to embed
+        metadata: doc.Metadata);
+}
+```
+
 ## Try it without installing
 
 The playground creates a demo folder full of fake sensitive data and scrubs it, so you can see

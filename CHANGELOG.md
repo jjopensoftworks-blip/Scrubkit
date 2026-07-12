@@ -28,6 +28,7 @@ accurate wording throughout. The public API is stable under SemVer from here on.
   the package page.
 - Redesigned the **`Scrubkit.Abstractions`** page with a focused example and a
   "what's inside" contract list.
+- Added a **"Prepare a folder for RAG"** recipe to the package and project READMEs.
 - Folded a short extension guide (writing a custom `IFileExtractor` or `IRedactor`) into the
   package README.
 
@@ -38,6 +39,12 @@ accurate wording throughout. The public API is stable under SemVer from here on.
   the formats it reads.
 - Refreshed the **search tags** (added `text-extraction` and `office`; removed noise) so the
   right people can find it.
+- Aligned the package **author/company** to `OpenFreeSoftwares` (matches the nuget.org owner).
+
+### 🛡️ Under the hood
+
+- Enabled **package validation** — the build now checks that the `net8.0` and
+  `netstandard2.0` API surfaces stay compatible within each package.
 
 ### ✍️ Wording & accuracy
 
