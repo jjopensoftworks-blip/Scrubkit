@@ -1,0 +1,155 @@
+using System.Text.RegularExpressions;
+
+namespace Scrubkit;
+
+/// <summary>
+/// The public entry point. Point it at a folder and get back a table of
+/// <see cref="FileRecord"/> — text + metadata per file, sensitive values already
+/// scrubbed. Fully offline and non-throwing per file (problems surface as
+/// <see cref="FileRecord.Warnings"/>).
+///
+/// The fast built-in extractors cover PDF, Office (docx/pptx/xlsx), plain text and
+/// image metadata. Register add-on extractors (e.g. Scrubkit.Email) via
+/// <see cref="ReadOptions.Extractors"/>.
+/// </summary>
+public sealed class FolderScrubber
+{
+    private readonly ReadOptions _options;
+    private readonly IRedactor _redactor;
+    private readonly List<IFileExtractor> _extractors;
+
+    public FolderScrubber(ReadOptions? options = null)
+    {
+        _options = options ?? new ReadOptions();
+        _redactor = _options.Redactor ?? new StandardRedactor(_options.Redaction);
+
+        // Registered add-ons first (can override), then the built-ins.
+        _extractors = new List<IFileExtractor>(_options.Extractors)
+        {
+            new PdfExtractor(),
+            new OfficeExtractor(),
+            new PlainTextExtractor(),
+            new ImageExtractor(),
+        };
+    }
+
+    /// <summary>Scrub every eligible file under <paramref name="rootPath"/>.</summary>
+    /// <exception cref="DirectoryNotFoundException">The root folder does not exist.</exception>
+    public async Task<IReadOnlyList<FileRecord>> ReadAsync(string rootPath, CancellationToken ct = default)
+    {
+        if (!Directory.Exists(rootPath))
+            throw new DirectoryNotFoundException($"Folder not found: {rootPath}");
+
+        var results = new List<FileRecord>();
+        foreach (var path in Enumerate(rootPath))
+        {
+            ct.ThrowIfCancellationRequested();
+            if (_options.MaxFiles > 0 && results.Count >= _options.MaxFiles) break;
+            results.Add(await Task.Run(() => ReadOne(path), ct).ConfigureAwait(false));
+        }
+        return results;
+    }
+
+    private IEnumerable<string> Enumerate(string root)
+    {
+        var opt = _options.Recursion == Recursion.AllNested
+            ? SearchOption.AllDirectories
+            : SearchOption.TopDirectoryOnly;
+        IEnumerable<string> files;
+        try { files = Directory.EnumerateFiles(root, "*", opt); }
+        catch { yield break; }
+
+        foreach (var f in files)
+        {
+            var ext = Path.GetExtension(f);
+            if (_options.IncludeExtensions.Count > 0 &&
+                !_options.IncludeExtensions.Contains(ext.TrimStart('.')) &&
+                !_options.IncludeExtensions.Contains(ext))
+                continue;
+            yield return f;
+        }
+    }
+
+    private IFileExtractor? ExtractorFor(string ext) =>
+        _extractors.FirstOrDefault(e => e.CanHandle(ext));
+
+    private FileRecord ReadOne(string path)
+    {
+        var ext = Path.GetExtension(path).ToLowerInvariant();
+        var name = Path.GetFileName(path);
+        var folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? "";
+        long size = 0;
+        DateTime modified = DateTime.MinValue;
+        var warnings = new List<string>();
+
+        try
+        {
+            var info = new FileInfo(path);
+            size = info.Length;
+            modified = info.LastWriteTime;
+        }
+        catch { warnings.Add("stat-failed"); }
+
+        var meta = new Dictionary<string, string>();
+        var text = "";
+        var redactions = new Dictionary<string, int>();
+
+        var extractor = ExtractorFor(ext);
+        bool tooBig = _options.MaxBytesPerFile > 0 && size > _options.MaxBytesPerFile;
+
+        if (extractor is null)
+        {
+            // Unknown type: metadata-only row, no content.
+        }
+        else if (tooBig)
+        {
+            warnings.Add($"skipped-content: {size} bytes over limit");
+        }
+        else
+        {
+            ExtractedContent content;
+            try { content = extractor.Extract(path); }
+            catch (Exception e) { content = ExtractedContent.Empty; warnings.Add($"extract-failed: {e.GetType().Name}"); }
+
+            meta = content.Metadata.ToDictionary(kv => kv.Key, kv => kv.Value);
+            var t = Normalize(content.Text);
+
+            if (_options.MaxTextLength > 0 && t.Length > _options.MaxTextLength)
+            {
+                t = t[.._options.MaxTextLength];
+                warnings.Add("text-clipped");
+            }
+
+            var red = _redactor.Redact(t);
+            text = red.Text;
+            redactions = red.Counts.ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            // Metadata can carry personal data too (authors, subjects) — scrub it as well.
+            foreach (var key in meta.Keys.ToList())
+            {
+                var mr = _redactor.Redact(meta[key]);
+                meta[key] = mr.Text;
+                foreach (var kv in mr.Counts)
+                    redactions[kv.Key] = redactions.GetValueOrDefault(kv.Key) + kv.Value;
+            }
+        }
+
+        return new FileRecord
+        {
+            Path = path,
+            Name = name,
+            Extension = ext,
+            Folder = folder,
+            SizeBytes = size,
+            Modified = modified,
+            TypeBucket = Buckets.For(ext),
+            Metadata = meta,
+            Text = text,
+            Redactions = redactions,
+            Warnings = warnings,
+        };
+    }
+
+    private static string Normalize(string s) =>
+        string.IsNullOrWhiteSpace(s) ? "" : Regex.Replace(s, @"\s+", " ").Trim();
+}
