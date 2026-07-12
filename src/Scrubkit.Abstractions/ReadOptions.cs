@@ -39,6 +39,14 @@ public sealed class ReadOptions
     public int MaxTextLength { get; set; } = 20_000;
 
     /// <summary>
+    /// How many files to process concurrently. Default: 1 (sequential). Raising it bounds
+    /// parallel extraction to this many files at once while preserving result order. When
+    /// &gt; 1, your <see cref="Extractors"/> and <see cref="Redactor"/> must be thread-safe
+    /// (the built-ins are). Values &lt; 1 are treated as 1.
+    /// </summary>
+    public int MaxDegreeOfParallelism { get; set; } = 1;
+
+    /// <summary>
     /// If non-empty, only these extensions are opened (e.g. <c>".pdf"</c>). Case-insensitive,
     /// leading dot optional. Empty = every extension a registered extractor can handle.
     /// </summary>

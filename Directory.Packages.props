@@ -9,6 +9,8 @@
     <!-- Runtime dependencies -->
     <PackageVersion Include="PdfPig" Version="0.1.15" />
     <PackageVersion Include="MetadataExtractor" Version="2.9.3" />
+    <!-- IAsyncEnumerable + [EnumeratorCancellation] on netstandard2.0 (built in on net8.0). -->
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
