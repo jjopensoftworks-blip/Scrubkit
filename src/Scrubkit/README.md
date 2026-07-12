@@ -34,7 +34,8 @@ Extraction never throws to the caller — problems land in `FileRecord.Warnings`
 
 ## Adding formats
 
-Implement `IFileExtractor` and register it — it's tried before the built-ins:
+Implement `IFileExtractor` and register it — it's tried before the built-ins (so you can
+also override one). Extensions arrive lower-cased with the leading dot (e.g. `".xyz"`):
 
 ```csharp
 public sealed class MyExtractor : IFileExtractor
@@ -46,8 +47,27 @@ public sealed class MyExtractor : IFileExtractor
 options.Extractors.Add(new MyExtractor());
 ```
 
+`Extract` may throw — `FolderScrubber` isolates per-file failures into
+`FileRecord.Warnings`, so it never crashes the batch. If you're shipping an add-on as its
+own package, reference **`Scrubkit.Abstractions`** (contracts only) rather than the full
+`Scrubkit` package, so you don't drag in PdfPig/MetadataExtractor.
+
 Add-on packages (planned): `Scrubkit.Email` (.eml/.msg), OCR for scanned images,
 EPUB, legacy Office, archives.
+
+## Large trees: streaming & parallelism
+
+`ReadAsync` buffers the whole table. For big folders, stream records as they're produced
+and/or process files concurrently:
+
+```csharp
+var options = new ReadOptions { MaxDegreeOfParallelism = 4 };   // bounded, order-preserving
+await foreach (var r in new FolderScrubber(options).ReadStreamAsync(@"C:\Docs"))
+    Index(r);   // handle each FileRecord without holding them all in memory
+```
+
+With `MaxDegreeOfParallelism > 1`, your extractors/redactor must be thread-safe (the
+built-ins are). Output order is preserved regardless.
 
 ## Scrubbing is best-effort, not a guarantee
 

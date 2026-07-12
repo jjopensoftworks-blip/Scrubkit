@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Scrubkit;
@@ -33,21 +34,60 @@ public sealed class FolderScrubber
         };
     }
 
-    /// <summary>Scrub every eligible file under <paramref name="rootPath"/>.</summary>
+    /// <summary>
+    /// Scrub every eligible file under <paramref name="rootPath"/> and return the whole
+    /// table. Buffers all records in memory — for large trees prefer
+    /// <see cref="ReadStreamAsync"/>.
+    /// </summary>
     /// <exception cref="DirectoryNotFoundException">The root folder does not exist.</exception>
     public async Task<IReadOnlyList<FileRecord>> ReadAsync(string rootPath, CancellationToken ct = default)
+    {
+        var results = new List<FileRecord>();
+        await foreach (var record in ReadStreamAsync(rootPath, ct).ConfigureAwait(false))
+            results.Add(record);
+        return results;
+    }
+
+    /// <summary>
+    /// Scrub every eligible file under <paramref name="rootPath"/>, yielding each
+    /// <see cref="FileRecord"/> as it is produced — so callers can process huge trees
+    /// without buffering the whole table. Records are yielded in enumeration order even
+    /// when <see cref="ReadOptions.MaxDegreeOfParallelism"/> &gt; 1.
+    /// </summary>
+    /// <exception cref="DirectoryNotFoundException">The root folder does not exist.</exception>
+    public async IAsyncEnumerable<FileRecord> ReadStreamAsync(
+        string rootPath, [EnumeratorCancellation] CancellationToken ct = default)
     {
         if (!Directory.Exists(rootPath))
             throw new DirectoryNotFoundException($"Folder not found: {rootPath}");
 
-        var results = new List<FileRecord>();
-        foreach (var path in Enumerate(rootPath))
+        int dop = Math.Max(1, _options.MaxDegreeOfParallelism);
+        int max = _options.MaxFiles;
+        int started = 0;
+
+        // A sliding FIFO window of in-flight tasks: bounds concurrency to `dop` while
+        // preserving order (we dequeue — and yield — in the order work was started).
+        var window = new Queue<Task<FileRecord>>(dop);
+
+        using var paths = Enumerate(rootPath).GetEnumerator();
+        bool hasMore = paths.MoveNext();
+
+        while (true)
         {
-            ct.ThrowIfCancellationRequested();
-            if (_options.MaxFiles > 0 && results.Count >= _options.MaxFiles) break;
-            results.Add(await Task.Run(() => ReadOne(path), ct).ConfigureAwait(false));
+            while (hasMore && window.Count < dop && (max <= 0 || started < max))
+            {
+                ct.ThrowIfCancellationRequested();
+                var path = paths.Current;
+                window.Enqueue(Task.Run(() => ReadOne(path), ct));
+                started++;
+                hasMore = paths.MoveNext();
+            }
+
+            if (window.Count == 0)
+                yield break;
+
+            yield return await window.Dequeue().ConfigureAwait(false);
         }
-        return results;
     }
 
     private IEnumerable<string> Enumerate(string root)

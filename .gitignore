@@ -55,3 +55,8 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Planning/docs kept local for now (not committed yet)
+docs/
+ROADMAP.md
+CLAUDE.md
