@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\src\Scrubkit\Scrubkit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

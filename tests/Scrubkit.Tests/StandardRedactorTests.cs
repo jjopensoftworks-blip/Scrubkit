@@ -39,6 +39,28 @@ public class StandardRedactorTests
     }
 
     [Fact]
+    public void Redacts_phone_number()
+    {
+        var r = new StandardRedactor().Redact("call 555-123-4567 when ready");
+
+        Assert.Contains("[PHONE]", r.Text);
+        Assert.Equal(1, r.Counts["Phone"]);
+    }
+
+    [Fact]
+    public void Email_and_phone_are_each_categorized_correctly()
+    {
+        // Ordering invariant: email is claimed before the looser phone pattern,
+        // so neither cannibalizes the other.
+        var r = new StandardRedactor().Redact("reach me at jo@corp.com or 555-123-4567");
+
+        Assert.Contains("[EMAIL]", r.Text);
+        Assert.Contains("[PHONE]", r.Text);
+        Assert.Equal(1, r.Counts["Email"]);
+        Assert.Equal(1, r.Counts["Phone"]);
+    }
+
+    [Fact]
     public void Off_level_returns_text_untouched()
     {
         const string input = "email a@b.com phone 555-123-4567";

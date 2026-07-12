@@ -97,6 +97,38 @@ public class FolderScrubberTests : IDisposable
     }
 
     [Fact]
+    public async Task Long_text_is_clipped_with_warning()
+    {
+        Write("long.txt", new string('a', 500));
+
+        var table = await new FolderScrubber(new ReadOptions { MaxTextLength = 100 }).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Equal(100, rec.Text.Length);
+        Assert.Contains("text-clipped", rec.Warnings);
+    }
+
+    [Fact]
+    public async Task Extractor_that_throws_is_isolated_as_a_warning()
+    {
+        Write("boom.txt", "content");
+        var options = new ReadOptions();
+        options.Extractors.Add(new ThrowingExtractor());
+
+        var table = await new FolderScrubber(options).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Contains(rec.Warnings, w => w.StartsWith("extract-failed"));
+        Assert.Equal("", rec.Text);
+    }
+
+    private sealed class ThrowingExtractor : IFileExtractor
+    {
+        public bool CanHandle(string extension) => extension == ".txt";
+        public ExtractedContent Extract(string path) => throw new InvalidOperationException("boom");
+    }
+
+    [Fact]
     public async Task Registered_extractor_overrides_builtins()
     {
         Write("notes.txt", "original text");
