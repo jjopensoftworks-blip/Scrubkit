@@ -18,9 +18,9 @@ public readonly struct ExtractedContent
 
 /// <summary>
 /// The extension point. The core ships fast extractors for the common formats;
-/// add-on packages (e.g. Scrubkit.Email) implement this for more types and are
-/// registered via <see cref="ReadOptions.Extractors"/>. Registered extractors are
-/// tried before the built-ins, so an add-on can also override a built-in.
+/// implement this for more types and register it via
+/// <see cref="ReadOptions.Extractors"/>. Registered extractors are tried before the
+/// built-ins, so an add-on can also override a built-in.
 ///
 /// <see cref="Extract"/> may throw — <c>FolderScrubber</c> isolates failures
 /// per file and surfaces them as warnings, never crashing the batch.

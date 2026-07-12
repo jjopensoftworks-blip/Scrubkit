@@ -10,7 +10,7 @@ namespace Scrubkit;
 /// <see cref="FileRecord.Warnings"/>).
 ///
 /// The fast built-in extractors cover PDF, Office (docx/pptx/xlsx), plain text and
-/// image metadata. Register add-on extractors (e.g. Scrubkit.Email) via
+/// image metadata. Register your own <see cref="IFileExtractor"/> implementations via
 /// <see cref="ReadOptions.Extractors"/>.
 /// </summary>
 public sealed class FolderScrubber
@@ -164,7 +164,7 @@ public sealed class FolderScrubber
             text = red.Text;
             redactions = red.Counts.ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            // Metadata can carry personal data too (authors, subjects) — scrub it as well.
+            // Metadata can carry sensitive values too (authors, subjects) — scrub it as well.
             foreach (var key in meta.Keys.ToList())
             {
                 var mr = _redactor.Redact(meta[key]);

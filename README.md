@@ -8,16 +8,17 @@
 **Point at a folder, get a clean table of file text + metadata back — fully offline.**
 Scrubkit walks a directory, extracts text and metadata from common file types, and
 quietly scrubs common sensitive values (emails, phones, card/SSN-like numbers, IPs)
-so you keep *what matters about a file* without carrying the raw personal data
+so you keep *what matters about a file* without carrying the raw sensitive data
 downstream. Ideal for RAG ingestion, search indexing, and data-prep pipelines that
 must stay on-device.
 
 - **Offline.** No network calls, no telemetry — everything runs locally.
 - **Fast, small core.** PDF · Office (docx/pptx/xlsx) · text · image EXIF, on
   PdfPig + MetadataExtractor only.
-- **Pluggable.** Add formats via `IFileExtractor`; opt-in add-on packages
-  (`Scrubkit.Email`, OCR, …) keep heavy dependencies out of the core.
-- **Best-effort scrubbing.** Swap in your own `IRedactor` for stronger guarantees.
+- **Pluggable.** Add formats via `IFileExtractor` and stronger scrubbing via
+  `IRedactor`; ship add-ons that reference only `Scrubkit.Abstractions`, keeping heavy
+  dependencies out of the core.
+- **Best-effort scrubbing.** Swap in your own `IRedactor` for stronger redaction.
 
 ## Install
 
@@ -38,7 +39,7 @@ See [`src/Scrubkit/README.md`](src/Scrubkit/README.md) for the full API.
 
 ## Try it without installing
 
-The playground creates a demo folder full of fake PII and scrubs it, so you can see
+The playground creates a demo folder full of fake sensitive data and scrubs it, so you can see
 the output before adding the package to your project:
 
 ```
@@ -68,14 +69,14 @@ samples/Scrubkit.Playground runnable demo
 ```
 
 Package versions come from Git tags via [MinVer](https://github.com/adamralph/minver)
-(e.g. tag `v0.1.0` → package `0.1.0`); dependency versions are centralized in
+(e.g. tag `v1.0.0` → package `1.0.0`); dependency versions are centralized in
 `Directory.Packages.props`.
 
 ## A note on scrubbing
 
 The built-in redactor is best-effort pattern matching. It reduces incidental
-exposure of common personal data; **it is not a compliance tool** and is not a
-substitute for a DLP/PHI review. For stronger guarantees, implement `IRedactor`.
+exposure of common sensitive values, but **it will miss things** and is best-effort
+only. For stronger redaction, implement your own `IRedactor`.
 
 ## Contributing
 
