@@ -59,4 +59,5 @@ nunit-*.xml
 # Planning/docs kept local for now (not committed yet)
 docs/
 ROADMAP.md
+ROADMAP-ARCHIVE.md
 CLAUDE.md

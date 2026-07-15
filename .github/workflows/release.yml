@@ -1,6 +1,6 @@
 name: Release
 
-# Publishes to NuGet when a version tag (e.g. v0.1.0) is pushed.
+# Publishes to NuGet when a version tag (e.g. v1.0.0) is pushed.
 # One-time setup required before the first release — see docs/RELEASING.md.
 on:
   push:

@@ -1,41 +1,114 @@
 # Scrubkit
 
-Point it at a folder, get back a clean table of **file text + metadata** — fully
-offline. It quietly scrubs common sensitive values (emails, phones, card/SSN-like
-numbers, IPs) so you keep *what matters about a file* without carrying the raw
-personal data downstream.
+**Point it at a folder — get back a clean table of file text + metadata, fully offline.**
 
-The **core is fast and small** — it handles the common formats out of the box. Need
-more? Add opt-in packages (e.g. `Scrubkit.Email`) that plug new extractors in.
+Scrubkit walks a directory, pulls text and metadata out of common file types, and
+scrubs common sensitive values (emails, phone numbers, card- and SSN-like numbers,
+IPs) as it goes. You keep *what matters about each file* without carrying the raw
+values downstream — ideal for RAG ingestion, search indexing, and on-device data prep.
+
+---
+
+## Highlights
+
+- **Offline** — no network calls, no telemetry.
+- **Small, fast core** — PDF, Office, text, and image metadata out of the box.
+- **Built-in scrubbing** — best-effort redaction of common sensitive values.
+- **Pluggable** — add formats with `IFileExtractor`, swap redaction with `IRedactor`.
+- **Scales** — stream results and process files in parallel for large trees.
+- **Multi-target** — `net8.0` and `netstandard2.0`.
+
+---
+
+## Install
+
+```
+dotnet add package Scrubkit
+```
+
+## Quick start
 
 ```csharp
 using Scrubkit;
 
 var scrubber = new FolderScrubber(new ReadOptions
 {
-    Recursion       = Recursion.AllNested,   // or TopOnly
-    MaxFiles        = 1000,
-    MaxBytesPerFile = 25 * 1024 * 1024,
-    Redaction       = RedactionLevel.Standard,
+    Recursion = Recursion.AllNested,
+    Redaction = RedactionLevel.Standard,
 });
 
 IReadOnlyList<FileRecord> table = await scrubber.ReadAsync(@"C:\Docs");
 
 foreach (var r in table)
-    Console.WriteLine($"{r.Name}\t{r.TypeBucket}\t{r.Text.Length} chars"
-                    + (r.HasSensitiveData ? $"\t(scrubbed: {string.Join(",", r.Redactions.Keys)})" : ""));
+    Console.WriteLine($"{r.Name} — {r.TypeBucket} — {r.Text.Length} chars");
 ```
 
-## Core formats
+Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, a per-category
+`Redactions` count, and any `Warnings`.
 
-PDF · DOCX · PPTX · XLSX (shared strings) · TXT/MD/CSV/LOG/JSON/XML/HTML/RTF ·
-image EXIF (make/model/software). Unknown types return a metadata-only row.
-Extraction never throws to the caller — problems land in `FileRecord.Warnings`.
+---
 
-## Adding formats
+## Supported formats
 
-Implement `IFileExtractor` and register it — it's tried before the built-ins (so you can
-also override one). Extensions arrive lower-cased with the leading dot (e.g. `".xyz"`):
+| Category      | Extensions                                  |
+| ------------- | ------------------------------------------- |
+| Documents     | PDF, DOCX, RTF                              |
+| Spreadsheets  | XLSX, CSV                                   |
+| Presentations | PPTX                                        |
+| Text          | TXT, MD, LOG, JSON, XML, HTML               |
+| Images        | EXIF metadata (make / model / software)     |
+
+Unknown types return a metadata-only row. Extraction never throws to the caller —
+per-file problems land in `FileRecord.Warnings`.
+
+---
+
+## Large folders: stream & parallelize
+
+`ReadAsync` buffers the whole table. For big trees, stream records as they're produced
+and process files concurrently:
+
+```csharp
+var options = new ReadOptions { MaxDegreeOfParallelism = 4 };
+
+await foreach (var r in new FolderScrubber(options).ReadStreamAsync(@"C:\Docs"))
+    Index(r);
+```
+
+Output order is preserved. Above a degree of 1, custom extractors and redactors should
+be thread-safe (the built-ins are).
+
+---
+
+## Recipe: prepare a folder for RAG
+
+Stream a document folder straight into a vector store — sensitive values already scrubbed,
+rows with no text skipped:
+
+```csharp
+var scrubber = new FolderScrubber(new ReadOptions
+{
+    Redaction     = RedactionLevel.Standard,
+    MaxTextLength = 8_000,   // keep chunks index-friendly
+});
+
+await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
+{
+    if (doc.Text.Length == 0) continue;   // skip metadata-only rows
+
+    await index.UpsertAsync(
+        id: doc.Path,
+        text: doc.Text,                   // clean text, ready to embed
+        metadata: doc.Metadata);
+}
+```
+
+---
+
+## Extend it
+
+Add a format by implementing `IFileExtractor` — it's tried before the built-ins, so you
+can also override one:
 
 ```csharp
 public sealed class MyExtractor : IFileExtractor
@@ -47,33 +120,17 @@ public sealed class MyExtractor : IFileExtractor
 options.Extractors.Add(new MyExtractor());
 ```
 
-`Extract` may throw — `FolderScrubber` isolates per-file failures into
-`FileRecord.Warnings`, so it never crashes the batch. If you're shipping an add-on as its
-own package, reference **`Scrubkit.Abstractions`** (contracts only) rather than the full
-`Scrubkit` package, so you don't drag in PdfPig/MetadataExtractor.
+For different redaction, implement `IRedactor` and set `ReadOptions.Redactor`.
 
-Add-on packages (planned): `Scrubkit.Email` (.eml/.msg), OCR for scanned images,
-EPUB, legacy Office, archives.
+Shipping an add-on as its own package? Reference **`Scrubkit.Abstractions`** (contracts
+only) to stay lightweight.
 
-## Large trees: streaming & parallelism
+---
 
-`ReadAsync` buffers the whole table. For big folders, stream records as they're produced
-and/or process files concurrently:
+## A note on scrubbing
 
-```csharp
-var options = new ReadOptions { MaxDegreeOfParallelism = 4 };   // bounded, order-preserving
-await foreach (var r in new FolderScrubber(options).ReadStreamAsync(@"C:\Docs"))
-    Index(r);   // handle each FileRecord without holding them all in memory
-```
+The built-in redactor is best-effort pattern matching. It reduces incidental exposure
+of common sensitive values, but it will miss things and is not a guarantee. For stronger
+redaction, plug in your own `IRedactor`.
 
-With `MaxDegreeOfParallelism > 1`, your extractors/redactor must be thread-safe (the
-built-ins are). Output order is preserved regardless.
-
-## Scrubbing is best-effort, not a guarantee
-
-The built-in `StandardRedactor` is pattern matching. It reduces incidental exposure
-of common personal data; **it will miss things and is not a compliance tool** (not a
-substitute for a DLP or PHI review). Need stronger guarantees? Implement `IRedactor`
-(e.g. an NER/model-based pass) and set `ReadOptions.Redactor`.
-
-100% offline. No network calls. No telemetry.
+*100% offline — no network calls, no telemetry.*

@@ -19,10 +19,10 @@ public readonly struct RedactionResult
 /// <summary>
 /// Strips sensitive values from text. A small, swappable seam: the built-in
 /// <c>StandardRedactor</c> is best-effort pattern matching; callers who need
-/// stronger guarantees plug in their own (e.g. an NER/model-based pass).
+/// stronger redaction plug in their own.
 ///
-/// This is NOT a compliance guarantee. It reduces incidental exposure of common
-/// personal data; it will miss things and is not a substitute for a DLP/PHI review.
+/// This is best-effort, not a guarantee. It reduces incidental exposure of common
+/// sensitive values, but it will miss things.
 /// </summary>
 public interface IRedactor
 {

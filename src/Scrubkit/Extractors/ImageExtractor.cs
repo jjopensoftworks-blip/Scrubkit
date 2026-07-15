@@ -1,6 +1,6 @@
 namespace Scrubkit;
 
-/// <summary>Camera/software metadata from images (no pixels, no OCR — that's an add-on).</summary>
+/// <summary>Camera/software metadata from images (EXIF only — no pixels, no OCR).</summary>
 public sealed class ImageExtractor : IFileExtractor
 {
     public bool CanHandle(string extension) => Buckets.IsImage(extension);

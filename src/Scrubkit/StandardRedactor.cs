@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 namespace Scrubkit;
 
 /// <summary>
-/// Best-effort pattern-based redactor. Replaces high-confidence personal data with
+/// Best-effort pattern-based redactor. Replaces high-confidence sensitive values with
 /// category tokens (<c>[EMAIL]</c>, <c>[PHONE]</c>, …). At
 /// <see cref="RedactionLevel.Aggressive"/> it also removes lower-confidence patterns
 /// that trade precision for recall. Card numbers are Luhn-checked to cut false hits.
