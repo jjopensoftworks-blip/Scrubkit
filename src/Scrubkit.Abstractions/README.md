@@ -1,27 +1,35 @@
 # Scrubkit.Abstractions
 
-The dependency-free contract layer for [Scrubkit](https://www.nuget.org/packages/Scrubkit).
+The dependency-free **contracts** for
+[Scrubkit](https://www.nuget.org/packages/Scrubkit) — interfaces and simple records,
+nothing else.
 
-Reference **this** package (not the full `Scrubkit` package) when you're writing an
-add-on — a custom `IFileExtractor` for a new format or a custom `IRedactor` for
-stronger PII handling. It carries only interfaces and simple records, so your add-on
-stays lightweight and doesn't drag in PdfPig or MetadataExtractor.
+Reference **this** package (instead of the full `Scrubkit` package) when you build an
+add-on: a custom `IFileExtractor` for a new format, or a custom `IRedactor` for your own
+redaction. Your add-on stays lightweight and takes no heavy dependencies.
+
+---
+
+## Example
 
 ```csharp
 using Scrubkit;
 
 public sealed class MyExtractor : IFileExtractor
 {
-    public bool CanHandle(string extension) => extension == ".xyz";
+    public bool CanHandle(string ext) => ext == ".xyz";
     public ExtractedContent Extract(string path) => new(metadata, text);
 }
 ```
 
-Everything lives in the `Scrubkit` namespace, so consuming code is identical whether
-you reference `Scrubkit` or `Scrubkit.Abstractions`.
+Everything lives in the `Scrubkit` namespace, so consuming code is identical whether you
+reference `Scrubkit` or `Scrubkit.Abstractions`.
 
-Contracts included: `IFileExtractor`, `ExtractedContent`, `IRedactor`,
-`RedactionResult`, `FileRecord`, `ReadOptions`, `Recursion`, `RedactionLevel`,
-`Buckets`.
+---
 
-Multi-targets `netstandard2.0` and `net8.0`. 100% offline — no dependencies.
+## What's inside
+
+`IFileExtractor` · `ExtractedContent` · `IRedactor` · `RedactionResult` · `FileRecord` ·
+`ReadOptions` · `Recursion` · `RedactionLevel` · `Buckets`
+
+Multi-targets `net8.0` and `netstandard2.0`. Fully offline — no dependencies.

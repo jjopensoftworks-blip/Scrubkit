@@ -22,7 +22,7 @@ public enum RedactionLevel
 
 /// <summary>
 /// Knobs for a single scrub run. Sensible defaults: recurse everything, cap the
-/// batch, clip large files, and redact common personal data.
+/// batch, clip large files, and redact common sensitive values.
 /// </summary>
 public sealed class ReadOptions
 {
@@ -54,7 +54,7 @@ public sealed class ReadOptions
         new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Extra format extractors from add-on packages (e.g. Scrubkit.Email). Tried BEFORE the
+    /// Extra format extractors (your own or from an add-on package). Tried BEFORE the
     /// built-ins, so an add-on can also override a built-in extractor.
     /// </summary>
     public IList<IFileExtractor> Extractors { get; } = new List<IFileExtractor>();

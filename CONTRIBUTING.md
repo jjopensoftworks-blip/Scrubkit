@@ -75,7 +75,7 @@ Please add tests for new extractors/redactors. Prefer synthesizing fixtures in-t
 Versions come from Git tags via MinVer — nothing to bump in a file. Tag `main` and push:
 
 ```bash
-git tag v0.1.0 && git push origin v0.1.0
+git tag v1.0.0 && git push origin v1.0.0
 ```
 
 The release workflow builds, tests, packs, and publishes both packages to NuGet via

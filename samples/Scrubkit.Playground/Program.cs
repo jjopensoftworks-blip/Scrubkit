@@ -2,7 +2,7 @@ using Scrubkit;
 
 // Scrubkit Playground
 // -------------------
-//   dotnet run                       -> generates a demo folder with fake PII and scrubs it
+//   dotnet run                       -> generates a demo folder with fake sensitive data and scrubs it
 //   dotnet run -- "C:\path\to\docs"  -> scrubs a folder you point it at
 //   dotnet run -- "C:\docs" --level aggressive
 //
@@ -16,7 +16,7 @@ Banner();
 if (isDemo)
 {
     targetPath = CreateDemoFolder();
-    Console.WriteLine($"No folder given — created a demo folder with fake PII:\n  {targetPath}\n");
+    Console.WriteLine($"No folder given — created a demo folder with fake sensitive data:\n  {targetPath}\n");
 }
 else
 {
