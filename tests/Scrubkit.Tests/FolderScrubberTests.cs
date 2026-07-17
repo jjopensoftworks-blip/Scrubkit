@@ -1,3 +1,4 @@
+using System.Reflection;
 using Scrubkit;
 using Xunit;
 
@@ -254,5 +255,24 @@ public class FolderScrubberTests : IDisposable
 
         Assert.Contains(rec.Warnings, w => w.StartsWith("extract-failed"));
         Assert.Equal("", rec.Text);
+    }
+
+    [Fact]
+    public void Stat_failure_is_recorded_as_a_warning()
+    {
+        // The stat-failed guard fires when a file is enumerable but its metadata can't be
+        // read — e.g. a file deleted mid-scan or a broken symlink (whose behaviour differs
+        // by OS). That race can't be provoked portably through the public API, so drive the
+        // per-file worker directly against a path that doesn't exist: FileInfo.Length then
+        // throws and the guard records the warning without crashing the batch.
+        var scrubber = new FolderScrubber();
+        var readOne = typeof(FolderScrubber).GetMethod(
+            "ReadOne", BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+        var ghost = Path.Combine(_dir, "vanished.txt");   // never created
+        var rec = (FileRecord)readOne.Invoke(scrubber, new object[] { ghost })!;
+
+        Assert.Contains("stat-failed", rec.Warnings);
+        Assert.Equal(0, rec.SizeBytes);
     }
 }

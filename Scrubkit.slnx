@@ -8,5 +8,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />
+    <Project Path="tests/Scrubkit.Tests.NetStd20/Scrubkit.Tests.NetStd20.csproj" />
   </Folder>
 </Solution>

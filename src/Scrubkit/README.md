@@ -1,5 +1,7 @@
 # Scrubkit
 
+![Scrubkit — offline text + metadata extraction for .NET](https://raw.githubusercontent.com/jjopensoftworks-blip/Scrubkit/main/assets/banner.png)
+
 [![CI](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml/badge.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
 [![Downloads](https://img.shields.io/nuget/dt/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
@@ -51,15 +53,16 @@ Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, `SizeBy
 
 ## Supported formats
 
-| Category      | Extensions                                  |
-| ------------- | ------------------------------------------- |
-| Documents     | PDF, DOCX                                   |
-| Spreadsheets  | XLSX, CSV                                   |
-| Presentations | PPTX                                        |
-| Text          | TXT, MD, LOG, JSON, XML, HTML, RTF          |
-| Images        | EXIF metadata (make / model / software)     |
+| Category      | Extensions                                       |
+| ------------- | ------------------------------------------------ |
+| Documents     | PDF, DOCX                                        |
+| Spreadsheets  | XLSX, CSV                                        |
+| Presentations | PPTX                                             |
+| Text          | TXT, MD, LOG, JSON, XML, HTML, HTM, RTF          |
+| Images        | JPG, PNG, TIFF, HEIC, WebP, GIF, BMP (EXIF only) |
 
 Text-family formats are read as raw text — markup in RTF/HTML/XML is **not** stripped.
+Images yield **EXIF metadata only** (make / model / software) — no pixels, no OCR.
 Unknown types return a metadata-only row. Extraction never throws to the caller —
 per-file problems land in `FileRecord.Warnings`.
 

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Scrubkit — offline text + metadata extraction for .NET</title>
+<meta name="description" content="Point Scrubkit at a folder and get back a clean table of file text + metadata — 100% offline. PDF, Office, text, and image EXIF, for RAG ingestion, search indexing, and data prep."/>
+<meta property="og:title" content="Scrubkit — offline text + metadata extraction for .NET"/>
+<meta property="og:description" content="Point at a folder, get a clean table of file text + metadata back — fully offline."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/jjopensoftworks-blip/Scrubkit/main/assets/social-preview.png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#0b1326",
+                    "surface-container-highest": "#2d3449",
+                    "surface-variant": "#2d3449",
+                    "electric-blue": "#60A5FA",
+                    "surface-container-high": "#222a3d",
+                    "on-surface": "#dae2fd",
+                    "secondary-container": "#00a572",
+                    "secondary": "#4edea3",
+                    "primary": "#adc6ff",
+                    "error-red": "#EF4444",
+                    "surface-deep": "#020617",
+                    "tertiary": "#ffb95f",
+                    "surface-dim": "#0b1326",
+                    "warning-amber": "#D97706",
+                    "primary-container": "#4d8eff",
+                    "surface-border": "#1E293B",
+                    "background": "#0b1326",
+                    "surface-container": "#171f33",
+                    "on-primary-container": "#00285d",
+                    "on-surface-variant": "#c2c6d6",
+                    "on-primary": "#002e6a",
+                    "text-muted": "#94A3B8"
+            },
+            "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+            "spacing": { "container-gap": "24px", "gutter": "16px", "bento-padding": "24px", "margin-page": "32px", "unit": "4px" },
+            "fontFamily": {
+                    "body-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "label-sm": ["JetBrains Mono"],
+                    "headline-lg": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "code-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .code-container { background-color: #020617; position: relative; }
+        .bento-card { border: 1px solid #1E293B; background-color: #0F172A; }
+        .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(30, 41, 59, 0.5); }
+    </style>
+</head>
+<body class="bg-surface-deep text-on-surface font-body-md selection:bg-electric-blue/30 selection:text-white">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container border-b border-surface-border px-margin-page h-16 flex justify-between items-center max-w-full">
+<div class="flex items-center gap-3">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Scrubkit</span>
+<img alt="NuGet version" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1 hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit#readme">Documentation</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
+</nav>
+<div class="flex items-center gap-4">
+<a href="https://www.nuget.org/packages/Scrubkit" class="hidden lg:flex items-center gap-2 bg-primary-container text-on-primary-container px-4 py-2 font-label-sm text-label-sm active:opacity-80 transition-all">
+<span class="material-symbols-outlined text-[18px]">deployed_code</span>
+                Get the package
+            </a>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="mt-16 p-margin-page max-w-7xl mx-auto">
+<!-- Hero Section -->
+<section class="relative mb-24 overflow-hidden rounded-xl border border-surface-border bg-surface-container p-bento-padding min-h-[500px] flex flex-col justify-center">
+<div class="relative z-10 max-w-2xl">
+<div class="flex flex-wrap gap-3 mb-6 items-center">
+<img alt="CI" src="https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml/badge.svg"/>
+<img alt="NuGet" src="https://img.shields.io/nuget/v/Scrubkit.svg"/>
+<img alt="Downloads" src="https://img.shields.io/nuget/dt/Scrubkit.svg"/>
+<img alt="License MPL 2.0" src="https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg md:text-6xl mb-4 tracking-tighter">Scrubkit</h1>
+<p class="font-body-lg text-body-lg text-text-muted mb-8 max-w-lg leading-relaxed">
+                    Point at a folder, get a clean table of file text + metadata back — <span class="text-on-surface font-semibold">fully offline.</span> Local-first data preparation for RAG and search pipelines, on .NET 8 and .NET Standard 2.0.
+                </p>
+<div class="flex flex-wrap gap-4">
+<a href="https://github.com/jjopensoftworks-blip/Scrubkit#readme" class="bg-primary text-on-primary px-8 py-3 font-label-sm text-label-sm flex items-center gap-2 hover:translate-y-[-2px] transition-all">
+<span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+                        Get Started
+                    </a>
+<a href="https://github.com/jjopensoftworks-blip/Scrubkit" class="border border-surface-border bg-surface-container-high/50 text-on-surface px-8 py-3 font-label-sm text-label-sm flex items-center gap-2 hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[18px]">code</span>
+                        View on GitHub
+                    </a>
+</div>
+</div>
+<!-- Absolute positioned code terminal element for aesthetic -->
+<div class="hidden xl:block absolute right-[-40px] top-1/2 -translate-y-1/2 w-[500px] bento-card rounded-lg overflow-hidden rotate-[-2deg] shadow-2xl">
+<div class="bg-surface-container-high px-4 py-2 flex items-center gap-2 border-b border-surface-border">
+<div class="flex gap-1.5">
+<div class="w-3 h-3 rounded-full bg-error-red/50"></div>
+<div class="w-3 h-3 rounded-full bg-warning-amber/50"></div>
+<div class="w-3 h-3 rounded-full bg-secondary/50"></div>
+</div>
+<p class="font-label-sm text-[11px] text-text-muted mx-auto">scrubkit — folder extraction</p>
+</div>
+<div class="p-4 font-code-md text-code-md text-on-surface/80">
+<p class="text-secondary">$ dotnet add package Scrubkit</p>
+<p class="mt-2 text-text-muted">scanning ./Docs …</p>
+<p class="text-electric-blue">handbook.pdf <span class="text-text-muted">Document · 48 KB</span></p>
+<p class="text-electric-blue">budget.xlsx <span class="text-text-muted">Spreadsheet · 12 KB</span></p>
+<p class="mt-2 text-warning-amber">warn: team-photo.jpg → EXIF only</p>
+<p class="text-secondary">✓ clean table returned</p>
+</div>
+</div>
+</section>
+<!-- Core Values Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-container-gap mb-24">
+<div class="bento-card p-bento-padding group">
+<span class="material-symbols-outlined text-electric-blue mb-4 text-[32px]">cloud_off</span>
+<h3 class="font-headline-md text-on-surface mb-2">Offline</h3>
+<p class="text-text-muted font-body-md">No network calls, no telemetry. Everything runs locally on your infrastructure for maximum privacy.</p>
+</div>
+<div class="bento-card p-bento-padding group">
+<span class="material-symbols-outlined text-secondary mb-4 text-[32px]">bolt</span>
+<h3 class="font-headline-md text-on-surface mb-2">Fast Core</h3>
+<p class="text-text-muted font-body-md">Extraction for PDF, Office, and text via PdfPig + MetadataExtractor — a small dependency set and streaming, bounded-parallel processing.</p>
+</div>
+<div class="bento-card p-bento-padding group">
+<span class="material-symbols-outlined text-warning-amber mb-4 text-[32px]">extension</span>
+<h3 class="font-headline-md text-on-surface mb-2">Pluggable</h3>
+<p class="text-text-muted font-body-md">Add or override formats via <code>IFileExtractor</code>. Opt into text transforms — redaction, masking — with an <code>IRedactor</code> you supply.</p>
+</div>
+<div class="bento-card p-bento-padding group">
+<span class="material-symbols-outlined text-error-red mb-4 text-[32px]">shield</span>
+<h3 class="font-headline-md text-on-surface mb-2">Robust</h3>
+<p class="text-text-muted font-body-md">A single unreadable file never crashes the batch. Problems surface as warnings on the specific row.</p>
+</div>
+</section>
+<!-- Install Section -->
+<section class="mb-24">
+<div class="bento-card overflow-hidden">
+<div class="flex flex-col md:flex-row">
+<div class="p-bento-padding md:w-1/3 flex flex-col justify-center">
+<p class="font-label-sm text-electric-blue mb-2">GET STARTED</p>
+<h2 class="font-headline-lg text-headline-lg mb-4">Simple Installation</h2>
+<p class="text-text-muted font-body-md">Add Scrubkit to your .NET project with a single command. Multi-targeted for net8.0 and netstandard2.0.</p>
+</div>
+<div class="md:w-2/3 bg-surface-deep p-bento-padding flex items-center">
+<div class="w-full code-container rounded border border-surface-border p-6 font-code-md group relative">
+<span class="text-secondary">$</span> <span class="text-on-surface">dotnet add package Scrubkit</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Start & Playground Visual -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-container-gap mb-24">
+<div class="flex flex-col justify-between">
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-6">Quick Start</h2>
+<p class="text-text-muted font-body-md mb-8">
+                        Get up and running in a few lines. Point <code>FolderScrubber</code> at a directory and await one flat table of results.
+                    </p>
+<div class="code-container rounded border border-surface-border p-6 font-code-md">
+<pre class="overflow-x-auto text-sm"><span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-electric-blue">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> {
+    Recursion = <span class="text-tertiary">Recursion</span>.AllNested
+});
+
+<span class="text-tertiary">IReadOnlyList</span>&lt;<span class="text-tertiary">FileRecord</span>&gt; table = <span class="text-secondary">await</span> scrubber.<span class="text-electric-blue">ReadAsync</span>(<span class="text-on-surface">@"C:\Docs"</span>);</pre>
+</div>
+</div>
+</div>
+<div class="bento-card overflow-hidden">
+<div class="bg-surface-container-high px-4 py-2 flex items-center border-b border-surface-border">
+<span class="font-label-sm text-text-muted">Playground output</span>
+</div>
+<div class="p-2 h-full bg-surface-deep">
+<div class="relative w-full h-full min-h-[300px]">
+<img class="object-contain w-full h-full border border-surface-border/50" alt="Scrubkit playground output — a table of extracted files with type, size and text length" src="playground.png"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Recipe: RAG -->
+<section class="mb-24">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">Recipe: Prepare for RAG</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-4 flex flex-col justify-center">
+<p class="font-body-md text-text-muted leading-relaxed">
+                        Stream document folders straight into a vector store. The async stream API keeps the memory footprint low even on massive directories.
+                    </p>
+<ul class="mt-6 space-y-4">
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-label-sm text-on-surface">Text + metadata ready to embed</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-label-sm text-on-surface">Length-clipped, index-friendly chunks</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-label-sm text-on-surface">Streaming, order-preserving I/O</span>
+</li>
+</ul>
+</div>
+<div class="md:col-span-8">
+<div class="code-container rounded-lg border border-surface-border overflow-hidden">
+<div class="bg-[#1E293B]/20 p-6 font-code-md text-sm">
+<pre class="overflow-x-auto"><span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span>
+{
+    MaxTextLength = <span class="text-warning-amber">8_000</span>,   <span class="text-text-muted">// keep chunks index-friendly</span>
+});
+
+<span class="text-secondary">await foreach</span> (<span class="text-secondary">var</span> doc <span class="text-secondary">in</span> scrubber.<span class="text-electric-blue">ReadStreamAsync</span>(<span class="text-on-surface">@"C:\Docs"</span>))
+{
+    <span class="text-secondary">if</span> (doc.Text.Length == <span class="text-warning-amber">0</span>) <span class="text-secondary">continue</span>;
+
+    <span class="text-secondary">await</span> index.<span class="text-electric-blue">UpsertAsync</span>(
+        id: doc.Path,
+        text: doc.Text,
+        metadata: doc.Metadata);
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Try it Section -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-container-gap mb-24">
+<div class="bento-card p-bento-padding border-l-4 border-l-electric-blue">
+<h4 class="font-label-sm text-electric-blue mb-4 uppercase tracking-widest">Try Without Installing</h4>
+<p class="font-body-md text-text-muted mb-6">Run the playground demo to see the table output format immediately.</p>
+<div class="bg-surface-deep p-4 rounded border border-surface-border font-code-md text-sm">
+<span class="text-text-muted">dotnet run --project samples/Scrubkit.Playground</span>
+</div>
+</div>
+<div class="bento-card p-bento-padding border-l-4 border-l-secondary">
+<h4 class="font-label-sm text-secondary mb-4 uppercase tracking-widest">Repository Layout</h4>
+<div class="space-y-3 font-code-md text-xs text-on-surface/70">
+<div class="flex gap-4">
+<span class="text-secondary">src/Scrubkit.Abstractions</span>
+<span class="text-text-muted">contracts only</span>
+</div>
+<div class="flex gap-4">
+<span class="text-secondary">src/Scrubkit</span>
+<span class="text-text-muted">core + built-in extractors</span>
+</div>
+<div class="flex gap-4">
+<span class="text-secondary">tests/Scrubkit.Tests</span>
+<span class="text-text-muted">xUnit suite</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="relative w-full bottom-0 bg-surface-deep border-t border-surface-border flex flex-col md:flex-row justify-between items-center px-margin-page py-8 mt-auto">
+<div class="flex flex-col gap-2 mb-6 md:mb-0">
+<p class="font-headline-md text-[20px] text-on-surface">Scrubkit</p>
+<p class="font-body-md text-body-md text-text-muted">© Scrubkit contributors · Licensed under MPL 2.0.</p>
+</div>
+<div class="flex flex-wrap gap-8">
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE">License</a>
+</div>
+</footer>
+</body></html>

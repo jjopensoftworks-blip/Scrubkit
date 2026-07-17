@@ -13,6 +13,8 @@ public class BucketsTests
     [InlineData(".pptx", "Presentation")]
     [InlineData(".txt", "Text")]
     [InlineData(".json", "Text")]
+    [InlineData(".html", "Text")]
+    [InlineData(".htm", "Text")]
     [InlineData(".eml", "Email")]
     [InlineData(".jpg", "Image")]
     [InlineData(".png", "Image")]
