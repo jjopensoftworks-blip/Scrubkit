@@ -35,7 +35,22 @@ public class FolderScrubberTests : IDisposable
     }
 
     [Fact]
-    public async Task Reads_text_file_and_scrubs_pii()
+    public async Task Reads_text_file_and_scrubs_when_redaction_enabled()
+    {
+        Write("notes.txt", "Contact jane@example.com or 192.168.1.1 for access.");
+
+        var opts = new ReadOptions { Redaction = RedactionLevel.Standard };
+        var table = await new FolderScrubber(opts).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Equal("Text", rec.TypeBucket);
+        Assert.True(rec.HasSensitiveData);
+        Assert.DoesNotContain("jane@example.com", rec.Text);
+        Assert.Contains("[EMAIL]", rec.Text);
+    }
+
+    [Fact]
+    public async Task Does_not_redact_by_default()
     {
         Write("notes.txt", "Contact jane@example.com or 192.168.1.1 for access.");
 
@@ -43,9 +58,8 @@ public class FolderScrubberTests : IDisposable
 
         var rec = Assert.Single(table);
         Assert.Equal("Text", rec.TypeBucket);
-        Assert.True(rec.HasSensitiveData);
-        Assert.DoesNotContain("jane@example.com", rec.Text);
-        Assert.Contains("[EMAIL]", rec.Text);
+        Assert.False(rec.HasSensitiveData);
+        Assert.Contains("jane@example.com", rec.Text);   // returned as-is
     }
 
     [Fact]

@@ -105,7 +105,8 @@ public class OfficeExtractorTests : IDisposable
                 }
             }
 
-            var rec = Assert.Single(await new FolderScrubber().ReadAsync(dir));
+            var opts = new ReadOptions { Redaction = RedactionLevel.Standard };
+            var rec = Assert.Single(await new FolderScrubber(opts).ReadAsync(dir));
 
             Assert.Equal("Document", rec.TypeBucket);
             Assert.Equal("[EMAIL]", rec.Metadata["Author"]);

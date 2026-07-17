@@ -21,8 +21,9 @@ public enum RedactionLevel
 }
 
 /// <summary>
-/// Knobs for a single scrub run. Sensible defaults: recurse everything, cap the
-/// batch, clip large files, and redact common sensitive values.
+/// Knobs for a single extraction run. Sensible defaults: recurse everything, cap the
+/// batch, and clip large files. Extracted text is returned as-is — redaction is off by
+/// default (opt in via <see cref="Redaction"/> or a custom <see cref="Redactor"/>).
 /// </summary>
 public sealed class ReadOptions
 {
@@ -59,8 +60,8 @@ public sealed class ReadOptions
     /// </summary>
     public IList<IFileExtractor> Extractors { get; } = new List<IFileExtractor>();
 
-    /// <summary>Built-in redaction level, used when <see cref="Redactor"/> is null. Default: Standard.</summary>
-    public RedactionLevel Redaction { get; set; } = RedactionLevel.Standard;
+    /// <summary>Built-in redaction level, used when <see cref="Redactor"/> is null. Default: Off (text returned as-is).</summary>
+    public RedactionLevel Redaction { get; set; } = RedactionLevel.Off;
 
     /// <summary>
     /// Custom redactor. When set, it fully replaces the built-in one. When null, a

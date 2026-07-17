@@ -1,8 +1,9 @@
 namespace Scrubkit;
 
 /// <summary>
-/// One row of the output table: what we could learn about a single file,
-/// with sensitive values already scrubbed out of <see cref="Text"/> and metadata.
+/// One row of the output table: what we could learn about a single file — its
+/// <see cref="Text"/> and <see cref="Metadata"/>. When redaction is enabled, sensitive
+/// values are removed from both and tallied in <see cref="Redactions"/>.
 /// </summary>
 public sealed record FileRecord
 {
@@ -28,7 +29,7 @@ public sealed record FileRecord
     public IReadOnlyDictionary<string, string> Metadata { get; init; } =
         new Dictionary<string, string>();
 
-    /// <summary>Extracted, scrubbed text. Empty when the type isn't text-bearing or reading failed.</summary>
+    /// <summary>Extracted text (redacted only when redaction is enabled). Empty when the type isn't text-bearing or reading failed.</summary>
     public string Text { get; init; } = "";
 
     /// <summary>How many values of each kind were scrubbed (e.g. <c>{"Email":2,"Phone":1}</c>).</summary>
