@@ -160,4 +160,59 @@ public class FolderScrubberTests : IDisposable
         public ExtractedContent Extract(string path) =>
             new(new Dictionary<string, string>(), "stubbed");
     }
+
+    [Fact]
+    public async Task Custom_redactor_replaces_the_builtin()
+    {
+        Write("notes.txt", "the secret code");
+        var options = new ReadOptions { Redactor = new MarkerRedactor() };
+
+        var rec = Assert.Single(await new FolderScrubber(options).ReadAsync(_dir));
+
+        Assert.Equal("the [REDACTED] code", rec.Text);   // custom redactor ran, not the built-in
+        Assert.Equal(1, rec.Redactions["Custom"]);
+    }
+
+    private sealed class MarkerRedactor : IRedactor
+    {
+        public RedactionResult Redact(string text)
+        {
+            var counts = new Dictionary<string, int>();
+            if (text.Contains("secret")) counts["Custom"] = 1;
+            return new RedactionResult(text.Replace("secret", "[REDACTED]"), counts);
+        }
+    }
+
+    [Fact]
+    public async Task IncludeExtensions_limits_which_files_are_opened()
+    {
+        Write("a.txt", "x");
+        Write("b.md", "y");
+        Write("c.log", "z");
+        var options = new ReadOptions();
+        options.IncludeExtensions.Add("txt");    // leading dot optional
+        options.IncludeExtensions.Add(".md");    // and with the dot
+
+        var table = await new FolderScrubber(options).ReadAsync(_dir);
+
+        Assert.Equal(2, table.Count);
+        Assert.All(table, r => Assert.Contains(r.Extension, new[] { ".txt", ".md" }));
+    }
+
+    [Fact]
+    public async Task Populates_file_record_fields()
+    {
+        var path = Write(Path.Combine("sub", "Report.TXT"), "hello");   // upper-case extension
+
+        var rec = Assert.Single(await new FolderScrubber().ReadAsync(_dir));
+
+        Assert.Equal(path, rec.Path);
+        Assert.Equal("Report.TXT", rec.Name);
+        Assert.Equal(".txt", rec.Extension);       // lower-cased with the dot
+        Assert.Equal("sub", rec.Folder);           // immediate parent folder name
+        Assert.Equal("Text", rec.TypeBucket);
+        Assert.Equal(5, rec.SizeBytes);            // "hello"
+        Assert.Equal("hello", rec.Text);           // extraction off by default → verbatim
+        Assert.True(rec.Modified > DateTime.MinValue);
+    }
 }
