@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <PackageId>Scrubkit</PackageId>
-    <Description>Point Scrubkit at a folder and get back a clean table of file text + metadata — 100% offline, no telemetry. Extracts text and metadata from PDF, Office (docx/pptx/xlsx), text, and image (EXIF) files, then scrubs common sensitive values (emails, phone numbers, Luhn-checked card numbers, SSNs, IPs) so you can feed cleaner documents into RAG ingestion, search indexing, and data-prep pipelines. Pluggable extractors (IFileExtractor) and redactors (IRedactor); streaming and bounded-parallel processing for large folders.</Description>
+    <Title>Scrubkit — offline text &amp; metadata extraction for .NET</Title>
+    <Description>Point Scrubkit at a folder and get back a clean table of file text + metadata — 100% offline, no telemetry. Extracts text and metadata from PDF, Office (docx/pptx/xlsx), plain-text, and image (EXIF) files, ready to feed into RAG ingestion, search indexing, and data-prep pipelines. Pluggable per-format extractors (IFileExtractor) plus streaming and bounded-parallel processing for large folders.</Description>
   </PropertyGroup>
 
   <ItemGroup>

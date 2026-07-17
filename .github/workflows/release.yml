@@ -1,7 +1,8 @@
 name: Release
 
 # Publishes to NuGet when a version tag (e.g. v1.0.0) is pushed.
-# One-time setup required before the first release — see docs/RELEASING.md.
+# One-time NuGet Trusted Publishing (OIDC) setup + a NUGET_USER repo variable are
+# required before the first release. See the "Releasing (maintainers)" section in CONTRIBUTING.md.
 on:
   push:
     tags: [ 'v*.*.*' ]

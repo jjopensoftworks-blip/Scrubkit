@@ -7,6 +7,51 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.1.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.1.0` &nbsp;·&nbsp; 📅 2026-07-17
+
+&nbsp;
+
+---
+
+Repositioned the package around **offline text + metadata extraction**. Redaction is now
+**opt-in** instead of applied by default.
+
+### ⚠️ Behavior change
+
+- **Redaction is opt-in and caller-driven.** The core extracts and returns text + metadata
+  exactly as read; it redacts only when you supply an `IRedactor` via `ReadOptions.Redactor`
+  (or set a `Redaction` level). **1.0.0 redacted by default** — if you relied on that, set a
+  redactor or level explicitly after upgrading.
+
+### 📖 Positioning & docs
+
+- Repositioned `Scrubkit` as **offline text + metadata extraction for .NET**. Updated the
+  package `Title`, `Description`, tags, and both READMEs to lead with extraction.
+- Refreshed the playground into a neutral extraction demo with an **extraction-view**
+  screenshot (synthetic sample data only).
+- Clarified that text-family formats (RTF / HTML / XML) are read as raw text.
+
+### 🧪 Tests & tooling
+
+- Expanded the test suite — extraction, extension filtering, record fields, opt-in and
+  custom redaction, and edge cases (empty folders, uncapped limits, corrupt Office files,
+  and a `stat-failed` guard).
+- Added an **offline-guarantee test** that fails the build if either shipping assembly ever
+  references a networking assembly.
+- Added a **netstandard2.0 runtime test project** that runs the `netstandard2.0` build (its
+  PolySharp polyfills and `GetValueOrDefault` shim) on the .NET 8 host, so the polyfilled
+  paths are exercised at runtime — not just compiled.
+- CI now publishes a **test-status summary** on every run.
+- Tidied package author/copyright metadata and optimized the package icon.
+
+### 🐛 Bug fixes
+
+- **`.htm` files now report `TypeBucket = "Text"`.** `Buckets.For` mapped `.html` but not
+  `.htm`, so `.htm` files extracted correctly yet were bucketed `Other`.
+
+
 ## 1.0.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.0.0` &nbsp;·&nbsp; 📅 2026-07-15
@@ -39,7 +84,6 @@ accurate wording throughout. The public API is stable under SemVer from here on.
   the formats it reads.
 - Refreshed the **search tags** (added `text-extraction` and `office`; removed noise) so the
   right people can find it.
-- Aligned the package **author/company** to `OpenFreeSoftwares` (matches the nuget.org owner).
 
 ### 🛡️ Under the hood
 

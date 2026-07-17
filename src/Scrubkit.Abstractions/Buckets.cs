@@ -13,7 +13,7 @@ public static class Buckets
         ".pdf" or ".docx" or ".rtf" or ".odt"                     => "Document",
         ".xlsx" or ".xls" or ".csv" or ".ods"                     => "Spreadsheet",
         ".pptx" or ".ppt" or ".odp"                               => "Presentation",
-        ".txt" or ".md" or ".log" or ".json" or ".xml" or ".html" => "Text",
+        ".txt" or ".md" or ".log" or ".json" or ".xml" or ".html" or ".htm" => "Text",
         ".eml" or ".msg"                                          => "Email",
         _ when ImageExts.Contains(ext)                            => "Image",
         _                                                         => "Other",

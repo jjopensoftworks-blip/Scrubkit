@@ -1,3 +1,4 @@
+using System.Reflection;
 using Scrubkit;
 using Xunit;
 
@@ -35,7 +36,22 @@ public class FolderScrubberTests : IDisposable
     }
 
     [Fact]
-    public async Task Reads_text_file_and_scrubs_pii()
+    public async Task Reads_text_file_and_scrubs_when_redaction_enabled()
+    {
+        Write("notes.txt", "Contact jane@example.com or 192.168.1.1 for access.");
+
+        var opts = new ReadOptions { Redaction = RedactionLevel.Standard };
+        var table = await new FolderScrubber(opts).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Equal("Text", rec.TypeBucket);
+        Assert.True(rec.HasSensitiveData);
+        Assert.DoesNotContain("jane@example.com", rec.Text);
+        Assert.Contains("[EMAIL]", rec.Text);
+    }
+
+    [Fact]
+    public async Task Does_not_redact_by_default()
     {
         Write("notes.txt", "Contact jane@example.com or 192.168.1.1 for access.");
 
@@ -43,9 +59,8 @@ public class FolderScrubberTests : IDisposable
 
         var rec = Assert.Single(table);
         Assert.Equal("Text", rec.TypeBucket);
-        Assert.True(rec.HasSensitiveData);
-        Assert.DoesNotContain("jane@example.com", rec.Text);
-        Assert.Contains("[EMAIL]", rec.Text);
+        Assert.False(rec.HasSensitiveData);
+        Assert.Contains("jane@example.com", rec.Text);   // returned as-is
     }
 
     [Fact]
@@ -145,5 +160,119 @@ public class FolderScrubberTests : IDisposable
         public bool CanHandle(string extension) => extension == ".txt";
         public ExtractedContent Extract(string path) =>
             new(new Dictionary<string, string>(), "stubbed");
+    }
+
+    [Fact]
+    public async Task Custom_redactor_replaces_the_builtin()
+    {
+        Write("notes.txt", "the secret code");
+        var options = new ReadOptions { Redactor = new MarkerRedactor() };
+
+        var rec = Assert.Single(await new FolderScrubber(options).ReadAsync(_dir));
+
+        Assert.Equal("the [REDACTED] code", rec.Text);   // custom redactor ran, not the built-in
+        Assert.Equal(1, rec.Redactions["Custom"]);
+    }
+
+    private sealed class MarkerRedactor : IRedactor
+    {
+        public RedactionResult Redact(string text)
+        {
+            var counts = new Dictionary<string, int>();
+            if (text.Contains("secret")) counts["Custom"] = 1;
+            return new RedactionResult(text.Replace("secret", "[REDACTED]"), counts);
+        }
+    }
+
+    [Fact]
+    public async Task IncludeExtensions_limits_which_files_are_opened()
+    {
+        Write("a.txt", "x");
+        Write("b.md", "y");
+        Write("c.log", "z");
+        var options = new ReadOptions();
+        options.IncludeExtensions.Add("txt");    // leading dot optional
+        options.IncludeExtensions.Add(".md");    // and with the dot
+
+        var table = await new FolderScrubber(options).ReadAsync(_dir);
+
+        Assert.Equal(2, table.Count);
+        Assert.All(table, r => Assert.Contains(r.Extension, new[] { ".txt", ".md" }));
+    }
+
+    [Fact]
+    public async Task Populates_file_record_fields()
+    {
+        var path = Write(Path.Combine("sub", "Report.TXT"), "hello");   // upper-case extension
+
+        var rec = Assert.Single(await new FolderScrubber().ReadAsync(_dir));
+
+        Assert.Equal(path, rec.Path);
+        Assert.Equal("Report.TXT", rec.Name);
+        Assert.Equal(".txt", rec.Extension);       // lower-cased with the dot
+        Assert.Equal("sub", rec.Folder);           // immediate parent folder name
+        Assert.Equal("Text", rec.TypeBucket);
+        Assert.Equal(5, rec.SizeBytes);            // "hello"
+        Assert.Equal("hello", rec.Text);           // extraction off by default → verbatim
+        Assert.True(rec.Modified > DateTime.MinValue);
+    }
+
+    [Fact]
+    public async Task Empty_folder_returns_empty_table()
+    {
+        var table = await new FolderScrubber().ReadAsync(_dir);
+        Assert.Empty(table);
+    }
+
+    [Fact]
+    public async Task MaxFiles_zero_means_no_limit()
+    {
+        for (int i = 0; i < 4; i++) Write($"f{i}.txt", "x");
+
+        var table = await new FolderScrubber(new ReadOptions { MaxFiles = 0 }).ReadAsync(_dir);
+
+        Assert.Equal(4, table.Count);
+    }
+
+    [Fact]
+    public async Task MaxTextLength_zero_leaves_text_unclipped()
+    {
+        Write("long.txt", new string('a', 500));
+
+        var table = await new FolderScrubber(new ReadOptions { MaxTextLength = 0 }).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Equal(500, rec.Text.Length);
+        Assert.DoesNotContain("text-clipped", rec.Warnings);
+    }
+
+    [Fact]
+    public async Task Corrupt_office_file_is_isolated_as_a_warning()
+    {
+        Write("broken.docx", "this is not a valid OOXML zip");
+
+        var rec = Assert.Single(await new FolderScrubber().ReadAsync(_dir));
+
+        Assert.Contains(rec.Warnings, w => w.StartsWith("extract-failed"));
+        Assert.Equal("", rec.Text);
+    }
+
+    [Fact]
+    public void Stat_failure_is_recorded_as_a_warning()
+    {
+        // The stat-failed guard fires when a file is enumerable but its metadata can't be
+        // read — e.g. a file deleted mid-scan or a broken symlink (whose behaviour differs
+        // by OS). That race can't be provoked portably through the public API, so drive the
+        // per-file worker directly against a path that doesn't exist: FileInfo.Length then
+        // throws and the guard records the warning without crashing the batch.
+        var scrubber = new FolderScrubber();
+        var readOne = typeof(FolderScrubber).GetMethod(
+            "ReadOne", BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+        var ghost = Path.Combine(_dir, "vanished.txt");   // never created
+        var rec = (FileRecord)readOne.Invoke(scrubber, new object[] { ghost })!;
+
+        Assert.Contains("stat-failed", rec.Warnings);
+        Assert.Equal(0, rec.SizeBytes);
     }
 }

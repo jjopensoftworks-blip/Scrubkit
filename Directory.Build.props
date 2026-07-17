@@ -37,8 +37,11 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReleaseNotes>See the changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
-    <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;privacy;redaction;scrubbing;rag</PackageTags>
+    <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
+         each release (versions themselves are tag-driven via MinVer). Full history:
+         https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
+    <PackageReleaseNotes>1.1.0 — Repositioned around offline text + metadata extraction. Redaction is now opt-in: the core returns text as read and redacts only when you supply an IRedactor via ReadOptions.Redactor (or set a Redaction level). 1.0.0 redacted by default, so set a redactor/level explicitly if you relied on that. Docs, playground, and tests refreshed. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -48,10 +51,11 @@
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <MinVerDefaultPreReleaseIdentifiers>alpha.0</MinVerDefaultPreReleaseIdentifiers>
 
-    <!-- Guard the public API. Now: cross-framework compatibility within each package.
-         After 1.0.0 ships, set PackageValidationBaselineVersion to 1.0.0 so every
-         later release is also checked against it for accidental breaking changes. -->
+    <!-- Guard the public API: cross-framework compatibility within each package, plus a
+         baseline diff against the last stable release so accidental breaking changes fail
+         the build. Bump the baseline to each new stable version as it ships. -->
     <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' != 'false'">
