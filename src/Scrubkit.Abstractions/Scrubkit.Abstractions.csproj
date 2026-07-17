@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <PackageId>Scrubkit.Abstractions</PackageId>
-    <Description>Dependency-free contracts for Scrubkit: IFileExtractor, IRedactor, FileRecord, ReadOptions and friends. Reference this (not the full Scrubkit package) when authoring add-on extractors or redactors so you don't pull in PdfPig or MetadataExtractor.</Description>
+    <Title>Scrubkit.Abstractions — contracts for Scrubkit extractors</Title>
+    <Description>Dependency-free contracts for Scrubkit: IFileExtractor, FileRecord, ExtractedContent, ReadOptions and friends. Reference this (not the full Scrubkit package) when authoring add-on extractors so you don't pull in PdfPig or MetadataExtractor.</Description>
   </PropertyGroup>
 
   <ItemGroup>

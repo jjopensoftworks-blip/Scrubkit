@@ -44,7 +44,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
+        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=test-results.trx" --results-directory ./coverage
+
+      - name: Test report (PR summary)
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
+        run: python3 build/test-summary.py --dir ./coverage
 
       - name: Coverage gate (line >= 85%)
         if: matrix.os == 'ubuntu-latest'

@@ -79,4 +79,15 @@ public class StandardRedactorTests
         Assert.Contains("1234567890", standard.Text);   // untouched at Standard
         Assert.Contains("[NUMBER]", aggressive.Text);     // stripped at Aggressive
     }
+
+    [Fact]
+    public void Aggressive_level_strips_dob_like_dates()
+    {
+        var standard = new StandardRedactor(RedactionLevel.Standard).Redact("born 12/31/1990");
+        var aggressive = new StandardRedactor(RedactionLevel.Aggressive).Redact("born 12/31/1990");
+
+        Assert.Contains("12/31/1990", standard.Text);   // untouched at Standard
+        Assert.Contains("[DATE]", aggressive.Text);       // stripped at Aggressive
+        Assert.Equal(1, aggressive.Counts["DateOfBirth"]);
+    }
 }

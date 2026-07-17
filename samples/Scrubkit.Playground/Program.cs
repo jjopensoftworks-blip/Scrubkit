@@ -2,13 +2,12 @@ using Scrubkit;
 
 // Scrubkit Playground
 // -------------------
-//   dotnet run                       -> generates a demo folder with fake sensitive data and scrubs it
-//   dotnet run -- "C:\path\to\docs"  -> scrubs a folder you point it at
-//   dotnet run -- "C:\docs" --level aggressive
+//   dotnet run                       -> generates a small demo folder and extracts it
+//   dotnet run -- "C:\path\to\docs"  -> extracts a folder you point it at
 //
-// Nothing here touches the network. The demo files contain only fabricated data.
+// Nothing here touches the network. The demo files contain only ordinary sample text.
 
-var (targetPath, level, isDemo) = ParseArgs(args);
+var (targetPath, isDemo) = ParseArgs(args);
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 Banner();
@@ -16,19 +15,14 @@ Banner();
 if (isDemo)
 {
     targetPath = CreateDemoFolder();
-    Console.WriteLine($"No folder given — created a demo folder with fake sensitive data:\n  {targetPath}\n");
+    Console.WriteLine($"No folder given — created a demo folder with sample files:\n  {targetPath}\n");
 }
 else
 {
-    Console.WriteLine($"Scrubbing folder: {targetPath}\n");
+    Console.WriteLine($"Extracting folder: {targetPath}\n");
 }
 
-var options = new ReadOptions
-{
-    Recursion = Recursion.AllNested,
-    Redaction = level,
-};
-
+var options = new ReadOptions { Recursion = Recursion.AllNested };
 var scrubber = new FolderScrubber(options);
 
 IReadOnlyList<FileRecord> table;
@@ -45,67 +39,47 @@ catch (DirectoryNotFoundException)
 PrintTable(table);
 PrintDetail(table);
 
-if (isDemo)
-    Console.WriteLine($"\nTip: run  dotnet run -- \"{targetPath}\" --level aggressive  to see the aggressive pass.");
-
+Console.WriteLine("\nTip: pass a real folder to extract your own docs — nothing leaves your machine.");
 return 0;
 
 // ---------- helpers ----------
 
-static (string path, RedactionLevel level, bool isDemo) ParseArgs(string[] args)
+static (string path, bool isDemo) ParseArgs(string[] args)
 {
-    string? path = null;
-    var level = RedactionLevel.Standard;
-
-    for (int i = 0; i < args.Length; i++)
-    {
-        if (args[i] is "--level" or "-l" && i + 1 < args.Length)
-        {
-            level = args[++i].ToLowerInvariant() switch
-            {
-                "off"        => RedactionLevel.Off,
-                "aggressive" => RedactionLevel.Aggressive,
-                _            => RedactionLevel.Standard,
-            };
-        }
-        else if (!args[i].StartsWith('-'))
-        {
-            path = args[i];
-        }
-    }
-
-    return path is null ? ("", level, true) : (path, level, false);
+    var path = args.FirstOrDefault(a => !a.StartsWith('-'));
+    return path is null ? ("", true) : (path, false);
 }
 
 static void Banner()
 {
-    Console.WriteLine("┌───────────────────────────────────────────────┐");
-    Console.WriteLine("│  Scrubkit Playground — offline file scrubbing  │");
-    Console.WriteLine("└───────────────────────────────────────────────┘\n");
+    const string title = "Scrubkit Playground — offline file extraction";
+    var line = new string('─', title.Length + 4);
+    Console.WriteLine($"┌{line}┐");
+    Console.WriteLine($"│  {title}  │");
+    Console.WriteLine($"└{line}┘\n");
 }
 
 static string CreateDemoFolder()
 {
     var root = Path.Combine(Path.GetTempPath(), "scrubkit-demo-" + DateTime.Now.ToString("HHmmss"));
     Directory.CreateDirectory(root);
-    Directory.CreateDirectory(Path.Combine(root, "invoices"));
+    Directory.CreateDirectory(Path.Combine(root, "handbook"));
 
     File.WriteAllText(Path.Combine(root, "welcome.txt"),
-        "Hi! Reach the support desk at help@contoso.com or call +1 (415) 555-0182.\n" +
-        "Your account manager is Dana, dana.lee@contoso.com.");
+        "Welcome to the team! This guide walks new members through their first week.\n" +
+        "Start with the setup checklist, then say hello in the team channel.");
 
     File.WriteAllText(Path.Combine(root, "notes.md"),
-        "# Onboarding\n\n- Server: 10.0.42.7\n- Backup server: 192.168.1.254\n" +
-        "- Escalation SSN on file: 123-45-6789 (do not share)\n");
+        "# Onboarding\n\n- Read the handbook\n- Set up your workstation\n- Book a welcome chat with your buddy\n");
 
-    File.WriteAllText(Path.Combine(root, "invoices", "invoice-3391.csv"),
-        "customer,email,card,amount\n" +
-        "Acme Co,ap@acme.example,4111 1111 1111 1111,1299.00\n" +
-        "Globex,billing@globex.example,5555 5555 5555 4444,842.50\n");
+    File.WriteAllText(Path.Combine(root, "handbook", "expenses.csv"),
+        "category,limit,notes\n" +
+        "Travel,1500,Book through the portal\n" +
+        "Equipment,1200,Manager approval for laptops\n");
 
-    File.WriteAllText(Path.Combine(root, "readme.log"),
-        "2026-07-13 12:00:01 login user=root ip=203.0.113.9\n" +
-        "2026-07-13 12:00:05 contact set to ops@contoso.com\n");
+    File.WriteAllText(Path.Combine(root, "service.log"),
+        "2026-07-13 12:00:01 service started\n" +
+        "2026-07-13 12:00:05 config reloaded\n");
 
     return root;
 }
@@ -113,25 +87,22 @@ static string CreateDemoFolder()
 static void PrintTable(IReadOnlyList<FileRecord> table)
 {
     Console.WriteLine($"Found {table.Count} file(s):\n");
-    Console.WriteLine($"  {"NAME",-24} {"BUCKET",-12} {"SIZE",8}  {"SCRUBBED",-24} WARN");
-    Console.WriteLine("  " + new string('─', 78));
+    Console.WriteLine($"  {"NAME",-24} {"BUCKET",-12} {"SIZE",8} {"TEXT",8}  WARN");
+    Console.WriteLine("  " + new string('─', 64));
 
     foreach (var r in table)
     {
-        var scrubbed = r.HasSensitiveData
-            ? string.Join(", ", r.Redactions.Select(kv => $"{kv.Key}:{kv.Value}"))
-            : "—";
         var warn = r.Warnings.Count > 0 ? string.Join(";", r.Warnings) : "";
-        Console.WriteLine($"  {Trunc(r.Name, 24),-24} {r.TypeBucket,-12} {r.SizeBytes,8}  {Trunc(scrubbed, 24),-24} {warn}");
+        Console.WriteLine($"  {Trunc(r.Name, 24),-24} {r.TypeBucket,-12} {r.SizeBytes,8} {r.Text.Length,8}  {warn}");
     }
 }
 
 static void PrintDetail(IReadOnlyList<FileRecord> table)
 {
-    var first = table.FirstOrDefault(r => r.HasSensitiveData);
+    var first = table.FirstOrDefault(r => r.Text.Length > 0);
     if (first is null) return;
 
-    Console.WriteLine($"\nScrubbed text preview — {first.Name}:\n");
+    Console.WriteLine($"\nText preview — {first.Name}:\n");
     Console.WriteLine("  " + Trunc(first.Text.Replace("\n", " "), 200));
 }
 
