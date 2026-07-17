@@ -56,8 +56,10 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-# Planning/docs kept local for now (not committed yet)
-docs/
-ROADMAP.md
-ROADMAP-ARCHIVE.md
+coverage/
+
+local/
+
+build/icon-source.png
+
 CLAUDE.md

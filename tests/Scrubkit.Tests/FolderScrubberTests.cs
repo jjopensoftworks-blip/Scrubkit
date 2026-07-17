@@ -215,4 +215,44 @@ public class FolderScrubberTests : IDisposable
         Assert.Equal("hello", rec.Text);           // extraction off by default → verbatim
         Assert.True(rec.Modified > DateTime.MinValue);
     }
+
+    [Fact]
+    public async Task Empty_folder_returns_empty_table()
+    {
+        var table = await new FolderScrubber().ReadAsync(_dir);
+        Assert.Empty(table);
+    }
+
+    [Fact]
+    public async Task MaxFiles_zero_means_no_limit()
+    {
+        for (int i = 0; i < 4; i++) Write($"f{i}.txt", "x");
+
+        var table = await new FolderScrubber(new ReadOptions { MaxFiles = 0 }).ReadAsync(_dir);
+
+        Assert.Equal(4, table.Count);
+    }
+
+    [Fact]
+    public async Task MaxTextLength_zero_leaves_text_unclipped()
+    {
+        Write("long.txt", new string('a', 500));
+
+        var table = await new FolderScrubber(new ReadOptions { MaxTextLength = 0 }).ReadAsync(_dir);
+
+        var rec = Assert.Single(table);
+        Assert.Equal(500, rec.Text.Length);
+        Assert.DoesNotContain("text-clipped", rec.Warnings);
+    }
+
+    [Fact]
+    public async Task Corrupt_office_file_is_isolated_as_a_warning()
+    {
+        Write("broken.docx", "this is not a valid OOXML zip");
+
+        var rec = Assert.Single(await new FolderScrubber().ReadAsync(_dir));
+
+        Assert.Contains(rec.Warnings, w => w.StartsWith("extract-failed"));
+        Assert.Equal("", rec.Text);
+    }
 }

@@ -5,9 +5,9 @@ namespace Scrubkit;
 
 /// <summary>
 /// The public entry point. Point it at a folder and get back a table of
-/// <see cref="FileRecord"/> — text + metadata per file, sensitive values already
-/// scrubbed. Fully offline and non-throwing per file (problems surface as
-/// <see cref="FileRecord.Warnings"/>).
+/// <see cref="FileRecord"/> — text + metadata per file. Fully offline and non-throwing
+/// per file (problems surface as <see cref="FileRecord.Warnings"/>). Redaction is opt-in:
+/// supply an <see cref="IRedactor"/> via <see cref="ReadOptions.Redactor"/>.
 ///
 /// The fast built-in extractors cover PDF, Office (docx/pptx/xlsx), plain text and
 /// image metadata. Register your own <see cref="IFileExtractor"/> implementations via
@@ -16,13 +16,18 @@ namespace Scrubkit;
 public sealed class FolderScrubber
 {
     private readonly ReadOptions _options;
-    private readonly IRedactor _redactor;
+    private readonly IRedactor? _redactor;
     private readonly List<IFileExtractor> _extractors;
 
     public FolderScrubber(ReadOptions? options = null)
     {
         _options = options ?? new ReadOptions();
-        _redactor = _options.Redactor ?? new StandardRedactor(_options.Redaction);
+
+        // Redaction is the caller's choice: an explicit Redactor wins; otherwise the
+        // built-in is used only when a level was requested. With neither, _redactor stays
+        // null and extracted text is returned exactly as read.
+        _redactor = _options.Redactor
+            ?? (_options.Redaction != RedactionLevel.Off ? new StandardRedactor(_options.Redaction) : null);
 
         // Registered add-ons first (can override), then the built-ins.
         _extractors = new List<IFileExtractor>(_options.Extractors)
@@ -160,17 +165,23 @@ public sealed class FolderScrubber
                 warnings.Add("text-clipped");
             }
 
-            var red = _redactor.Redact(t);
-            text = red.Text;
-            redactions = red.Counts.ToDictionary(kv => kv.Key, kv => kv.Value);
+            text = t;
 
-            // Metadata can carry sensitive values too (authors, subjects) — scrub it as well.
-            foreach (var key in meta.Keys.ToList())
+            // Redaction runs only when the caller opted in (see the constructor).
+            if (_redactor is not null)
             {
-                var mr = _redactor.Redact(meta[key]);
-                meta[key] = mr.Text;
-                foreach (var kv in mr.Counts)
-                    redactions[kv.Key] = redactions.GetValueOrDefault(kv.Key) + kv.Value;
+                var red = _redactor.Redact(t);
+                text = red.Text;
+                redactions = red.Counts.ToDictionary(kv => kv.Key, kv => kv.Value);
+
+                // Metadata can carry the same values (authors, subjects) — redact it too.
+                foreach (var key in meta.Keys.ToList())
+                {
+                    var mr = _redactor.Redact(meta[key]);
+                    meta[key] = mr.Text;
+                    foreach (var kv in mr.Counts)
+                        redactions[kv.Key] = redactions.GetValueOrDefault(kv.Key) + kv.Value;
+                }
             }
         }
 

@@ -22,8 +22,9 @@ public enum RedactionLevel
 
 /// <summary>
 /// Knobs for a single extraction run. Sensible defaults: recurse everything, cap the
-/// batch, and clip large files. Extracted text is returned as-is — redaction is off by
-/// default (opt in via <see cref="Redaction"/> or a custom <see cref="Redactor"/>).
+/// batch, and clip large files. Extracted text is returned exactly as read — redaction
+/// is entirely the caller's choice: supply a <see cref="Redactor"/> (or set a
+/// <see cref="Redaction"/> level) to opt in.
 /// </summary>
 public sealed class ReadOptions
 {
@@ -60,12 +61,18 @@ public sealed class ReadOptions
     /// </summary>
     public IList<IFileExtractor> Extractors { get; } = new List<IFileExtractor>();
 
-    /// <summary>Built-in redaction level, used when <see cref="Redactor"/> is null. Default: Off (text returned as-is).</summary>
+    /// <summary>
+    /// Convenience level for the built-in redactor, applied only when <see cref="Redactor"/>
+    /// is null and this is not <see cref="RedactionLevel.Off"/>. Default: <c>Off</c> — the
+    /// core extracts and does not redact unless you ask it to.
+    /// </summary>
     public RedactionLevel Redaction { get; set; } = RedactionLevel.Off;
 
     /// <summary>
-    /// Custom redactor. When set, it fully replaces the built-in one. When null, a
-    /// <c>StandardRedactor</c> honoring <see cref="Redaction"/> is used.
+    /// The redactor applied to extracted text and metadata — this is how you opt into
+    /// redaction. When set, it is used as-is (and takes precedence over
+    /// <see cref="Redaction"/>). When null and <see cref="Redaction"/> is <c>Off</c>,
+    /// nothing is redacted. Plug in <c>StandardRedactor</c> or your own <see cref="IRedactor"/>.
     /// </summary>
     public IRedactor? Redactor { get; set; }
 }
