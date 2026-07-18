@@ -15,8 +15,9 @@ from Git tags via MinVer.
 
 ---
 
-Introduces the first **add-on package**, exercising the `IFileExtractor` extension seam
-end to end.
+Introduces the first **add-on packages**, exercising the `IFileExtractor` extension seam
+end to end. Both reference only `Scrubkit.Abstractions`, so they pull in no PDF or image
+libraries; register either via `ReadOptions.Extractors`.
 
 ### 🚀 New package: Scrubkit.Email
 
@@ -24,10 +25,17 @@ end to end.
   `From` / `To` / `Cc` / `Subject` / `Date` headers become metadata and the message body
   becomes text. It handles multipart messages, `base64` and `quoted-printable` transfer
   encodings, common charsets, and RFC 2047 encoded-word headers — preferring the
-  `text/plain` part and falling back to `text/html`. Attachments are skipped.
-- **No extra dependencies.** The package references only `Scrubkit.Abstractions`, so adding
-  it pulls in no PDF or image libraries. Register it via `ReadOptions.Extractors`; `.eml`
-  files then route to it and come back as `TypeBucket = "Email"` rows.
+  `text/plain` part and falling back to `text/html`. Attachments are skipped. `.eml` files
+  come back as `TypeBucket = "Email"` rows.
+
+### 🚀 New package: Scrubkit.OpenDocument
+
+- **`Scrubkit.OpenDocument`** ships an `OpenDocumentExtractor` that reads OpenDocument
+  Format files from LibreOffice / OpenOffice — text documents (**`.odt`**), spreadsheets
+  (**`.ods`**), and presentations (**`.odp`**). Body text becomes `Text` and the
+  `Title` / `Author` / `Subject` properties become metadata. ODF is a zip of XML, read with
+  the BCL — the same technique the built-in Office extractor uses. Files route to their
+  natural buckets (`Document` / `Spreadsheet` / `Presentation`).
 
 ## 1.1.0
 
