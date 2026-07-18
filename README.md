@@ -7,6 +7,8 @@
 [![Downloads](https://img.shields.io/nuget/dt/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 
+**[🌐 Website](https://jjopensoftworks-blip.github.io/Scrubkit/)** · **[📦 NuGet](https://www.nuget.org/packages/Scrubkit)** · **[📝 Changelog](CHANGELOG.md)**
+
 **Point at a folder, get a clean table of file text + metadata back — fully offline.**
 Scrubkit walks a directory and extracts text and metadata from common file types,
 returning one row per file. Everything runs locally — no network calls, no telemetry —

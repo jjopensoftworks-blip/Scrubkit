@@ -32,7 +32,7 @@
     <Company>OpenFreeSoftwares</Company>
     <Copyright>Copyright © OpenFreeSoftwares</Copyright>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/jjopensoftworks-blip/Scrubkit</PackageProjectUrl>
+    <PackageProjectUrl>https://jjopensoftworks-blip.github.io/Scrubkit/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjopensoftworks-blip/Scrubkit.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -55,7 +55,7 @@
          baseline diff against the last stable release so accidental breaking changes fail
          the build. Bump the baseline to each new stable version as it ships. -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.1.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' != 'false'">
