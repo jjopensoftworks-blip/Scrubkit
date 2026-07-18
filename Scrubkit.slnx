@@ -6,10 +6,12 @@
     <Project Path="src/Scrubkit.Abstractions/Scrubkit.Abstractions.csproj" />
     <Project Path="src/Scrubkit/Scrubkit.csproj" />
     <Project Path="src/Scrubkit.Email/Scrubkit.Email.csproj" />
+    <Project Path="src/Scrubkit.OpenDocument/Scrubkit.OpenDocument.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />
     <Project Path="tests/Scrubkit.Tests.NetStd20/Scrubkit.Tests.NetStd20.csproj" />
     <Project Path="tests/Scrubkit.Email.Tests/Scrubkit.Email.Tests.csproj" />
+    <Project Path="tests/Scrubkit.OpenDocument.Tests/Scrubkit.OpenDocument.Tests.csproj" />
   </Folder>
 </Solution>
