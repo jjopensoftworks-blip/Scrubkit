@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <PackageId>Scrubkit.OpenDocument</PackageId>
+    <Title>Scrubkit.OpenDocument — .odt/.ods/.odp extractor for Scrubkit</Title>
+    <Description>Add-on IFileExtractor for Scrubkit that reads OpenDocument Format files — text documents (.odt), spreadsheets (.ods), and presentations (.odp) from LibreOffice / OpenOffice. Extracts the body text and the Title/Author/Subject properties, fully offline with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>
+    <PackageTags>scrubkit;opendocument;odf;odt;ods;odp;libreoffice;extraction;text-extraction;offline;rag;ingestion</PackageTags>
+    <!-- Brand-new package: no prior stable version on nuget.org to diff against, so skip the
+         baseline check (cross-framework API validation from Directory.Build.props still runs). -->
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Add-ons reference the contracts only — no PdfPig / MetadataExtractor pulled in. -->
+    <ProjectReference Include="..\Scrubkit.Abstractions\Scrubkit.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

@@ -7,6 +7,36 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.2.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.2.0` &nbsp;·&nbsp; 📅 2026-07-18
+
+&nbsp;
+
+---
+
+Introduces the first **add-on packages**, exercising the `IFileExtractor` extension seam
+end to end. Both reference only `Scrubkit.Abstractions`, so they pull in no PDF or image
+libraries; register either via `ReadOptions.Extractors`.
+
+### 🚀 New package: Scrubkit.Email
+
+- **`Scrubkit.Email`** ships an `EmailExtractor` that reads **`.eml`** (MIME) files: the
+  `From` / `To` / `Cc` / `Subject` / `Date` headers become metadata and the message body
+  becomes text. It handles multipart messages, `base64` and `quoted-printable` transfer
+  encodings, common charsets, and RFC 2047 encoded-word headers — preferring the
+  `text/plain` part and falling back to `text/html`. Attachments are skipped. `.eml` files
+  come back as `TypeBucket = "Email"` rows.
+
+### 🚀 New package: Scrubkit.OpenDocument
+
+- **`Scrubkit.OpenDocument`** ships an `OpenDocumentExtractor` that reads OpenDocument
+  Format files from LibreOffice / OpenOffice — text documents (**`.odt`**), spreadsheets
+  (**`.ods`**), and presentations (**`.odp`**). Body text becomes `Text` and the
+  `Title` / `Author` / `Subject` properties become metadata. ODF is a zip of XML, read with
+  the BCL — the same technique the built-in Office extractor uses. Files route to their
+  natural buckets (`Document` / `Spreadsheet` / `Presentation`).
+
 ## 1.1.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.1.0` &nbsp;·&nbsp; 📅 2026-07-17
