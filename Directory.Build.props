@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.1.0 — Repositioned around offline text + metadata extraction. Redaction is now opt-in: the core returns text as read and redacts only when you supply an IRedactor via ReadOptions.Redactor (or set a Redaction level). 1.0.0 redacted by default, so set a redactor/level explicitly if you relied on that. Docs, playground, and tests refreshed. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.2.0 — Adds the first add-on packages: Scrubkit.Email (.eml / MIME) and Scrubkit.OpenDocument (.odt / .ods / .odp), each an IFileExtractor you register via ReadOptions.Extractors. Both reference only Scrubkit.Abstractions, so they add no extra dependencies. The core package is unchanged. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
