@@ -7,6 +7,28 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.2.0
+
+![Unreleased](https://img.shields.io/badge/release-Unreleased-8957e5?style=flat-square) &nbsp; 🏷️ `v1.2.0` &nbsp;·&nbsp; 📅 _unreleased_
+
+&nbsp;
+
+---
+
+Introduces the first **add-on package**, exercising the `IFileExtractor` extension seam
+end to end.
+
+### 🚀 New package: Scrubkit.Email
+
+- **`Scrubkit.Email`** ships an `EmailExtractor` that reads **`.eml`** (MIME) files: the
+  `From` / `To` / `Cc` / `Subject` / `Date` headers become metadata and the message body
+  becomes text. It handles multipart messages, `base64` and `quoted-printable` transfer
+  encodings, common charsets, and RFC 2047 encoded-word headers — preferring the
+  `text/plain` part and falling back to `text/html`. Attachments are skipped.
+- **No extra dependencies.** The package references only `Scrubkit.Abstractions`, so adding
+  it pulls in no PDF or image libraries. Register it via `ReadOptions.Extractors`; `.eml`
+  files then route to it and come back as `TypeBucket = "Email"` rows.
+
 ## 1.1.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.1.0` &nbsp;·&nbsp; 📅 2026-07-17
