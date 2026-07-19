@@ -7,6 +7,61 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.4.0
+
+![Pre-release](https://img.shields.io/badge/release-Pre--release-e0a106?style=flat-square) &nbsp; 🏷️ `v1.4.0` &nbsp;·&nbsp; 📅 Unreleased
+
+&nbsp;
+
+---
+
+A capability release: turn the scrubbed table into output, watch the run, and hash content.
+
+### 🚀 Output: CSV / JSON and a new Parquet package
+
+- **`TableWriter`** (in the core, zero-dependency) serializes the record table to **CSV** or
+  **JSON** — `TableWriter.ToCsv(table)` / `ToJson(table)`. CSV is a flat, RFC 4180-quoted
+  summary; JSON carries the full record including text, metadata, redaction counts, warnings,
+  and content hash.
+- **`Modified` timestamps are written in UTC** (trailing `Z`) by default. Pass **`utc: false`**
+  to emit machine-local time instead — always with an explicit offset (e.g.
+  `2026-07-19T15:30:00+05:30`) so the value stays unambiguous.
+- **New package `Scrubkit.Parquet`** writes the table to Apache **Parquet** via Parquet.Net
+  (`ParquetTableWriter`), for data-lake / analytics ingestion. **net8.0-only**; the core stays
+  zero-dependency. Parquet always stores `Modified` as a UTC instant.
+
+### 🚀 Diagnostics and an ILogger seam
+
+- **`ReadOptions.OnDiagnostic`** is a dependency-free `Action<ScrubDiagnostic>` hook the core
+  fires per file — a `read` event on success, or a warning code (`extract-failed`,
+  `skipped-content`, `text-clipped`, `stat-failed`, `hash-failed`) on a problem.
+- **`AddScrubkit`** bridges that hook to **`ILogger`** when a logger factory is present, so the
+  core takes no logging dependency.
+
+### 🚀 Content hashing
+
+- Opt-in **`ReadOptions.ComputeContentHash`** populates **`FileRecord.ContentHash`** with the
+  file's lower-case hex **SHA-256**, bounded by `MaxBytesPerFile` (oversized files are
+  stat-skipped and never read).
+
+### 🔧 Changes
+
+- **Default `MaxBytesPerFile` lowered to 10 MB.** Files over the limit are stat-skipped with a
+  `skipped-content` warning rather than read into memory.
+- **`FileRecord.Modified` is now UTC** (`DateTimeKind.Utc`) — the canonical, unambiguous form;
+  convert consumer-side with `Modified.ToLocalTime()` for a local view.
+
+### 🐛 Bug fixes
+
+- **Redaction no longer drops a valid match that overlaps a higher-priority span.** The
+  single-pass engine now masks claimed characters in a working copy, so a looser later pattern
+  can't reach into text a more specific one already took.
+
+### 🧰 Maintenance
+
+- CI coverage floor raised to **99%** (actual line coverage ~99.8%).
+- Added a **Privacy & disclaimer** section to the site and package READMEs.
+
 ## 1.3.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.3.0` &nbsp;·&nbsp; 📅 2026-07-19

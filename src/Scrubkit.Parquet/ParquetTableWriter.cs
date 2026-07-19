@@ -10,6 +10,11 @@ namespace Scrubkit;
 /// Columns: <c>Path</c>, <c>Name</c>, <c>Extension</c>, <c>Folder</c>, <c>SizeBytes</c>,
 /// <c>Modified</c>, <c>TypeBucket</c>, <c>Text</c>, <c>Warnings</c> (";"-joined),
 /// <c>Redactions</c> ("cat:count;"-joined), and <c>ContentHash</c>.
+///
+/// <c>Modified</c> is always written in UTC. A Parquet timestamp is an instant and Parquet.Net
+/// normalizes it to UTC on write, so — unlike the text writers' <c>utc: false</c> option —
+/// there is no lossless way to express a local zone in the column; read it back as UTC and
+/// convert consumer-side (<c>value.ToLocalTime()</c>) if you need a local view.
 /// </summary>
 public static class ParquetTableWriter
 {

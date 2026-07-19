@@ -111,6 +111,31 @@ await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 
 ---
 
+## Export the table
+
+Serialize the records to CSV or JSON with the zero-dependency `TableWriter` (or to Parquet
+via the separate **`Scrubkit.Parquet`** package):
+
+```csharp
+string csv  = TableWriter.ToCsv(table);
+string json = TableWriter.ToJson(table);
+```
+
+Timestamps (`Modified`) are written in **UTC** with a trailing `Z`. Need machine-local time
+instead? Pass `utc: false` — the value is emitted with an explicit offset (e.g.
+`2026-07-19T15:30:00+05:30`) so it stays unambiguous:
+
+```csharp
+string localJson = TableWriter.ToJson(table, utc: false);
+string localCsv  = TableWriter.ToCsv(table, utc: false);
+```
+
+`FileRecord.Modified` is itself always `DateTimeKind.Utc`, so you can equally convert
+consumer-side with `record.Modified.ToLocalTime()`. (Parquet always stores UTC — a Parquet
+timestamp is an instant, so convert on read if you want a local view.)
+
+---
+
 ## Extend it
 
 Add a format by implementing `IFileExtractor` — it's tried before the built-ins, so you

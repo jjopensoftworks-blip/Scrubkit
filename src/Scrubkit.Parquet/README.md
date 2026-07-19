@@ -32,6 +32,11 @@ await ParquetTableWriter.WriteAsync(table, stream);
 Columns: `Path`, `Name`, `Extension`, `Folder`, `SizeBytes`, `Modified`, `TypeBucket`,
 `Text`, `Warnings`, `Redactions`, `ContentHash`.
 
+`Modified` is always stored in **UTC** — a Parquet timestamp is an instant, so read it back
+and convert with `value.ToLocalTime()` if you need a local view. (The core's CSV/JSON
+`TableWriter` additionally supports a `utc: false` option, since text formats can carry an
+explicit offset; Parquet cannot.)
+
 ## License
 
 [Mozilla Public License 2.0](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE).

@@ -8,6 +8,10 @@ namespace Scrubkit;
 /// pipelines. Zero-dependency and fully offline, like the rest of Scrubkit. CSV is a flat
 /// summary (RFC 4180 quoting); JSON carries the full record including text, metadata,
 /// redaction counts, warnings, and content hash.
+///
+/// Timestamps default to UTC (<c>...Z</c>). Pass <c>utc: false</c> to emit machine-local
+/// time instead — always with an explicit offset (<c>...+05:30</c>) so the value stays
+/// unambiguous.
 /// </summary>
 public static class TableWriter
 {
@@ -19,16 +23,20 @@ public static class TableWriter
         "Text", "Warnings", "Redactions", "ContentHash",
     };
 
-    /// <summary>Returns the records as a CSV string (with a header row).</summary>
-    public static string ToCsv(IEnumerable<FileRecord> records)
+    /// <summary>
+    /// Returns the records as a CSV string (with a header row). Timestamps are UTC unless
+    /// <paramref name="utc"/> is <c>false</c>, in which case they are machine-local with an
+    /// explicit offset.
+    /// </summary>
+    public static string ToCsv(IEnumerable<FileRecord> records, bool utc = true)
     {
         var writer = new StringWriter(CultureInfo.InvariantCulture);
-        WriteCsv(records, writer);
+        WriteCsv(records, writer, utc);
         return writer.ToString();
     }
 
     /// <summary>Writes the records as CSV (with a header row) to <paramref name="writer"/>.</summary>
-    public static void WriteCsv(IEnumerable<FileRecord> records, TextWriter writer)
+    public static void WriteCsv(IEnumerable<FileRecord> records, TextWriter writer, bool utc = true)
     {
         if (records is null) throw new ArgumentNullException(nameof(records));
         if (writer is null) throw new ArgumentNullException(nameof(writer));
@@ -45,7 +53,7 @@ public static class TableWriter
                 r.Extension,
                 r.Folder,
                 r.SizeBytes.ToString(CultureInfo.InvariantCulture),
-                Iso(r.Modified),
+                Iso(r.Modified, utc),
                 r.TypeBucket,
                 r.Text,
                 Join(r.Warnings),
@@ -57,9 +65,12 @@ public static class TableWriter
         }
     }
 
-    // UTC ISO-8601 with an explicit 'Z' so consumers never guess the zone.
-    private static string Iso(DateTime value) =>
-        value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss'Z'", CultureInfo.InvariantCulture);
+    // ISO-8601 with an explicit zone marker so consumers never guess: 'Z' for UTC, or a
+    // numeric offset (e.g. +05:30) for machine-local time.
+    private static string Iso(DateTime value, bool utc) =>
+        utc
+            ? value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss'Z'", CultureInfo.InvariantCulture)
+            : value.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
 
     private static string Join(IReadOnlyList<string>? items) =>
         items is null ? "" : string.Join(";", items);
@@ -67,16 +78,20 @@ public static class TableWriter
     private static string JoinPairs(IReadOnlyDictionary<string, int>? map) =>
         map is null ? "" : string.Join(";", map.Select(kv => $"{kv.Key}:{kv.Value}"));
 
-    /// <summary>Returns the records as a JSON array string.</summary>
-    public static string ToJson(IEnumerable<FileRecord> records)
+    /// <summary>
+    /// Returns the records as a JSON array string. Timestamps are UTC unless
+    /// <paramref name="utc"/> is <c>false</c>, in which case they are machine-local with an
+    /// explicit offset.
+    /// </summary>
+    public static string ToJson(IEnumerable<FileRecord> records, bool utc = true)
     {
         var writer = new StringWriter(CultureInfo.InvariantCulture);
-        WriteJson(records, writer);
+        WriteJson(records, writer, utc);
         return writer.ToString();
     }
 
     /// <summary>Writes the records as a JSON array to <paramref name="writer"/>.</summary>
-    public static void WriteJson(IEnumerable<FileRecord> records, TextWriter writer)
+    public static void WriteJson(IEnumerable<FileRecord> records, TextWriter writer, bool utc = true)
     {
         if (records is null) throw new ArgumentNullException(nameof(records));
         if (writer is null) throw new ArgumentNullException(nameof(writer));
@@ -87,12 +102,12 @@ public static class TableWriter
         {
             if (!first) writer.Write(',');
             first = false;
-            writer.Write(RecordToJson(r));
+            writer.Write(RecordToJson(r, utc));
         }
         writer.Write(']');
     }
 
-    private static string RecordToJson(FileRecord r)
+    private static string RecordToJson(FileRecord r, bool utc)
     {
         var sb = new StringBuilder();
         sb.Append('{');
@@ -101,7 +116,7 @@ public static class TableWriter
         sb.Append("\"extension\":").Append(JsonString(r.Extension)).Append(',');
         sb.Append("\"folder\":").Append(JsonString(r.Folder)).Append(',');
         sb.Append("\"sizeBytes\":").Append(r.SizeBytes.ToString(CultureInfo.InvariantCulture)).Append(',');
-        sb.Append("\"modified\":").Append(JsonString(Iso(r.Modified))).Append(',');
+        sb.Append("\"modified\":").Append(JsonString(Iso(r.Modified, utc))).Append(',');
         sb.Append("\"typeBucket\":").Append(JsonString(r.TypeBucket)).Append(',');
         sb.Append("\"text\":").Append(JsonString(r.Text)).Append(',');
         sb.Append("\"metadata\":").Append(JsonStringMap(r.Metadata)).Append(',');

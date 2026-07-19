@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using Scrubkit;
 using Xunit;
@@ -71,6 +72,34 @@ public class TableWriterTests
 
         using var doc = JsonDocument.Parse(json);   // and it must still round-trip
         Assert.Equal(control, doc.RootElement[0].GetProperty("text").GetString());
+    }
+
+    [Fact]
+    public void Local_time_output_carries_an_explicit_offset_and_same_instant()
+    {
+        var rec = Rec() with { Modified = new DateTime(2026, 7, 19, 10, 0, 0, DateTimeKind.Utc) };
+        var expectedOffset = TimeZoneInfo.Local.GetUtcOffset(rec.Modified);
+
+        var json = TableWriter.ToJson(new[] { rec }, utc: false);
+        var modified = JsonDocument.Parse(json).RootElement[0].GetProperty("modified").GetString()!;
+        var parsed = DateTimeOffset.Parse(modified, CultureInfo.InvariantCulture);
+
+        Assert.Equal(rec.Modified, parsed.UtcDateTime);     // same instant, losslessly
+        Assert.Equal(expectedOffset, parsed.Offset);        // tagged with the local offset
+
+        // CSV carries the same offset-tagged value.
+        var csvModified = TableWriter.ToCsv(new[] { rec }, utc: false)
+            .Replace("\r\n", "\n").TrimEnd('\n').Split('\n')[1].Split(',')[5];
+        Assert.Equal(rec.Modified, DateTimeOffset.Parse(csvModified, CultureInfo.InvariantCulture).UtcDateTime);
+    }
+
+    [Fact]
+    public void Utc_output_is_the_default_and_ends_with_z()
+    {
+        var rec = Rec() with { Modified = new DateTime(2026, 7, 19, 10, 0, 0, DateTimeKind.Utc) };
+        var modified = JsonDocument.Parse(TableWriter.ToJson(new[] { rec }))
+            .RootElement[0].GetProperty("modified").GetString()!;
+        Assert.Equal("2026-07-19T10:00:00Z", modified);
     }
 
     [Fact]
