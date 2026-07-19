@@ -62,6 +62,20 @@ public class OutputAndDiagnosticsTests : IDisposable
         await new FolderScrubber(options).ReadAsync(_dir);
 
         Assert.Contains(diagnostics, d => d.Event == "skipped-content" && d.IsWarning);
+        Assert.DoesNotContain(diagnostics, d => d.Event == "read");   // skipped != read
+    }
+
+    [Fact]
+    public async Task Modified_is_utc_and_serializes_with_a_z_suffix()
+    {
+        File.WriteAllText(Path.Combine(_dir, "a.txt"), "hi");
+
+        var table = await new FolderScrubber().ReadAsync(_dir);
+
+        Assert.Equal(DateTimeKind.Utc, Assert.Single(table).Modified.Kind);
+        Assert.Matches(@"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", TableWriter.ToCsv(table));
+        using var doc = JsonDocument.Parse(TableWriter.ToJson(table));
+        Assert.EndsWith("Z", doc.RootElement[0].GetProperty("modified").GetString());
     }
 
     [Fact]

@@ -38,7 +38,6 @@ public static class TableWriter
 
         foreach (var r in records)
         {
-            var redactions = string.Join(";", r.Redactions.Select(kv => $"{kv.Key}:{kv.Value}"));
             var row = new[]
             {
                 r.Path,
@@ -46,17 +45,27 @@ public static class TableWriter
                 r.Extension,
                 r.Folder,
                 r.SizeBytes.ToString(CultureInfo.InvariantCulture),
-                r.Modified.ToString("s", CultureInfo.InvariantCulture),
+                Iso(r.Modified),
                 r.TypeBucket,
                 r.Text,
-                string.Join(";", r.Warnings),
-                redactions,
+                Join(r.Warnings),
+                JoinPairs(r.Redactions),
                 r.ContentHash ?? "",
             };
             writer.Write(string.Join(",", row.Select(CsvField)));
             writer.Write("\r\n");
         }
     }
+
+    // UTC ISO-8601 with an explicit 'Z' so consumers never guess the zone.
+    private static string Iso(DateTime value) =>
+        value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss'Z'", CultureInfo.InvariantCulture);
+
+    private static string Join(IReadOnlyList<string>? items) =>
+        items is null ? "" : string.Join(";", items);
+
+    private static string JoinPairs(IReadOnlyDictionary<string, int>? map) =>
+        map is null ? "" : string.Join(";", map.Select(kv => $"{kv.Key}:{kv.Value}"));
 
     /// <summary>Returns the records as a JSON array string.</summary>
     public static string ToJson(IEnumerable<FileRecord> records)
@@ -92,7 +101,7 @@ public static class TableWriter
         sb.Append("\"extension\":").Append(JsonString(r.Extension)).Append(',');
         sb.Append("\"folder\":").Append(JsonString(r.Folder)).Append(',');
         sb.Append("\"sizeBytes\":").Append(r.SizeBytes.ToString(CultureInfo.InvariantCulture)).Append(',');
-        sb.Append("\"modified\":").Append(JsonString(r.Modified.ToString("s", CultureInfo.InvariantCulture))).Append(',');
+        sb.Append("\"modified\":").Append(JsonString(Iso(r.Modified))).Append(',');
         sb.Append("\"typeBucket\":").Append(JsonString(r.TypeBucket)).Append(',');
         sb.Append("\"text\":").Append(JsonString(r.Text)).Append(',');
         sb.Append("\"metadata\":").Append(JsonStringMap(r.Metadata)).Append(',');
@@ -103,8 +112,9 @@ public static class TableWriter
         return sb.ToString();
     }
 
-    private static string JsonStringMap(IReadOnlyDictionary<string, string> map)
+    private static string JsonStringMap(IReadOnlyDictionary<string, string>? map)
     {
+        if (map is null) return "{}";
         var sb = new StringBuilder("{");
         var first = true;
         foreach (var kv in map)
@@ -116,8 +126,9 @@ public static class TableWriter
         return sb.Append('}').ToString();
     }
 
-    private static string JsonIntMap(IReadOnlyDictionary<string, int> map)
+    private static string JsonIntMap(IReadOnlyDictionary<string, int>? map)
     {
+        if (map is null) return "{}";
         var sb = new StringBuilder("{");
         var first = true;
         foreach (var kv in map)
@@ -129,8 +140,9 @@ public static class TableWriter
         return sb.Append('}').ToString();
     }
 
-    private static string JsonStringArray(IReadOnlyList<string> items)
+    private static string JsonStringArray(IReadOnlyList<string>? items)
     {
+        if (items is null) return "[]";
         var sb = new StringBuilder("[");
         for (var i = 0; i < items.Count; i++)
         {

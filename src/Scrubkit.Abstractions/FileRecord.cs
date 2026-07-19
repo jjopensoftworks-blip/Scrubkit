@@ -20,6 +20,8 @@ public sealed record FileRecord
     public string Folder { get; init; } = "";
 
     public long SizeBytes { get; init; }
+
+    /// <summary>Last-write time in <b>UTC</b> (<c>DateTimeKind.Utc</c>).</summary>
     public DateTime Modified { get; init; }
 
     /// <summary>Coarse bucket: Document, Spreadsheet, Presentation, Text, Image, Email, Other.</summary>

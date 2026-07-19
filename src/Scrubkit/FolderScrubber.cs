@@ -121,6 +121,7 @@ public sealed class FolderScrubber
     private FileRecord ReadOne(string path)
     {
         var ext = Path.GetExtension(path).ToLowerInvariant();
+        var bucket = Buckets.For(ext);
         var name = Path.GetFileName(path);
         var folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? "";
         long size = 0;
@@ -131,7 +132,7 @@ public sealed class FolderScrubber
         {
             var info = new FileInfo(path);
             size = info.Length;
-            modified = info.LastWriteTime;
+            modified = info.LastWriteTimeUtc;
         }
         catch { warnings.Add("stat-failed"); }
 
@@ -192,7 +193,7 @@ public sealed class FolderScrubber
             }
         }
 
-        Emit(path, ext, text, warnings);
+        Emit(path, bucket, text, warnings);
 
         return new FileRecord
         {
@@ -202,7 +203,7 @@ public sealed class FolderScrubber
             Folder = folder,
             SizeBytes = size,
             Modified = modified,
-            TypeBucket = Buckets.For(ext),
+            TypeBucket = bucket,
             Metadata = meta,
             Text = text,
             Redactions = redactions,
@@ -211,19 +212,24 @@ public sealed class FolderScrubber
         };
     }
 
-    // Fire the optional per-file diagnostics: one per warning, then a "read" event.
-    private void Emit(string path, string ext, string text, List<string> warnings)
+    // Fire the optional per-file diagnostics: one per warning, then a "read" event — but only
+    // when the file was actually read (not skipped, extract-failed, or stat-failed).
+    private void Emit(string path, string bucket, string text, List<string> warnings)
     {
         var onDiagnostic = _options.OnDiagnostic;
         if (onDiagnostic is null) return;
 
+        var read = true;
         foreach (var w in warnings)
         {
             var colon = w.IndexOf(':');
             var evt = colon >= 0 ? w.Substring(0, colon) : w;
             onDiagnostic(new ScrubDiagnostic(path, evt, w, isWarning: true));
+            if (evt is "skipped-content" or "extract-failed" or "stat-failed") read = false;
         }
-        onDiagnostic(new ScrubDiagnostic(path, "read", $"{Buckets.For(ext)}, {text.Length} chars", isWarning: false));
+
+        if (read)
+            onDiagnostic(new ScrubDiagnostic(path, "read", $"{bucket}, {text.Length} chars", isWarning: false));
     }
 
     private static string Sha256Hex(string path)

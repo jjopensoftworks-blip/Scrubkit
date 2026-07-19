@@ -131,18 +131,26 @@ public sealed class StandardRedactor : IRedactor
                     Mask(work, i, term.Length);
         }
 
+        // Reuse one string view of the masked buffer across rules, rebuilding it only after a
+        // rule actually masked something (most rules match nothing on a given text).
+        var current = new string(work);
         foreach (var rule in Rules)
         {
             if (rule.Aggressive && _options.Level != RedactionLevel.Aggressive) continue;
             if (_options.DisabledCategories.Contains(rule.Category)) continue;
 
-            foreach (Match m in rule.Regex.Matches(new string(work)))
+            var masked = false;
+            foreach (Match m in rule.Regex.Matches(current))
             {
                 if (rule.Validate is not null && !rule.Validate(m)) continue;
                 if (_options.AllowList.Contains(m.Value)) continue;
                 if (TryClaim(m.Index, m.Length, rule.Category, claimed, spans))
+                {
                     Mask(work, m.Index, m.Length);
+                    masked = true;
+                }
             }
+            if (masked) current = new string(work);
         }
 
         if (spans.Count == 0)

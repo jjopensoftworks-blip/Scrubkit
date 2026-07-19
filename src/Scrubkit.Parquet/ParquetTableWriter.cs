@@ -40,11 +40,11 @@ public static class ParquetTableWriter
         Extension = r.Extension,
         Folder = r.Folder,
         SizeBytes = r.SizeBytes,
-        Modified = r.Modified,
+        Modified = r.Modified.ToUniversalTime(),
         TypeBucket = r.TypeBucket,
         Text = r.Text,
-        Warnings = string.Join(";", r.Warnings),
-        Redactions = string.Join(";", r.Redactions.Select(kv => $"{kv.Key}:{kv.Value}")),
+        Warnings = r.Warnings is null ? "" : string.Join(";", r.Warnings),
+        Redactions = r.Redactions is null ? "" : string.Join(";", r.Redactions.Select(kv => $"{kv.Key}:{kv.Value}")),
         ContentHash = r.ContentHash,
     };
 
