@@ -73,6 +73,7 @@
 </div>
 <nav class="hidden md:flex gap-8 items-center">
 <a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1 hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit#readme">Documentation</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="#packages">Packages</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="changelog.html">Changelog</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
@@ -248,6 +249,66 @@
 </div>
 </div>
 </div>
+</section>
+<!-- Package family -->
+<section id="packages" class="mb-24 scroll-mt-24">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">One core, a growing family of add-ons</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<p class="text-center text-text-muted font-body-md max-w-2xl mx-auto mb-10">
+                    Start with the core package — it reads PDF, Office, text, and image EXIF out of the box.
+                    Reach for an optional add-on when you need more formats. Every add-on references only
+                    <code>Scrubkit.Abstractions</code>, so it stays lightweight and pulls in no heavy dependencies.
+                </p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-container-gap">
+<!-- Core -->
+<a href="https://www.nuget.org/packages/Scrubkit" class="bento-card p-bento-padding flex flex-col hover:border-electric-blue/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-electric-blue text-[28px]">deployed_code</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Core</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">The engine — <code>FolderScrubber</code> with built-in PDF, Office, text, and image-EXIF extractors. Everything most projects need.</p>
+<img class="h-5 self-start" alt="Scrubkit on NuGet" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
+</a>
+<!-- Abstractions -->
+<a href="https://www.nuget.org/packages/Scrubkit.Abstractions" class="bento-card p-bento-padding flex flex-col hover:border-primary/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-[28px]">handshake</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">Contracts</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Abstractions</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Dependency-free contracts — <code>IFileExtractor</code>, <code>FileRecord</code>, <code>ReadOptions</code>. Reference this to author your own add-on.</p>
+<img class="h-5 self-start" alt="Scrubkit.Abstractions on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Abstractions?style=flat-square&amp;color=adc6ff&amp;label=nuget"/>
+</a>
+<!-- Email -->
+<a href="https://www.nuget.org/packages/Scrubkit.Email" class="bento-card p-bento-padding flex flex-col hover:border-secondary/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-secondary text-[28px]">mail</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded">Add-on</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Email</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>.eml</code> (MIME) email — headers become metadata, the body becomes text. Multipart, <code>base64</code>, and <code>quoted-printable</code> aware.</p>
+<img class="h-5 self-start" alt="Scrubkit.Email on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Email?style=flat-square&amp;color=4edea3&amp;label=nuget"/>
+</a>
+<!-- OpenDocument -->
+<a href="https://www.nuget.org/packages/Scrubkit.OpenDocument" class="bento-card p-bento-padding flex flex-col hover:border-tertiary/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-tertiary text-[28px]">article</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Add-on</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.OpenDocument</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">OpenDocument <code>.odt</code> / <code>.ods</code> / <code>.odp</code> from LibreOffice / OpenOffice — body text plus Title, Author, and Subject.</p>
+<img class="h-5 self-start" alt="Scrubkit.OpenDocument on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.OpenDocument?style=flat-square&amp;color=ffb95f&amp;label=nuget"/>
+</a>
+</div>
+<p class="text-center text-text-muted font-body-md text-sm mt-8">
+                    Writing your own? Implement <code>IFileExtractor</code>, reference
+                    <code>Scrubkit.Abstractions</code>, and register it via <code>ReadOptions.Extractors</code> —
+                    it's tried before the built-ins, so you can add or override any format.
+                </p>
 </section>
 <!-- Try it Section -->
 <section class="grid grid-cols-1 md:grid-cols-2 gap-container-gap mb-24">
