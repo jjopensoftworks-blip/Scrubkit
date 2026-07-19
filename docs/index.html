@@ -381,17 +381,54 @@
 </div>
 </div>
 </section>
+<!-- Privacy & disclaimer -->
+<section id="privacy" class="mb-24 scroll-mt-24">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">Privacy &amp; disclaimer</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-container-gap">
+<div class="bento-card p-bento-padding border-l-4 border-l-secondary">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary text-[28px]">lock</span>
+<h3 class="font-headline-md text-on-surface">Private by design</h3>
+</div>
+<p class="text-text-muted font-body-md">
+                        <span class="text-on-surface font-semibold">100% offline.</span> No network calls, no
+                        telemetry, no accounts — your files and their contents never leave your process.
+                        Scrubkit is safe for air-gapped and regulated environments; the offline guarantee is
+                        enforced by a test that fails the build if either shipping assembly references a
+                        networking API.
+                    </p>
+</div>
+<div class="bento-card p-bento-padding border-l-4 border-l-tertiary">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary text-[28px]">info</span>
+<h3 class="font-headline-md text-on-surface">Disclaimer</h3>
+</div>
+<p class="text-text-muted font-body-md">
+                        Scrubkit is provided <span class="text-on-surface font-semibold">as-is under the
+                        MPL-2.0, with no warranty.</span> Its redaction is <span class="text-on-surface font-semibold">best-effort</span>
+                        pattern matching: it reduces incidental exposure of common sensitive values but will
+                        miss things — it is <span class="text-on-surface font-semibold">not a compliance tool
+                        or a guarantee</span>. Validate suitability for your own use before relying on it.
+                    </p>
+</div>
+</div>
+</section>
 </main>
 <!-- Footer -->
 <footer class="relative w-full bottom-0 bg-surface-deep border-t border-surface-border flex flex-col md:flex-row justify-between items-center px-margin-page py-8 mt-auto">
 <div class="flex flex-col gap-2 mb-6 md:mb-0">
 <p class="font-headline-md text-[20px] text-on-surface">Scrubkit</p>
-<p class="font-body-md text-body-md text-text-muted">© Scrubkit contributors · Licensed under MPL 2.0.</p>
+<p class="font-body-md text-body-md text-text-muted">© Scrubkit OpenFreeSoftwares · Licensed under MPL 2.0.</p>
 </div>
 <div class="flex flex-wrap gap-8">
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="changelog.html">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="#privacy">Privacy</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE">License</a>
 </div>
 </footer>

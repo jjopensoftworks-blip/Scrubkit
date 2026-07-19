@@ -135,4 +135,13 @@ only) to stay lightweight.
 
 ---
 
+## Privacy & disclaimer
+
+**Private by design** — 100% offline, no network calls, no telemetry; your files never leave
+your machine (enforced by an offline-guarantee test).
+
+**Best-effort, not a guarantee** — redaction is opt-in, best-effort pattern matching that
+*will* miss things; it is **not a compliance tool**. Provided as-is under the MPL-2.0, no
+warranty.
+
 *100% offline — no network calls, no telemetry.*
