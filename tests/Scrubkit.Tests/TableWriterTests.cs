@@ -57,6 +57,23 @@ public class TableWriterTests
     }
 
     [Fact]
+    public void Json_escapes_every_control_character()
+    {
+        // Backspace, form-feed, carriage-return and a bare control char (U+0001) each
+        // hit a distinct escape arm in the hand-rolled writer.
+        var control = "a" + (char)0x08 + "b" + (char)0x0c + "c" + (char)0x0d + "d" + (char)0x01 + "e";
+        var json = TableWriter.ToJson(new[] { Rec(control) });
+
+        Assert.Contains("\\b", json);
+        Assert.Contains("\\f", json);
+        Assert.Contains("\\r", json);
+        Assert.Contains("\\u0001", json);
+
+        using var doc = JsonDocument.Parse(json);   // and it must still round-trip
+        Assert.Equal(control, doc.RootElement[0].GetProperty("text").GetString());
+    }
+
+    [Fact]
     public void Json_null_content_hash_serializes_as_null()
     {
         var json = TableWriter.ToJson(new[] { Rec() with { ContentHash = null } });

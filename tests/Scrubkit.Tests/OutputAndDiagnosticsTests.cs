@@ -45,7 +45,25 @@ public class OutputAndDiagnosticsTests : IDisposable
 
         await new FolderScrubber(options).ReadAsync(_dir);
 
-        Assert.Contains(diagnostics, d => d.Event == "read" && !d.IsWarning);
+        var read = Assert.Single(diagnostics, d => d.Event == "read" && !d.IsWarning);
+        Assert.Equal(Path.Combine(_dir, "a.txt"), read.Path);
+        Assert.False(string.IsNullOrEmpty(read.Message));
+    }
+
+    [Fact]
+    public async Task Content_hash_warns_when_the_file_cannot_be_opened()
+    {
+        var path = Path.Combine(_dir, "locked.bin");   // no extractor: only the hash path runs
+        File.WriteAllText(path, "data");
+
+        // Hold the file open with no sharing so the SHA-256 read fails.
+        using var _ = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+
+        var table = await new FolderScrubber(new ReadOptions { ComputeContentHash = true }).ReadAsync(_dir);
+
+        var row = Assert.Single(table);
+        Assert.Contains("hash-failed", row.Warnings);
+        Assert.Null(row.ContentHash);
     }
 
     [Fact]
