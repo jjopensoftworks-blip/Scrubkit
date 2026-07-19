@@ -9,6 +9,7 @@
     <Project Path="src/Scrubkit.OpenDocument/Scrubkit.OpenDocument.csproj" />
     <Project Path="src/Scrubkit.Epub/Scrubkit.Epub.csproj" />
     <Project Path="src/Scrubkit.Extensions.DependencyInjection/Scrubkit.Extensions.DependencyInjection.csproj" />
+    <Project Path="src/Scrubkit.Parquet/Scrubkit.Parquet.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />
@@ -17,5 +18,6 @@
     <Project Path="tests/Scrubkit.OpenDocument.Tests/Scrubkit.OpenDocument.Tests.csproj" />
     <Project Path="tests/Scrubkit.Epub.Tests/Scrubkit.Epub.Tests.csproj" />
     <Project Path="tests/Scrubkit.Extensions.DependencyInjection.Tests/Scrubkit.Extensions.DependencyInjection.Tests.csproj" />
+    <Project Path="tests/Scrubkit.Parquet.Tests/Scrubkit.Parquet.Tests.csproj" />
   </Folder>
 </Solution>
