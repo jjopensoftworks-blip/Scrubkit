@@ -7,6 +7,41 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.3.0
+
+![Unreleased](https://img.shields.io/badge/release-Unreleased-8957e5?style=flat-square) &nbsp; 🏷️ `v1.3.0` &nbsp;·&nbsp; 📅 _unreleased_
+
+&nbsp;
+
+---
+
+Two more add-on packages, a DI integration, and a published throughput number.
+
+### 🚀 New package: Scrubkit.Epub
+
+- **`Scrubkit.Epub`** reads **`.epub`** e-books: the OPF `Title` / `Author` / `Subject`
+  become metadata and the XHTML spine (tags stripped, entities decoded) becomes text, in
+  reading order. Zero dependencies beyond `Scrubkit.Abstractions`; `.epub` files come back
+  as `Document` rows.
+
+### 🚀 New package: Scrubkit.Extensions.DependencyInjection
+
+- **`services.AddScrubkit(…)`** registers a configured `FolderScrubber` as a singleton for
+  ASP.NET Core, worker services, and other generic hosts. Configure recursion, limits,
+  add-on extractors, and an optional redactor via a `ReadOptions` hook (with an
+  `IServiceProvider` overload for DI-resolved dependencies).
+
+### 🏎️ Benchmarks
+
+- Added a **BenchmarkDotNet** throughput harness (`benchmarks/`). A representative run
+  extracts on the order of **~12,000 files/sec** (4-way parallel; ~4,900 sequential) over a
+  mixed text-file corpus.
+
+### 🐛 Bug fixes
+
+- **`.epub` files now report `TypeBucket = "Document"`.** `Buckets.For` didn't map the
+  extension, so `.epub` files extracted fine but bucketed as `Other`.
+
 ## 1.2.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.2.0` &nbsp;·&nbsp; 📅 2026-07-18

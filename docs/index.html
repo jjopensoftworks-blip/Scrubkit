@@ -131,6 +131,30 @@
 </div>
 </div>
 </section>
+<!-- Stats band -->
+<section class="mb-24">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-container-gap">
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-electric-blue tracking-tighter">~12K</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">files/sec extracted</p>
+</div>
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter">100%</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">offline · no telemetry</p>
+</div>
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">6</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">NuGet packages</p>
+</div>
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-primary tracking-tighter">2</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">target frameworks<br/>net8.0 · netstandard2.0</p>
+</div>
+</div>
+<p class="text-center text-text-muted font-body-md text-xs mt-4">
+                    Throughput from a BenchmarkDotNet run over a mixed text-file corpus, 4-way parallel — regenerate it from <code>benchmarks/</code>.
+                </p>
+</section>
 <!-- Core Values Bento Grid -->
 <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-container-gap mb-24">
 <div class="bento-card p-bento-padding group">
@@ -262,7 +286,7 @@
                     Reach for an optional add-on when you need more formats. Every add-on references only
                     <code>Scrubkit.Abstractions</code>, so it stays lightweight and pulls in no heavy dependencies.
                 </p>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-container-gap">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-container-gap">
 <!-- Core -->
 <a href="https://www.nuget.org/packages/Scrubkit" class="bento-card p-bento-padding flex flex-col hover:border-electric-blue/40 transition-all">
 <div class="flex items-center justify-between mb-4">
@@ -302,6 +326,26 @@
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.OpenDocument</h3>
 <p class="text-text-muted font-body-md text-sm mb-4 flex-1">OpenDocument <code>.odt</code> / <code>.ods</code> / <code>.odp</code> from LibreOffice / OpenOffice — body text plus Title, Author, and Subject.</p>
 <img class="h-5 self-start" alt="Scrubkit.OpenDocument on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.OpenDocument?style=flat-square&amp;color=ffb95f&amp;label=nuget"/>
+</a>
+<!-- Epub -->
+<a href="https://www.nuget.org/packages/Scrubkit.Epub" class="bento-card p-bento-padding flex flex-col hover:border-warning-amber/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-warning-amber text-[28px]">menu_book</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-warning-amber bg-warning-amber/10 px-2 py-0.5 rounded">Add-on</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Epub</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>.epub</code> e-books — the book's text (XHTML spine, tags stripped) plus Title, Author, and Subject. Zero-dependency, like the other add-ons.</p>
+<img class="h-5 self-start" alt="Scrubkit.Epub on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Epub?style=flat-square&amp;color=D97706&amp;label=nuget"/>
+</a>
+<!-- Dependency Injection -->
+<a href="https://www.nuget.org/packages/Scrubkit.Extensions.DependencyInjection" class="bento-card p-bento-padding flex flex-col hover:border-primary/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary text-[28px]">cable</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">Integration</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Extensions.DependencyInjection</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>services.AddScrubkit(…)</code> registers a configured <code>FolderScrubber</code> for ASP.NET Core and worker hosts — idiomatic <code>Microsoft.Extensions.DependencyInjection</code>.</p>
+<img class="h-5 self-start" alt="Scrubkit.Extensions.DependencyInjection on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Extensions.DependencyInjection?style=flat-square&amp;color=adc6ff&amp;label=nuget"/>
 </a>
 </div>
 <p class="text-center text-text-muted font-body-md text-sm mt-8">
