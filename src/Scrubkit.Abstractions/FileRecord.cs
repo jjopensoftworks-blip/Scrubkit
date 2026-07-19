@@ -41,4 +41,10 @@ public sealed record FileRecord
 
     /// <summary>Non-fatal problems (skipped-too-large, unreadable, clipped). Never throws to the caller.</summary>
     public IReadOnlyList<string> Warnings { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Lower-case hex SHA-256 of the file's bytes, when
+    /// <see cref="ReadOptions.ComputeContentHash"/> is enabled; otherwise <c>null</c>.
+    /// </summary>
+    public string? ContentHash { get; init; }
 }

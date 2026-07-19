@@ -142,6 +142,13 @@ public sealed class FolderScrubber
         var extractor = ExtractorFor(ext);
         bool tooBig = _options.MaxBytesPerFile > 0 && size > _options.MaxBytesPerFile;
 
+        string? contentHash = null;
+        if (_options.ComputeContentHash && !tooBig)
+        {
+            try { contentHash = Sha256Hex(path); }
+            catch { warnings.Add("hash-failed"); }
+        }
+
         if (extractor is null)
         {
             // Unknown type: metadata-only row, no content.
@@ -185,6 +192,8 @@ public sealed class FolderScrubber
             }
         }
 
+        Emit(path, ext, text, warnings);
+
         return new FileRecord
         {
             Path = path,
@@ -198,7 +207,33 @@ public sealed class FolderScrubber
             Text = text,
             Redactions = redactions,
             Warnings = warnings,
+            ContentHash = contentHash,
         };
+    }
+
+    // Fire the optional per-file diagnostics: one per warning, then a "read" event.
+    private void Emit(string path, string ext, string text, List<string> warnings)
+    {
+        var onDiagnostic = _options.OnDiagnostic;
+        if (onDiagnostic is null) return;
+
+        foreach (var w in warnings)
+        {
+            var colon = w.IndexOf(':');
+            var evt = colon >= 0 ? w.Substring(0, colon) : w;
+            onDiagnostic(new ScrubDiagnostic(path, evt, w, isWarning: true));
+        }
+        onDiagnostic(new ScrubDiagnostic(path, "read", $"{Buckets.For(ext)}, {text.Length} chars", isWarning: false));
+    }
+
+    private static string Sha256Hex(string path)
+    {
+        using var sha = System.Security.Cryptography.SHA256.Create();
+        using var stream = File.OpenRead(path);
+        var bytes = sha.ComputeHash(stream);
+        var sb = new System.Text.StringBuilder(bytes.Length * 2);
+        foreach (var b in bytes) sb.Append(b.ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
+        return sb.ToString();
     }
 
     private static string Normalize(string s) =>

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Scrubkit;
 using Xunit;
 
@@ -81,5 +82,38 @@ public class ScrubkitServiceCollectionExtensionsTests : IDisposable
     {
         IServiceCollection services = null!;
         Assert.Throws<ArgumentNullException>(() => services.AddScrubkit());
+    }
+
+    [Fact]
+    public async Task Bridges_per_file_diagnostics_to_ILogger()
+    {
+        var logs = new List<string>();
+        var provider = new ServiceCollection()
+            .AddSingleton<ILoggerFactory>(new CapturingLoggerFactory(logs))
+            .AddScrubkit()
+            .BuildServiceProvider();
+
+        File.WriteAllText(Path.Combine(_dir, "a.txt"), "hi");
+        await provider.GetRequiredService<FolderScrubber>().ReadAsync(_dir);
+
+        Assert.Contains(logs, m => m.Contains("read", StringComparison.Ordinal));
+    }
+
+    private sealed class CapturingLoggerFactory(List<string> logs) : ILoggerFactory
+    {
+        public ILogger CreateLogger(string categoryName) => new CapturingLogger(logs);
+        public void AddProvider(ILoggerProvider provider) { }
+        public void Dispose() { }
+    }
+
+    private sealed class CapturingLogger(List<string> logs) : ILogger
+    {
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => true;
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state,
+            Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            lock (logs) logs.Add(formatter(state, exception));
+        }
     }
 }

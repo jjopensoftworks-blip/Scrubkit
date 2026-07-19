@@ -75,4 +75,20 @@ public sealed class ReadOptions
     /// nothing is redacted. Plug in <c>StandardRedactor</c> or your own <see cref="IRedactor"/>.
     /// </summary>
     public IRedactor? Redactor { get; set; }
+
+    /// <summary>
+    /// When true, compute a SHA-256 hash of each file's bytes and expose it on
+    /// <see cref="FileRecord.ContentHash"/> — a stable dedup key for indexes. Off by default:
+    /// it reads the whole file. Files skipped for size are not hashed.
+    /// </summary>
+    public bool ComputeContentHash { get; set; }
+
+    /// <summary>
+    /// Optional per-file diagnostics sink, invoked as each file is processed — successful
+    /// reads and problems alike (see <see cref="ScrubDiagnostic.IsWarning"/>). Dependency-free:
+    /// bridge it to <c>ILogger</c> via the <c>Scrubkit.Extensions.DependencyInjection</c>
+    /// package, or handle it yourself. Must be thread-safe when
+    /// <see cref="MaxDegreeOfParallelism"/> &gt; 1.
+    /// </summary>
+    public Action<ScrubDiagnostic>? OnDiagnostic { get; set; }
 }
