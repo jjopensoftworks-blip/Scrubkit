@@ -34,8 +34,14 @@ public sealed class ReadOptions
     /// <summary>Stop after this many files (0 = no limit). Default: 1000.</summary>
     public int MaxFiles { get; set; } = 1000;
 
-    /// <summary>Skip files larger than this before opening them (0 = no limit). Default: 25 MB.</summary>
-    public long MaxBytesPerFile { get; set; } = 25 * 1024 * 1024;
+    /// <summary>
+    /// Skip files larger than this before opening them — checked against the file's size via
+    /// a cheap stat, so oversized files are never read (they get a <c>skipped-content</c>
+    /// warning). Default: 10 MB, which comfortably covers everyday documents while keeping the
+    /// run fast. <c>0</c> = no limit — use with care: a multi-GB file will then be read in
+    /// full (and, with <see cref="ComputeContentHash"/>, hashed in full).
+    /// </summary>
+    public long MaxBytesPerFile { get; set; } = 10 * 1024 * 1024;
 
     /// <summary>Clip extracted text to this many characters (0 = no clip). Default: 20 000.</summary>
     public int MaxTextLength { get; set; } = 20_000;
@@ -78,8 +84,11 @@ public sealed class ReadOptions
 
     /// <summary>
     /// When true, compute a SHA-256 hash of each file's bytes and expose it on
-    /// <see cref="FileRecord.ContentHash"/> — a stable dedup key for indexes. Off by default:
-    /// it reads the whole file. Files skipped for size are not hashed.
+    /// <see cref="FileRecord.ContentHash"/> — a stable dedup key for indexes. Off by default.
+    /// It reads the whole file, so it is <b>bounded by <see cref="MaxBytesPerFile"/></b>:
+    /// files over that limit are skipped (not hashed), which keeps very large files from
+    /// hanging the run. Don't enable this together with <see cref="MaxBytesPerFile"/> = 0 on
+    /// multi-GB files.
     /// </summary>
     public bool ComputeContentHash { get; set; }
 
