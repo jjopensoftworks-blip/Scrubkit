@@ -10,7 +10,7 @@ public static class Buckets
 
     public static string For(string ext) => ext switch
     {
-        ".pdf" or ".docx" or ".rtf" or ".odt"                     => "Document",
+        ".pdf" or ".docx" or ".rtf" or ".odt" or ".epub"          => "Document",
         ".xlsx" or ".xls" or ".csv" or ".ods"                     => "Spreadsheet",
         ".pptx" or ".ppt" or ".odp"                               => "Presentation",
         ".txt" or ".md" or ".log" or ".json" or ".xml" or ".html" or ".htm" => "Text",

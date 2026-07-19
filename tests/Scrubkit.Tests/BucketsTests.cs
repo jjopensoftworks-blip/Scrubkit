@@ -8,6 +8,8 @@ public class BucketsTests
     [Theory]
     [InlineData(".pdf", "Document")]
     [InlineData(".docx", "Document")]
+    [InlineData(".epub", "Document")]
+    [InlineData(".odt", "Document")]
     [InlineData(".xlsx", "Spreadsheet")]
     [InlineData(".csv", "Spreadsheet")]
     [InlineData(".pptx", "Presentation")]
