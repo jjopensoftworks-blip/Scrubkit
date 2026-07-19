@@ -11,6 +11,10 @@
     <PackageVersion Include="MetadataExtractor" Version="2.9.3" />
     <!-- IAsyncEnumerable + [EnumeratorCancellation] on netstandard2.0 (built in on net8.0). -->
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+    <!-- DI integration package (AddScrubkit); Abstractions is the runtime dep, the full
+         package is used by its test project for a concrete container. -->
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
