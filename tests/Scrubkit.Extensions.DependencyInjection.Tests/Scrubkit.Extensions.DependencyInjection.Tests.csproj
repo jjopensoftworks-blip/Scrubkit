@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- Concrete DI container (ServiceCollection / BuildServiceProvider) for the tests. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <!-- No coverlet.collector here on purpose (same as the other core-referencing test
+         projects): it pulls in the core assembly transitively and would drag the gate. -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Scrubkit.Extensions.DependencyInjection\Scrubkit.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>
