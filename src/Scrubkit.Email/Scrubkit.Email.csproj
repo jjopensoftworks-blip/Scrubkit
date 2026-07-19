@@ -6,9 +6,6 @@
     <Title>Scrubkit.Email — .eml (email) extractor for Scrubkit</Title>
     <Description>Add-on IFileExtractor for Scrubkit that reads .eml (MIME email) files: the From/To/Cc/Subject/Date headers become metadata and the message body becomes text. Handles multipart messages, base64 and quoted-printable encodings, common charsets, and RFC 2047 encoded-word headers — fully offline with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>
     <PackageTags>scrubkit;email;eml;mime;extraction;text-extraction;offline;rag;ingestion</PackageTags>
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against, so skip the
-         baseline check (cross-framework API validation from Directory.Build.props still runs). -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>

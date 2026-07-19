@@ -6,9 +6,6 @@
     <Title>Scrubkit.Extensions.DependencyInjection — AddScrubkit for DI hosts</Title>
     <Description>Microsoft.Extensions.DependencyInjection integration for Scrubkit. Call services.AddScrubkit(...) to register a configured FolderScrubber for constructor injection in ASP.NET Core, worker services, and other generic hosts. Configure recursion, limits, add-on extractors, and an optional redactor via the ReadOptions hook.</Description>
     <PackageTags>scrubkit;dependencyinjection;di;aspnetcore;hosting;extraction;text-extraction;offline</PackageTags>
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against, so skip the
-         baseline check (cross-framework API validation from Directory.Build.props still runs). -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>

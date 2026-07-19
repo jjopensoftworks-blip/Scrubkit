@@ -6,9 +6,6 @@
     <Title>Scrubkit.Epub — .epub e-book extractor for Scrubkit</Title>
     <Description>Add-on IFileExtractor for Scrubkit that reads .epub e-books: the Title/Author/Subject become metadata and the book's text (from the XHTML spine, tags stripped) becomes text. Fully offline with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>
     <PackageTags>scrubkit;epub;ebook;extraction;text-extraction;offline;rag;ingestion</PackageTags>
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against, so skip the
-         baseline check (cross-framework API validation from Directory.Build.props still runs). -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
