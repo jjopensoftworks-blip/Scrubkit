@@ -9,7 +9,7 @@ from Git tags via MinVer.
 
 ## 1.4.0
 
-![Pre-release](https://img.shields.io/badge/release-Pre--release-e0a106?style=flat-square) &nbsp; 🏷️ `v1.4.0` &nbsp;·&nbsp; 📅 Unreleased
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.4.0` &nbsp;·&nbsp; 📅 2026-07-20
 
 &nbsp;
 
