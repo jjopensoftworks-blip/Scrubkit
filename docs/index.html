@@ -75,6 +75,7 @@
 <a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1 hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit#readme">Documentation</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="#packages">Packages</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="changelog.html">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="#about">About</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
 </nav>
@@ -133,26 +134,34 @@
 </section>
 <!-- Stats band -->
 <section class="mb-24">
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-container-gap">
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-container-gap">
 <div class="bento-card p-bento-padding text-center">
 <p class="font-headline-lg text-headline-lg md:text-5xl text-electric-blue tracking-tighter">~12K</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">files/sec extracted</p>
+</div>
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter">99%+</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">covered · 320+ tests</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
 <p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter">100%</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">offline · no telemetry</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
-<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">6</p>
+<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">8</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">NuGet packages</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
 <p class="font-headline-lg text-headline-lg md:text-5xl text-primary tracking-tighter">2</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">target frameworks<br/>net8.0 · netstandard2.0</p>
 </div>
+<div class="bento-card p-bento-padding text-center">
+<p class="font-headline-lg text-headline-lg md:text-5xl text-warning-amber tracking-tighter">MPL-2.0</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">open source</p>
+</div>
 </div>
 <p class="text-center text-text-muted font-body-md text-xs mt-4">
-                    Throughput from a BenchmarkDotNet run over a mixed text-file corpus, 4-way parallel — regenerate it from <code>benchmarks/</code>.
+                    Throughput from a BenchmarkDotNet run over a mixed text-file corpus, 4-way parallel — regenerate it from <code>benchmarks/</code>. Coverage is gated in CI at a 99% line floor (currently ~99.8%).
                 </p>
 </section>
 <!-- Core Values Bento Grid -->
@@ -285,6 +294,7 @@
                     Start with the core package — it reads PDF, Office, text, and image EXIF out of the box.
                     Reach for an optional add-on when you need more formats. Every add-on references only
                     <code>Scrubkit.Abstractions</code>, so it stays lightweight and pulls in no heavy dependencies.
+                    Want it all in one reference? Grab <code>Scrubkit.All</code>.
                 </p>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-container-gap">
 <!-- Core -->
@@ -296,6 +306,16 @@
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit</h3>
 <p class="text-text-muted font-body-md text-sm mb-4 flex-1">The engine — <code>FolderScrubber</code> with built-in PDF, Office, text, and image-EXIF extractors. Everything most projects need.</p>
 <img class="h-5 self-start" alt="Scrubkit on NuGet" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
+</a>
+<!-- All (bundle) -->
+<a href="https://www.nuget.org/packages/Scrubkit.All" class="bento-card p-bento-padding flex flex-col hover:border-electric-blue/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-electric-blue text-[28px]">inventory_2</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Bundle</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.All</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">One reference that pulls in the whole family — core, every extractor add-on, DI, and (on net8.0) Parquet. Install this to read everything out of the box.</p>
+<img class="h-5 self-start" alt="Scrubkit.All on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.All?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
 </a>
 <!-- Abstractions -->
 <a href="https://www.nuget.org/packages/Scrubkit.Abstractions" class="bento-card p-bento-padding flex flex-col hover:border-primary/40 transition-all">
@@ -347,6 +367,16 @@
 <p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>services.AddScrubkit(…)</code> registers a configured <code>FolderScrubber</code> for ASP.NET Core and worker hosts — idiomatic <code>Microsoft.Extensions.DependencyInjection</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.Extensions.DependencyInjection on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Extensions.DependencyInjection?style=flat-square&amp;color=adc6ff&amp;label=nuget"/>
 </a>
+<!-- Parquet -->
+<a href="https://www.nuget.org/packages/Scrubkit.Parquet" class="bento-card p-bento-padding flex flex-col hover:border-tertiary/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-tertiary text-[28px]">table_view</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Output</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Parquet</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Write the record table to Apache <strong>Parquet</strong> for data-lake / analytics ingestion (Parquet.Net). CSV &amp; JSON stay zero-dependency in the core; this one is <code>net8.0</code>-only.</p>
+<img class="h-5 self-start" alt="Scrubkit.Parquet on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Parquet?style=flat-square&amp;color=ffb95f&amp;label=nuget"/>
+</a>
 </div>
 <p class="text-center text-text-muted font-body-md text-sm mt-8">
                     Writing your own? Implement <code>IFileExtractor</code>, reference
@@ -381,17 +411,73 @@
 </div>
 </div>
 </section>
+<!-- Privacy & disclaimer -->
+<section id="privacy" class="mb-24 scroll-mt-24">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">Privacy &amp; disclaimer</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-container-gap">
+<div class="bento-card p-bento-padding border-l-4 border-l-secondary">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary text-[28px]">lock</span>
+<h3 class="font-headline-md text-on-surface">Private by design</h3>
+</div>
+<p class="text-text-muted font-body-md">
+                        <span class="text-on-surface font-semibold">100% offline.</span> No network calls, no
+                        telemetry, no accounts — your files and their contents never leave your process.
+                        Scrubkit is safe for air-gapped and regulated environments; the offline guarantee is
+                        enforced by a test that fails the build if either shipping assembly references a
+                        networking API.
+                    </p>
+</div>
+<div class="bento-card p-bento-padding border-l-4 border-l-tertiary">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-tertiary text-[28px]">info</span>
+<h3 class="font-headline-md text-on-surface">Disclaimer</h3>
+</div>
+<p class="text-text-muted font-body-md">
+                        Scrubkit is provided <span class="text-on-surface font-semibold">as-is under the
+                        MPL-2.0, with no warranty.</span> Its redaction is <span class="text-on-surface font-semibold">best-effort</span>
+                        pattern matching: it reduces incidental exposure of common sensitive values but will
+                        miss things — it is <span class="text-on-surface font-semibold">not a compliance tool
+                        or a guarantee</span>. Validate suitability for your own use before relying on it.
+                    </p>
+</div>
+</div>
+</section>
+<!-- About / built by -->
+<section id="about" class="mb-24 scroll-mt-24">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">Built by OpenFreeSoftwares</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<div class="bento-card p-bento-padding text-center max-w-3xl mx-auto">
+<p class="text-text-muted font-body-md text-body-md mb-6 leading-relaxed">
+                        Scrubkit is built and maintained by <span class="text-on-surface font-semibold">OpenFreeSoftwares</span>.
+                        We also build web apps, cloud &amp; DevOps, desktop, and mobile (Android/iOS) software —
+                        need a hand on a project, or want a custom extractor or integration? We'd love to hear from you.
+                    </p>
+<a href="https://github.com/jjopensoftworks-blip/Scrubkit/discussions" class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 font-label-sm text-label-sm hover:translate-y-[-2px] transition-all">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+                        Get in touch
+                    </a>
+</div>
+</section>
 </main>
 <!-- Footer -->
 <footer class="relative w-full bottom-0 bg-surface-deep border-t border-surface-border flex flex-col md:flex-row justify-between items-center px-margin-page py-8 mt-auto">
 <div class="flex flex-col gap-2 mb-6 md:mb-0">
 <p class="font-headline-md text-[20px] text-on-surface">Scrubkit</p>
-<p class="font-body-md text-body-md text-text-muted">© Scrubkit contributors · Licensed under MPL 2.0.</p>
+<p class="font-body-md text-body-md text-text-muted">© Scrubkit OpenFreeSoftwares · Licensed under MPL 2.0.</p>
 </div>
 <div class="flex flex-wrap gap-8">
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="changelog.html">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="#privacy">Privacy</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE">License</a>
 </div>
 </footer>

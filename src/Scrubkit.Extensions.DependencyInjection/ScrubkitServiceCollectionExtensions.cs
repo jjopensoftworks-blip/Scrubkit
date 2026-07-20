@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Scrubkit;
 
@@ -40,6 +41,22 @@ public static class ScrubkitServiceCollectionExtensions
         {
             var options = new ReadOptions();
             configure(serviceProvider, options);
+
+            // If the host has logging and the caller didn't wire diagnostics, bridge per-file
+            // diagnostics to ILogger — successful reads at Debug, problems at Warning.
+            if (options.OnDiagnostic is null &&
+                serviceProvider.GetService<ILoggerFactory>() is { } loggerFactory)
+            {
+                var logger = loggerFactory.CreateLogger("Scrubkit.FolderScrubber");
+                options.OnDiagnostic = d =>
+                {
+                    if (d.IsWarning)
+                        logger.LogWarning("{Event} {Path}: {Message}", d.Event, d.Path, d.Message);
+                    else
+                        logger.LogDebug("{Event} {Path}: {Message}", d.Event, d.Path, d.Message);
+                };
+            }
+
             return new FolderScrubber(options);
         });
         return services;

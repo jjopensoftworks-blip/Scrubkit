@@ -105,6 +105,17 @@ Package versions come from Git tags via [MinVer](https://github.com/adamralph/mi
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [Code of Conduct](CODE_OF_CONDUCT.md). Changes are tracked in [CHANGELOG.md](CHANGELOG.md).
 
+## Privacy & disclaimer
+
+**Private by design.** Scrubkit is 100% offline — no network calls, no telemetry, no
+accounts — so your files never leave your machine. The offline guarantee is enforced by a
+test that fails the build if either shipping assembly references a networking API.
+
+**Best-effort, not a guarantee.** Redaction is opt-in, best-effort pattern matching that
+reduces incidental exposure of common sensitive values but *will* miss things — it is **not a
+compliance tool**. Scrubkit is provided as-is under the MPL-2.0, with no warranty; validate
+suitability for your own use.
+
 ## License
 
 [Mozilla Public License 2.0](LICENSE) — open and free to use, including in

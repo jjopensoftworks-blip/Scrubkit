@@ -116,25 +116,41 @@ public sealed class StandardRedactor : IRedactor
         var claimed = new bool[text.Length];
         var spans = new List<RedactionSpan>();
 
+        // A working copy where claimed characters are masked out, so a later, looser pattern
+        // can't reach back into text a more specific one already took (e.g. a phone pattern
+        // grabbing the trailing octet of a claimed IP). Masking preserves length, so match
+        // offsets still map 1:1 onto the original text.
+        var work = text.ToCharArray();
+
         // Deny-list terms win over the pattern categories.
         foreach (var term in _options.DenyTerms)
         {
             if (string.IsNullOrEmpty(term)) continue;
             for (var i = 0; (i = text.IndexOf(term, i, StringComparison.OrdinalIgnoreCase)) >= 0; i += term.Length)
-                TryClaim(i, term.Length, RedactionCategories.Custom, claimed, spans);
+                if (TryClaim(i, term.Length, RedactionCategories.Custom, claimed, spans))
+                    Mask(work, i, term.Length);
         }
 
+        // Reuse one string view of the masked buffer across rules, rebuilding it only after a
+        // rule actually masked something (most rules match nothing on a given text).
+        var current = new string(work);
         foreach (var rule in Rules)
         {
             if (rule.Aggressive && _options.Level != RedactionLevel.Aggressive) continue;
             if (_options.DisabledCategories.Contains(rule.Category)) continue;
 
-            foreach (Match m in rule.Regex.Matches(text))
+            var masked = false;
+            foreach (Match m in rule.Regex.Matches(current))
             {
                 if (rule.Validate is not null && !rule.Validate(m)) continue;
                 if (_options.AllowList.Contains(m.Value)) continue;
-                TryClaim(m.Index, m.Length, rule.Category, claimed, spans);
+                if (TryClaim(m.Index, m.Length, rule.Category, claimed, spans))
+                {
+                    Mask(work, m.Index, m.Length);
+                    masked = true;
+                }
             }
+            if (masked) current = new string(work);
         }
 
         if (spans.Count == 0)
@@ -157,15 +173,24 @@ public sealed class StandardRedactor : IRedactor
         return new RedactionResult(sb.ToString(), counts, spans);
     }
 
-    // Claim [start, start+length) unless it overlaps an already-claimed (higher-priority) range.
-    private static void TryClaim(int start, int length, string category, bool[] claimed, List<RedactionSpan> spans)
+    private const char MaskChar = '￿';   // non-word, non-digit — matches no pattern
+
+    // Claim [start, start+length) unless it overlaps an already-claimed (higher-priority)
+    // range. Returns true when the claim was taken.
+    private static bool TryClaim(int start, int length, string category, bool[] claimed, List<RedactionSpan> spans)
     {
-        if (length <= 0 || start < 0 || start + length > claimed.Length) return;
+        if (length <= 0 || start < 0 || start + length > claimed.Length) return false;
         for (var i = start; i < start + length; i++)
-            if (claimed[i]) return;
+            if (claimed[i]) return false;
         for (var i = start; i < start + length; i++)
             claimed[i] = true;
         spans.Add(new RedactionSpan(start, length, category));
+        return true;
+    }
+
+    private static void Mask(char[] work, int start, int length)
+    {
+        for (var i = start; i < start + length; i++) work[i] = MaskChar;
     }
 
     private string TokenFor(string category)
