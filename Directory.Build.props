@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.3.0 — Adds Scrubkit.Epub (.epub e-books) and Scrubkit.Extensions.DependencyInjection (services.AddScrubkit(...) for ASP.NET Core / worker hosts), plus a BenchmarkDotNet throughput harness (~12,000 files/sec, 4-way). Core: .epub files now bucket as Document. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.4.0 — Output: zero-dep CSV/JSON writers (TableWriter) with UTC-by-default timestamps and an opt-in utc:false local-time mode, plus a new Scrubkit.Parquet package (Apache Parquet via Parquet.Net, net8.0). Diagnostics: ReadOptions.OnDiagnostic hook bridged to ILogger by AddScrubkit. Opt-in SHA-256 content hashing (FileRecord.ContentHash). New Scrubkit.All meta-package bundles the whole family. Default MaxBytesPerFile lowered to 10 MB; FileRecord.Modified is now UTC. Fix: redaction no longer drops a match overlapping a higher-priority span. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
