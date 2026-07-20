@@ -10,6 +10,7 @@
     <Project Path="src/Scrubkit.Epub/Scrubkit.Epub.csproj" />
     <Project Path="src/Scrubkit.Extensions.DependencyInjection/Scrubkit.Extensions.DependencyInjection.csproj" />
     <Project Path="src/Scrubkit.Parquet/Scrubkit.Parquet.csproj" />
+    <Project Path="src/Scrubkit.All/Scrubkit.All.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />

@@ -148,7 +148,7 @@
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">offline · no telemetry</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
-<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">7</p>
+<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">8</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">NuGet packages</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
@@ -294,6 +294,7 @@
                     Start with the core package — it reads PDF, Office, text, and image EXIF out of the box.
                     Reach for an optional add-on when you need more formats. Every add-on references only
                     <code>Scrubkit.Abstractions</code>, so it stays lightweight and pulls in no heavy dependencies.
+                    Want it all in one reference? Grab <code>Scrubkit.All</code>.
                 </p>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-container-gap">
 <!-- Core -->
@@ -305,6 +306,16 @@
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit</h3>
 <p class="text-text-muted font-body-md text-sm mb-4 flex-1">The engine — <code>FolderScrubber</code> with built-in PDF, Office, text, and image-EXIF extractors. Everything most projects need.</p>
 <img class="h-5 self-start" alt="Scrubkit on NuGet" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
+</a>
+<!-- All (bundle) -->
+<a href="https://www.nuget.org/packages/Scrubkit.All" class="bento-card p-bento-padding flex flex-col hover:border-electric-blue/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-electric-blue text-[28px]">inventory_2</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Bundle</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.All</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">One reference that pulls in the whole family — core, every extractor add-on, DI, and (on net8.0) Parquet. Install this to read everything out of the box.</p>
+<img class="h-5 self-start" alt="Scrubkit.All on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.All?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
 </a>
 <!-- Abstractions -->
 <a href="https://www.nuget.org/packages/Scrubkit.Abstractions" class="bento-card p-bento-padding flex flex-col hover:border-primary/40 transition-all">

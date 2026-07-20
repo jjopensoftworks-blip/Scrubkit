@@ -29,6 +29,9 @@ A capability release: turn the scrubbed table into output, watch the run, and ha
 - **New package `Scrubkit.Parquet`** writes the table to Apache **Parquet** via Parquet.Net
   (`ParquetTableWriter`), for data-lake / analytics ingestion. **net8.0-only**; the core stays
   zero-dependency. Parquet always stores `Modified` as a UTC instant.
+- **New meta-package `Scrubkit.All`** references the whole family (core + all extractor add-ons
+  + DI + Parquet) in one install — for consumers who'd rather not assemble packages by hand.
+  Ships no code of its own; Parquet joins only on net8.0.
 
 ### 🚀 Diagnostics and an ILogger seam
 
