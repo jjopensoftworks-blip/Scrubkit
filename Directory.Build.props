@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.4.0 — Output: zero-dep CSV/JSON writers (TableWriter) with UTC-by-default timestamps and an opt-in utc:false local-time mode, plus a new Scrubkit.Parquet package (Apache Parquet via Parquet.Net, net8.0). Diagnostics: ReadOptions.OnDiagnostic hook bridged to ILogger by AddScrubkit. Opt-in SHA-256 content hashing (FileRecord.ContentHash). New Scrubkit.All meta-package bundles the whole family. Default MaxBytesPerFile lowered to 10 MB; FileRecord.Modified is now UTC. Fix: redaction no longer drops a match overlapping a higher-priority span. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.5.0 — The tool release. New Scrubkit.Tool: a dotnet tool (scrubkit scan &lt;folder&gt;) that extracts, redacts PII + secrets, and writes CSV/JSON/JSON Lines/Parquet from any shell or CI. Secret detection in StandardRedactor: PEM private keys, JWTs, connection strings, and AWS/GCP/GitHub/Slack keys (Standard); credential assignments and high-entropy tokens (Aggressive). RAG kit: a Chunker over FileRecord.Text plus JSON Lines output on TableWriter for records and chunks. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
@@ -55,7 +55,7 @@
          baseline diff against the last stable release so accidental breaking changes fail
          the build. Bump the baseline to each new stable version as it ships. -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>1.4.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.5.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' != 'false'">
