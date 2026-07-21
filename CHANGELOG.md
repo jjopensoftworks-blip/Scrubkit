@@ -7,6 +7,48 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.5.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.5.0` &nbsp;·&nbsp; 📅 2026-07-21
+
+&nbsp;
+
+---
+
+The tool release: run it from a shell, scrub secrets, and chunk for RAG.
+
+### 🚀 A command-line tool — `Scrubkit.Tool`
+
+- **New package `Scrubkit.Tool`** — a **`dotnet tool`** (`dotnet tool install -g Scrubkit.Tool`)
+  that runs Scrubkit from any shell or CI with zero code:
+  `scrubkit scan <folder> [--redact[=standard|aggressive]] [--format csv|json|jsonl|parquet]
+  [--out <file>] [--hash] [--include .pdf,.docx] [--no-recurse] [--max-files N] [--max-bytes N]
+  [--max-text N] [--local-time]`. The table goes to stdout (or `--out`); progress and a summary
+  go to stderr, so output pipes cleanly. Exit code `0` on success, `1` on a usage / I/O error.
+  Bundles the whole family (core + Email / OpenDocument / EPUB add-ons + Parquet output), so it
+  handles every supported format out of the box.
+
+### 🚀 Secret / credential detection
+
+- **`StandardRedactor` now detects secrets** in recognisable formats at the **Standard** level:
+  **PEM private keys** (`[PRIVATE_KEY]`), **JWTs** (`[JWT]`), **credentialed connection strings**
+  (`scheme://user:pass@host` → `[CONNECTION_STRING]`), and cloud / service credentials — AWS
+  access keys, Google API keys, GitHub and Slack tokens (`[API_KEY]`).
+- At the **Aggressive** level it additionally flags `key = value` credential **assignments**
+  (password / secret / token / api-key …) and long **high-entropy tokens** (`[SECRET]`).
+- New `RedactionCategories`: `PrivateKey`, `ApiKey`, `Jwt`, `ConnectionString`, `Secret`. All the
+  usual controls apply (per-category disable, custom tokens, allow / deny lists).
+
+### 🚀 RAG kit — chunking + JSON Lines
+
+- **New `Chunker`** splits a `FileRecord`'s text into overlapping windows ready for embedding /
+  retrieval, carrying the source path, name, type, and metadata onto each `Chunk` along with its
+  position (`Index` / `Count` / `StartOffset`). Configurable window and overlap via `ChunkOptions`;
+  boundaries snap to whitespace by default so words aren't cut.
+- **`TableWriter` gains JSON Lines output** — `ToJsonLines` / `WriteJsonLines` for both
+  `FileRecord`s and `Chunk`s (one JSON object per line), the streaming-friendly default for
+  embedding and log pipelines.
+
 ## 1.4.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.4.0` &nbsp;·&nbsp; 📅 2026-07-20

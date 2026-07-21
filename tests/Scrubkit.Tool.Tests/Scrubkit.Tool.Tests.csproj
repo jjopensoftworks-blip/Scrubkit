@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- End-to-end CLI harness. No coverlet.collector: it would instrument the whole package
+         family (core + add-ons + Parquet) at a partial view and tank the solution-wide coverage
+         gate. Tests still run in CI. -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Scrubkit.Tool\Scrubkit.Tool.csproj" />
+  </ItemGroup>
+
+</Project>

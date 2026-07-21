@@ -132,6 +132,77 @@ public class RedactorPatternTests
     }
 
     [Theory]
+    [InlineData("AKIAIOSFODNN7EXAMPLE")]                                   // AWS access key id
+    [InlineData("ASIAJERQWERTYUIOP123")]                                   // AWS temporary key id
+    [InlineData("AIzaSyD-1234567890abcdefghijklmnopqrstu")]                // Google API key
+    [InlineData("ghp_1234567890abcdefghijklmnopqrstuvwxyz")]               // GitHub PAT
+    [InlineData("xoxb-fake-token-for-tests-only-not-real")]                // Slack bot token (fake)
+    public void Redacts_api_key_at_standard(string value)
+    {
+        var r = Std($"key {value} end");
+        Assert.Contains("[API_KEY]", r.Text);
+        Assert.DoesNotContain(value, r.Text);
+        Assert.Equal(1, r.Counts["ApiKey"]);
+    }
+
+    [Fact]
+    public void Redacts_jwt_at_standard()
+    {
+        const string jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U";
+        var r = Std($"token={jwt}");
+        Assert.Contains("[JWT]", r.Text);
+        Assert.DoesNotContain(jwt, r.Text);
+        Assert.Equal(1, r.Counts["JWT"]);
+    }
+
+    [Fact]
+    public void Redacts_pem_private_key_block_at_standard()
+    {
+        const string pem =
+            "-----BEGIN RSA PRIVATE KEY-----\n" +
+            "MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Q\n" +
+            "uKUpRKfFLfRYC9AIKjbJTWit+CqvjTa1FQ==\n" +
+            "-----END RSA PRIVATE KEY-----";
+        var r = Std($"key:\n{pem}\ndone");
+        Assert.Contains("[PRIVATE_KEY]", r.Text);
+        Assert.DoesNotContain("MIIBOgIBAAJBAKj", r.Text);
+        Assert.Equal(1, r.Counts["PrivateKey"]);
+    }
+
+    [Theory]
+    [InlineData("mongodb://admin:s3cr3t@db.example.com")]
+    [InlineData("postgres://user:pass@localhost")]
+    [InlineData("redis://default:hunter2@cache.internal")]
+    public void Redacts_credentialed_connection_string_at_standard(string value)
+    {
+        var r = Std($"conn {value}/mydb");
+        Assert.Contains("[CONNECTION_STRING]", r.Text);
+        Assert.Equal(1, r.Counts["ConnectionString"]);
+    }
+
+    [Theory]
+    [InlineData("password=hunter2xyz")]
+    [InlineData("api_key: abcdef123456")]
+    [InlineData("client-secret = MyVerySecretValue")]
+    public void Redacts_secret_assignment_only_at_aggressive(string value)
+    {
+        Assert.Contains(value, Std($"config {value}").Text);   // untouched at Standard
+        var r = Agg($"config {value}");
+        Assert.Contains("[SECRET]", r.Text);
+        Assert.Equal(1, r.Counts["Secret"]);
+    }
+
+    [Fact]
+    public void Redacts_high_entropy_token_only_at_aggressive()
+    {
+        const string token = "wJalrXUtnFEMI7MDENGbPxRfiCYEXAMPLEKEY123";   // 40 chars, letter+digit mix
+        Assert.Contains(token, Std($"raw {token} end").Text);              // untouched at Standard
+        var r = Agg($"raw {token} end");
+        Assert.Contains("[SECRET]", r.Text);
+        Assert.True(r.Counts.ContainsKey("Secret"));
+    }
+
+    [Theory]
     [InlineData("just some plain text")]
     [InlineData("meeting notes for today")]
     [InlineData("hello world")]
@@ -153,6 +224,9 @@ public class RedactorPatternTests
     [InlineData("at 40.7128, -74.0060 stays at standard")]   // geo is Aggressive-only
     [InlineData("just letters and spaces only")]
     [InlineData("a small list: one, two, three")]
+    [InlineData("visit https://example.com/docs for more")]   // URL without credentials
+    [InlineData("password rules are enforced here")]          // 'password' keyword, no assignment
+    [InlineData("token expired, please sign in again")]
     public void Leaves_non_matching_text_untouched_at_standard(string input)
     {
         var r = Std(input);
