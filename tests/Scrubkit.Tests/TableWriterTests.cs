@@ -117,6 +117,42 @@ public class TableWriterTests
             "Path,Name,Extension,Folder,SizeBytes,Modified,TypeBucket,Text,Warnings,Redactions,ContentHash\r\n",
             TableWriter.ToCsv(Array.Empty<FileRecord>()));
         Assert.Equal("[]", TableWriter.ToJson(Array.Empty<FileRecord>()));
+        Assert.Equal("", TableWriter.ToJsonLines(Array.Empty<FileRecord>()));
+    }
+
+    [Fact]
+    public void JsonLines_writes_one_parseable_object_per_line()
+    {
+        const string tricky = "line1 \" quote \n embedded newline \t tab";
+        var jsonl = TableWriter.ToJsonLines(new[] { Rec("first"), Rec(tricky) });
+
+        // Trailing newline, and each embedded newline was escaped — so line count is exactly N.
+        Assert.EndsWith("\n", jsonl);
+        var lines = jsonl.TrimEnd('\n').Split('\n');
+        Assert.Equal(2, lines.Length);
+
+        // Each line is a standalone JSON object carrying the full record.
+        var first = JsonDocument.Parse(lines[0]).RootElement;
+        Assert.Equal("first", first.GetProperty("text").GetString());
+        Assert.Equal("Jane", first.GetProperty("metadata").GetProperty("Author").GetString());
+
+        var second = JsonDocument.Parse(lines[1]).RootElement;
+        Assert.Equal(tricky, second.GetProperty("text").GetString());
+    }
+
+    [Fact]
+    public void JsonLines_honours_the_utc_flag()
+    {
+        var rec = Rec() with { Modified = new DateTime(2026, 7, 19, 10, 0, 0, DateTimeKind.Utc) };
+
+        var utcLine = TableWriter.ToJsonLines(new[] { rec }).TrimEnd('\n');
+        Assert.Equal("2026-07-19T10:00:00Z", JsonDocument.Parse(utcLine).RootElement.GetProperty("modified").GetString());
+
+        var localLine = TableWriter.ToJsonLines(new[] { rec }, utc: false).TrimEnd('\n');
+        var parsed = DateTimeOffset.Parse(
+            JsonDocument.Parse(localLine).RootElement.GetProperty("modified").GetString()!,
+            CultureInfo.InvariantCulture);
+        Assert.Equal(rec.Modified, parsed.UtcDateTime);
     }
 
     [Fact]
@@ -124,5 +160,6 @@ public class TableWriterTests
     {
         Assert.Throws<ArgumentNullException>(() => TableWriter.ToCsv(null!));
         Assert.Throws<ArgumentNullException>(() => TableWriter.ToJson(null!));
+        Assert.Throws<ArgumentNullException>(() => TableWriter.ToJsonLines(null!));
     }
 }

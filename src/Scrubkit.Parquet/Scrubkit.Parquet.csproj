@@ -8,8 +8,7 @@
     <Title>Scrubkit.Parquet — Apache Parquet output for Scrubkit tables</Title>
     <Description>Writes a Scrubkit FileRecord table to Apache Parquet (columnar) for data-lake and analytics ingestion, using Parquet.Net. References only Scrubkit.Abstractions; the zero-dependency CSV/JSON writers live in the core Scrubkit package.</Description>
     <PackageTags>scrubkit;parquet;output;export;columnar;analytics;datalake;rag;ingestion</PackageTags>
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against. -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+    <!-- Now published (since 1.4.0), so it inherits the shared PackageValidationBaselineVersion. -->
   </PropertyGroup>
 
   <ItemGroup>

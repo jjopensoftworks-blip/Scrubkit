@@ -23,6 +23,11 @@ that must stay on-device.
   `Scrubkit.Abstractions`, keeping heavy dependencies out of the core.
 - **Robust.** A single unreadable file never crashes the batch — problems surface as
   `Warnings` on the row.
+- **Scrub before AI/sharing.** Opt-in redaction of PII **and secrets** (API keys, JWTs,
+  private keys, connection strings), a `Chunker` for RAG, and CSV / JSON / **JSON Lines** /
+  Parquet output.
+- **Runs from a shell.** The [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI
+  (`dotnet tool install -g Scrubkit.Tool`) scans a folder with zero code.
 
 ![Scrubkit playground output — a table of extracted files with type, size and text length](assets/playground.png)
 
@@ -54,16 +59,31 @@ var scrubber = new FolderScrubber(new ReadOptions
     MaxTextLength = 8_000,   // keep chunks index-friendly
 });
 
+var chunker = new Chunker();   // overlapping windows, whitespace-snapped
+
 await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 {
     if (doc.Text.Length == 0) continue;   // skip metadata-only rows
 
-    await index.UpsertAsync(
-        id: doc.Path,
-        text: doc.Text,                   // extracted text, ready to embed
-        metadata: doc.Metadata);
+    foreach (var chunk in chunker.Chunk(doc))
+        await index.UpsertAsync(
+            id: $"{chunk.Path}#{chunk.Index}",
+            text: chunk.Text,             // ready to embed
+            metadata: chunk.Metadata);
 }
 ```
+
+## No code? Use the CLI
+
+Install the `scrubkit` tool and scan a folder straight from a shell or CI:
+
+```sh
+dotnet tool install --global Scrubkit.Tool
+scrubkit scan ./docs --redact --format jsonl --out docs.jsonl
+```
+
+It extracts, optionally redacts PII + secrets, and writes CSV / JSON / JSON Lines / Parquet —
+fully offline. See [`src/Scrubkit.Tool`](src/Scrubkit.Tool/README.md).
 
 ## Try it without installing
 
@@ -92,6 +112,7 @@ dotnet test  -c Release        # runs the test suite
 ```text
 src/Scrubkit.Abstractions   contracts only (IFileExtractor, …) — no heavy deps
 src/Scrubkit                the core: FolderScrubber + built-in extractors
+src/Scrubkit.Tool           the `scrubkit` command-line tool (dotnet tool)
 tests/Scrubkit.Tests        xUnit tests
 samples/Scrubkit.Playground runnable demo
 ```

@@ -23,6 +23,10 @@ natural first step for RAG ingestion, search indexing, and on-device data prep.
 
 - **Offline** — no network calls, no telemetry.
 - **Small, fast core** — PDF, Office, text, and image metadata out of the box.
+- **Scrub PII & secrets** — opt-in redaction of emails, cards, IPs, and secrets (API keys,
+  JWTs, private keys, connection strings).
+- **RAG-ready** — a `Chunker` for overlapping windows and CSV / JSON / **JSON Lines** / Parquet output.
+- **Runs from a shell** — the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI (`dotnet tool`) scans a folder with zero code.
 - **Pluggable** — add or override formats with `IFileExtractor`.
 - **Scales** — stream results and process files in parallel for large trees.
 - **Multi-target** — `net8.0` and `netstandard2.0`.
@@ -98,27 +102,50 @@ var scrubber = new FolderScrubber(new ReadOptions
     MaxTextLength = 8_000,   // keep chunks index-friendly
 });
 
+var chunker = new Chunker(new ChunkOptions { MaxChars = 1_000, OverlapChars = 100 });
+
 await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 {
     if (doc.Text.Length == 0) continue;   // skip metadata-only rows
 
-    await index.UpsertAsync(
-        id: doc.Path,
-        text: doc.Text,                   // extracted text, ready to embed
-        metadata: doc.Metadata);
+    foreach (var chunk in chunker.Chunk(doc))   // overlapping windows, carrying path + metadata
+        await index.UpsertAsync(
+            id: $"{chunk.Path}#{chunk.Index}",
+            text: chunk.Text,                    // ready to embed
+            metadata: chunk.Metadata);
 }
+```
+
+The `Chunker` splits each file's text into overlapping windows (whitespace-snapped by default so
+words aren't cut), and `TableWriter.ToJsonLines(chunker.Chunk(table))` writes them straight to
+**JSON Lines** for a batch embedding pipeline.
+
+---
+
+## Redact PII & secrets
+
+Redaction is opt-in — set a `Redaction` level (or supply your own `IRedactor`). The built-in
+`StandardRedactor` masks emails, phones, Luhn-checked cards, SSNs, IPs, IBANs, and **secrets in
+recognisable formats** — PEM private keys, JWTs, credentialed connection strings, and AWS /
+Google / GitHub / Slack keys. **Aggressive** additionally catches `key = value` credential
+assignments and high-entropy tokens.
+
+```csharp
+var scrubber = new FolderScrubber(new ReadOptions { Redaction = RedactionLevel.Standard });
+// "AWS key AKIAIOSFODNN7EXAMPLE" → "AWS key [API_KEY]"
 ```
 
 ---
 
 ## Export the table
 
-Serialize the records to CSV or JSON with the zero-dependency `TableWriter` (or to Parquet
-via the separate **`Scrubkit.Parquet`** package):
+Serialize the records to CSV, JSON, or JSON Lines with the zero-dependency `TableWriter` (or
+to Parquet via the separate **`Scrubkit.Parquet`** package):
 
 ```csharp
-string csv  = TableWriter.ToCsv(table);
-string json = TableWriter.ToJson(table);
+string csv   = TableWriter.ToCsv(table);
+string json  = TableWriter.ToJson(table);
+string jsonl = TableWriter.ToJsonLines(table);   // one record per line — RAG / log pipelines
 ```
 
 Timestamps (`Modified`) are written in **UTC** with a trailing `Z`. Need machine-local time

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net8.0 only: it references Scrubkit.Parquet (net8.0) for Parquet output, and a global
+         tool doesn't need netstandard reach. -->
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <!-- Ship as a dotnet global/local tool: `dotnet tool install -g Scrubkit.Tool` → `scrubkit`. -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>scrubkit</ToolCommandName>
+    <PackageId>Scrubkit.Tool</PackageId>
+    <Title>Scrubkit.Tool — the scrubkit command-line tool</Title>
+    <Description>A dotnet tool that runs Scrubkit from any shell or CI: `scrubkit scan &lt;folder&gt;` walks a folder, extracts text + metadata from PDFs, Office/OpenDocument, email, EPUB, and text/images, optionally redacts PII and secrets, and writes a CSV / JSON / JSON Lines / Parquet table. Fully offline — no network calls.</Description>
+    <PackageTags>scrubkit;cli;dotnet-tool;pii;redaction;secrets;extraction;rag;offline;jsonl</PackageTags>
+
+    <!-- A tool package intentionally has no public API surface and ships as an app, not a lib. -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Brand-new package: no published baseline to diff against yet. Remove this override once
+         the first version is on NuGet so it inherits the shared baseline. -->
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The CLI has no public API; the test project drives its internal parser + entry point. -->
+    <InternalsVisibleTo Include="Scrubkit.Tool.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The core plus every extractor add-on and Parquet output, so the CLI covers the whole
+         family out of the box. -->
+    <ProjectReference Include="..\Scrubkit\Scrubkit.csproj" />
+    <ProjectReference Include="..\Scrubkit.Email\Scrubkit.Email.csproj" />
+    <ProjectReference Include="..\Scrubkit.OpenDocument\Scrubkit.OpenDocument.csproj" />
+    <ProjectReference Include="..\Scrubkit.Epub\Scrubkit.Epub.csproj" />
+    <ProjectReference Include="..\Scrubkit.Parquet\Scrubkit.Parquet.csproj" />
+  </ItemGroup>
+
+</Project>
