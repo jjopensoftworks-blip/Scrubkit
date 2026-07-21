@@ -5,9 +5,11 @@ namespace Scrubkit;
 
 /// <summary>
 /// Best-effort pattern-based redactor. Replaces high-confidence sensitive values with
-/// category tokens (<c>[EMAIL]</c>, <c>[PHONE]</c>, …). At
-/// <see cref="RedactionLevel.Aggressive"/> it also removes lower-confidence patterns that
-/// trade precision for recall. Card numbers are Luhn-checked to cut false hits.
+/// category tokens (<c>[EMAIL]</c>, <c>[PHONE]</c>, …), including secrets in recognisable
+/// formats — PEM private keys, JWTs, AWS / Google / GitHub / Slack credentials, and
+/// credentialed connection strings. At <see cref="RedactionLevel.Aggressive"/> it also removes
+/// lower-confidence patterns that trade precision for recall, including <c>key = value</c>
+/// credential assignments and high-entropy tokens. Card numbers are Luhn-checked to cut false hits.
 ///
 /// Matching is a single pass: patterns are tried in priority order and the more specific
 /// ones claim their text first, so nothing is double-counted. The result carries per-match
@@ -79,6 +81,40 @@ public sealed class StandardRedactor : IRedactor
     private static readonly Regex LongDigitRun =
         new(@"\b\d{7,}\b", RegexOptions.Compiled);
 
+    // ---- secrets / credentials -----
+
+    // A whole PEM private-key block, header to footer, across lines.
+    private static readonly Regex PrivateKey = new(
+        @"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----[\s\S]*?-----END (?:[A-Z0-9 ]+ )?PRIVATE KEY-----",
+        RegexOptions.Compiled);
+
+    // header.payload.signature, each base64url; the header always starts "eyJ" ('{"' in base64).
+    private static readonly Regex Jwt = new(
+        @"\beyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b", RegexOptions.Compiled);
+
+    // AWS access key id: AKIA/ASIA + 16 uppercase alphanumerics (20 total).
+    private static readonly Regex AwsKey = new(@"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", RegexOptions.Compiled);
+
+    // Google API key: "AIza" + 35 url-safe chars.
+    private static readonly Regex GcpKey = new(@"\bAIza[A-Za-z0-9_\-]{35}\b", RegexOptions.Compiled);
+
+    // GitHub token (ghp_/gho_/ghu_/ghs_/ghr_) and Slack token (xoxb-/xoxp-/…).
+    private static readonly Regex GitHubToken = new(@"\bgh[pousr]_[A-Za-z0-9]{36,}\b", RegexOptions.Compiled);
+    private static readonly Regex SlackToken = new(@"\bxox[baprs]-[A-Za-z0-9\-]{10,}\b", RegexOptions.Compiled);
+
+    // A credentialed URI: scheme://user:pass@host (mongodb, postgres, redis, amqp, …).
+    private static readonly Regex ConnectionUri = new(
+        @"\b[a-z][a-z0-9+.\-]*://[^\s:@/]+:[^\s:@/]+@[^\s/]+", RegexOptions.Compiled);
+
+    // Aggressive-only: a "key = value" credential assignment (password/secret/token/api key …).
+    private static readonly Regex SecretAssignment = new(
+        @"(?i)\b(?:pass(?:word|wd)?|pwd|secret|token|api[_\- ]?key|access[_\- ]?key|client[_\- ]?secret)\b\s*[=:]\s*[""']?[^\s""';,}{]{6,}",
+        RegexOptions.Compiled);
+
+    // Aggressive-only: a long high-entropy token (base64/hex-ish). Entropy-gated below.
+    private static readonly Regex HighEntropyToken = new(
+        @"(?<![A-Za-z0-9+/_\-])[A-Za-z0-9+/_\-]{32,}={0,2}(?![A-Za-z0-9+/_\-])", RegexOptions.Compiled);
+
     // ---- rule table (priority order: specific patterns claim their text first) ----
 
     private sealed class MatchRule
@@ -92,6 +128,16 @@ public sealed class StandardRedactor : IRedactor
 
     private static readonly MatchRule[] Rules =
     {
+        // Secrets first — the most specific, highest-confidence formats claim their text before
+        // any looser pattern (a JWT/URI can look phone- or number-ish in places).
+        new() { Regex = PrivateKey,    Category = RedactionCategories.PrivateKey,       Token = "[PRIVATE_KEY]" },
+        new() { Regex = Jwt,           Category = RedactionCategories.Jwt,              Token = "[JWT]" },
+        new() { Regex = ConnectionUri, Category = RedactionCategories.ConnectionString, Token = "[CONNECTION_STRING]" },
+        new() { Regex = AwsKey,        Category = RedactionCategories.ApiKey,           Token = "[API_KEY]" },
+        new() { Regex = GcpKey,        Category = RedactionCategories.ApiKey,           Token = "[API_KEY]" },
+        new() { Regex = GitHubToken,   Category = RedactionCategories.ApiKey,           Token = "[API_KEY]" },
+        new() { Regex = SlackToken,    Category = RedactionCategories.ApiKey,           Token = "[API_KEY]" },
+
         new() { Regex = Email,        Category = RedactionCategories.Email,       Token = "[EMAIL]" },
         new() { Regex = CardLike,     Category = RedactionCategories.Card,        Token = "[CARD]", Validate = IsLuhnCard },
         new() { Regex = Iban,         Category = RedactionCategories.Iban,        Token = "[IBAN]" },
@@ -100,9 +146,15 @@ public sealed class StandardRedactor : IRedactor
         new() { Regex = Ipv4,         Category = RedactionCategories.Ip,          Token = "[IP]" },
         new() { Regex = Ipv6,         Category = RedactionCategories.Ip,          Token = "[IP]" },
         new() { Regex = Phone,        Category = RedactionCategories.Phone,       Token = "[PHONE]" },
-        new() { Regex = Geo,          Category = RedactionCategories.Geo,         Token = "[GEO]",    Aggressive = true },
-        new() { Regex = DobLike,      Category = RedactionCategories.DateOfBirth, Token = "[DATE]",   Aggressive = true },
-        new() { Regex = LongDigitRun, Category = RedactionCategories.LongNumber,  Token = "[NUMBER]", Aggressive = true },
+
+        // Aggressive, broad patterns last so specific rules above win every overlap. The two
+        // heuristic secret rules (keyword assignment, then high-entropy) sit at the very end —
+        // high-entropy is the loosest, so it claims only what nothing else did.
+        new() { Regex = Geo,              Category = RedactionCategories.Geo,         Token = "[GEO]",    Aggressive = true },
+        new() { Regex = DobLike,          Category = RedactionCategories.DateOfBirth, Token = "[DATE]",   Aggressive = true },
+        new() { Regex = SecretAssignment, Category = RedactionCategories.Secret,      Token = "[SECRET]", Aggressive = true },
+        new() { Regex = LongDigitRun,     Category = RedactionCategories.LongNumber,  Token = "[NUMBER]", Aggressive = true },
+        new() { Regex = HighEntropyToken, Category = RedactionCategories.Secret,      Token = "[SECRET]", Aggressive = true, Validate = IsHighEntropy },
     };
 
     private static readonly IReadOnlyDictionary<string, string> DefaultTokens = BuildDefaultTokens();
@@ -205,6 +257,40 @@ public sealed class StandardRedactor : IRedactor
         var tokens = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var rule in Rules) tokens[rule.Category] = rule.Token;   // IP appears twice, same token
         return tokens;
+    }
+
+    // Gate the high-entropy rule: long enough, a letter+digit mix (skips prose and pure hyphenated
+    // words), and Shannon entropy over ~4 bits/char — enough to flag random-looking tokens while
+    // leaving ordinary identifiers alone. Aggressive-only, so some false positives are acceptable.
+    private static bool IsHighEntropy(Match m)
+    {
+        var s = m.Value;
+        if (s.Length < 32) return false;
+
+        var hasLetter = false;
+        var hasDigit = false;
+        foreach (var c in s)
+        {
+            if (char.IsLetter(c)) hasLetter = true;
+            else if (char.IsDigit(c)) hasDigit = true;
+        }
+        if (!hasLetter || !hasDigit) return false;
+
+        return ShannonEntropy(s) >= 4.0;
+    }
+
+    private static double ShannonEntropy(string s)
+    {
+        var counts = new Dictionary<char, int>();
+        foreach (var c in s) counts[c] = counts.GetValueOrDefault(c) + 1;
+
+        double entropy = 0;
+        foreach (var count in counts.Values)
+        {
+            double p = (double)count / s.Length;
+            entropy -= p * Math.Log(p, 2);
+        }
+        return entropy;
     }
 
     private static bool IsLuhnCard(Match m)

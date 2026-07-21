@@ -4,10 +4,11 @@ using System.Text;
 namespace Scrubkit;
 
 /// <summary>
-/// Serializes a table of <see cref="FileRecord"/>s to CSV or JSON for ingestion / indexing
-/// pipelines. Zero-dependency and fully offline, like the rest of Scrubkit. CSV is a flat
-/// summary (RFC 4180 quoting); JSON carries the full record including text, metadata,
-/// redaction counts, warnings, and content hash.
+/// Serializes a table of <see cref="FileRecord"/>s to CSV, JSON, or JSON Lines for ingestion /
+/// indexing pipelines. Zero-dependency and fully offline, like the rest of Scrubkit. CSV is a
+/// flat summary (RFC 4180 quoting); JSON and JSON Lines carry the full record including text,
+/// metadata, redaction counts, warnings, and content hash. JSON Lines (one object per line) is
+/// the streaming-friendly default for embedding / RAG and log pipelines.
 ///
 /// Timestamps default to UTC (<c>...Z</c>). Pass <c>utc: false</c> to emit machine-local
 /// time instead — always with an explicit offset (<c>...+05:30</c>) so the value stays
@@ -105,6 +106,76 @@ public static class TableWriter
             writer.Write(RecordToJson(r, utc));
         }
         writer.Write(']');
+    }
+
+    /// <summary>
+    /// Returns the records as JSON Lines (<see href="https://jsonlines.org/">NDJSON</see>) — one
+    /// JSON object per line, separated by <c>\n</c>, with a trailing newline. This is the default
+    /// shape for streaming into embedding / RAG and log pipelines, where each line is parsed
+    /// independently. Timestamps are UTC unless <paramref name="utc"/> is <c>false</c>.
+    /// </summary>
+    public static string ToJsonLines(IEnumerable<FileRecord> records, bool utc = true)
+    {
+        var writer = new StringWriter(CultureInfo.InvariantCulture);
+        WriteJsonLines(records, writer, utc);
+        return writer.ToString();
+    }
+
+    /// <summary>
+    /// Writes the records as JSON Lines (one object per line, <c>\n</c>-separated, trailing
+    /// newline) to <paramref name="writer"/>.
+    /// </summary>
+    public static void WriteJsonLines(IEnumerable<FileRecord> records, TextWriter writer, bool utc = true)
+    {
+        if (records is null) throw new ArgumentNullException(nameof(records));
+        if (writer is null) throw new ArgumentNullException(nameof(writer));
+
+        foreach (var r in records)
+        {
+            writer.Write(RecordToJson(r, utc));
+            writer.Write('\n');
+        }
+    }
+
+    /// <summary>
+    /// Returns the chunks as JSON Lines — one JSON object per line — ready to stream into an
+    /// embedding / vector-index pipeline. Each line carries the chunk text plus its source
+    /// path, name, type, position (<c>index</c>/<c>count</c>/<c>startOffset</c>), and metadata.
+    /// </summary>
+    public static string ToJsonLines(IEnumerable<Chunk> chunks)
+    {
+        var writer = new StringWriter(CultureInfo.InvariantCulture);
+        WriteJsonLines(chunks, writer);
+        return writer.ToString();
+    }
+
+    /// <summary>Writes the chunks as JSON Lines (one object per line) to <paramref name="writer"/>.</summary>
+    public static void WriteJsonLines(IEnumerable<Chunk> chunks, TextWriter writer)
+    {
+        if (chunks is null) throw new ArgumentNullException(nameof(chunks));
+        if (writer is null) throw new ArgumentNullException(nameof(writer));
+
+        foreach (var c in chunks)
+        {
+            writer.Write(ChunkToJson(c));
+            writer.Write('\n');
+        }
+    }
+
+    private static string ChunkToJson(Chunk c)
+    {
+        var sb = new StringBuilder();
+        sb.Append('{');
+        sb.Append("\"path\":").Append(JsonString(c.Path)).Append(',');
+        sb.Append("\"name\":").Append(JsonString(c.Name)).Append(',');
+        sb.Append("\"typeBucket\":").Append(JsonString(c.TypeBucket)).Append(',');
+        sb.Append("\"index\":").Append(c.Index.ToString(CultureInfo.InvariantCulture)).Append(',');
+        sb.Append("\"count\":").Append(c.Count.ToString(CultureInfo.InvariantCulture)).Append(',');
+        sb.Append("\"startOffset\":").Append(c.StartOffset.ToString(CultureInfo.InvariantCulture)).Append(',');
+        sb.Append("\"text\":").Append(JsonString(c.Text)).Append(',');
+        sb.Append("\"metadata\":").Append(JsonStringMap(c.Metadata));
+        sb.Append('}');
+        return sb.ToString();
     }
 
     private static string RecordToJson(FileRecord r, bool utc)

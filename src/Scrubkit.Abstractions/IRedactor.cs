@@ -68,6 +68,28 @@ public static class RedactionCategories
     public const string Geo = "Geo";
     public const string DateOfBirth = "DateOfBirth";
     public const string LongNumber = "LongNumber";
+
+    /// <summary>A PEM-encoded private-key block (<c>-----BEGIN … PRIVATE KEY-----</c>).</summary>
+    public const string PrivateKey = "PrivateKey";
+
+    /// <summary>
+    /// A cloud / service credential in a recognisable format — AWS access key, Google API key,
+    /// GitHub / Slack token, and similar.
+    /// </summary>
+    public const string ApiKey = "ApiKey";
+
+    /// <summary>A JSON Web Token (<c>eyJ…</c> header . payload . signature).</summary>
+    public const string Jwt = "JWT";
+
+    /// <summary>A connection string carrying embedded credentials (e.g. <c>scheme://user:pass@host</c>).</summary>
+    public const string ConnectionString = "ConnectionString";
+
+    /// <summary>
+    /// A likely secret found by heuristic — a <c>key = value</c> credential assignment or a
+    /// high-entropy token. Aggressive level only, since it trades precision for recall.
+    /// </summary>
+    public const string Secret = "Secret";
+
     /// <summary>Reported for caller-supplied deny-list terms.</summary>
     public const string Custom = "Custom";
 }
