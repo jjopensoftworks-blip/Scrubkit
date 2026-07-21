@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--threshold", type=float, default=85.0, help="minimum line coverage %")
+    ap.add_argument("--threshold", type=float, default=99.0, help="minimum line coverage %")
     ap.add_argument("--dir", default="./coverage", help="directory to search for cobertura xml")
     args = ap.parse_args()
 
@@ -36,9 +36,9 @@ def main() -> int:
         for c in classes[:8]:
             print(f"    {float(c.get('line-rate', 0)) * 100:5.1f}%  {c.get('name')}")
 
-    print(f"\nOverall line coverage: {worst:.1f}%  (threshold {args.threshold:.0f}%)")
+    print(f"\nOverall line coverage: {worst:.1f}%  (threshold {args.threshold:.1f}%)")
     if worst < args.threshold:
-        print(f"::error::line coverage {worst:.1f}% is below the {args.threshold:.0f}% floor")
+        print(f"::error::line coverage {worst:.1f}% is below the {args.threshold:.1f}% floor")
         return 1
     print("Coverage gate passed.")
     return 0

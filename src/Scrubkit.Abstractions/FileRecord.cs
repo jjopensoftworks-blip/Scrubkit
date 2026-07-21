@@ -20,6 +20,8 @@ public sealed record FileRecord
     public string Folder { get; init; } = "";
 
     public long SizeBytes { get; init; }
+
+    /// <summary>Last-write time in <b>UTC</b> (<c>DateTimeKind.Utc</c>).</summary>
     public DateTime Modified { get; init; }
 
     /// <summary>Coarse bucket: Document, Spreadsheet, Presentation, Text, Image, Email, Other.</summary>
@@ -41,4 +43,10 @@ public sealed record FileRecord
 
     /// <summary>Non-fatal problems (skipped-too-large, unreadable, clipped). Never throws to the caller.</summary>
     public IReadOnlyList<string> Warnings { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Lower-case hex SHA-256 of the file's bytes, when
+    /// <see cref="ReadOptions.ComputeContentHash"/> is enabled; otherwise <c>null</c>.
+    /// </summary>
+    public string? ContentHash { get; init; }
 }

@@ -34,6 +34,7 @@ jobs:
           dotnet-version: |
             8.0.x
             9.0.x
+            10.0.x
           cache: true
           cache-dependency-path: '**/packages.lock.json'
 
@@ -50,9 +51,9 @@ jobs:
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         run: python3 build/test-summary.py --dir ./coverage
 
-      - name: Coverage gate (line >= 85%)
+      - name: Coverage gate (line >= 99%)
         if: matrix.os == 'ubuntu-latest'
-        run: python3 build/coverage-gate.py --threshold 85 --dir ./coverage
+        run: python3 build/coverage-gate.py --threshold 99 --dir ./coverage
 
       - name: Pack (verify packaging succeeds)
         run: dotnet pack --configuration Release --no-build --output ./artifacts

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net8.0 only: Parquet.Net needs a modern TFM, and Parquet output is a modern concern.
+         The zero-dep CSV/JSON writers stay in the core for netstandard2.0 consumers. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <PackageId>Scrubkit.Parquet</PackageId>
+    <Title>Scrubkit.Parquet — Apache Parquet output for Scrubkit tables</Title>
+    <Description>Writes a Scrubkit FileRecord table to Apache Parquet (columnar) for data-lake and analytics ingestion, using Parquet.Net. References only Scrubkit.Abstractions; the zero-dependency CSV/JSON writers live in the core Scrubkit package.</Description>
+    <PackageTags>scrubkit;parquet;output;export;columnar;analytics;datalake;rag;ingestion</PackageTags>
+    <!-- Brand-new package: no prior stable version on nuget.org to diff against. -->
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Contracts only (FileRecord) — no core Scrubkit / PdfPig / MetadataExtractor. -->
+    <ProjectReference Include="..\Scrubkit.Abstractions\Scrubkit.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Parquet.Net" />
+  </ItemGroup>
+
+</Project>

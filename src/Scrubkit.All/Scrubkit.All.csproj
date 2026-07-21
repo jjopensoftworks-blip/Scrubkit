@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Meta-package: ships no code of its own, just pulls in the whole family as
+         dependencies. Multi-targets so netstandard2.0 consumers get everything except
+         Parquet (which is net8.0-only, referenced below only for net8.0). -->
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <PackageId>Scrubkit.All</PackageId>
+    <Title>Scrubkit.All — the whole Scrubkit family in one reference</Title>
+    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml, OpenDocument, .epub), the AddScrubkit dependency-injection integration, and — on net8.0 — Parquet output. Install this to read everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
+    <PackageTags>scrubkit;bundle;meta;all;extraction;text-extraction;pdf;office;email;epub;opendocument;parquet;offline;rag;ingestion</PackageTags>
+
+    <!-- No compiled output, no API surface: it's purely a dependency aggregator. -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <!-- Brand-new package: no prior stable version on nuget.org to diff against. -->
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+    <!-- NU5128: dependency groups without matching lib/ assemblies — expected for a
+         meta-package that ships no binaries. -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <!-- The full family. Scrubkit.Abstractions flows transitively through these. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Scrubkit\Scrubkit.csproj" />
+    <ProjectReference Include="..\Scrubkit.Email\Scrubkit.Email.csproj" />
+    <ProjectReference Include="..\Scrubkit.OpenDocument\Scrubkit.OpenDocument.csproj" />
+    <ProjectReference Include="..\Scrubkit.Epub\Scrubkit.Epub.csproj" />
+    <ProjectReference Include="..\Scrubkit.Extensions.DependencyInjection\Scrubkit.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <!-- Parquet output is net8.0-only, so it joins the bundle only for that TFM. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="..\Scrubkit.Parquet\Scrubkit.Parquet.csproj" />
+  </ItemGroup>
+
+</Project>

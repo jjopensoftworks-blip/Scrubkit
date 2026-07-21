@@ -86,6 +86,19 @@ public class OfficeExtractorTests : IDisposable
     }
 
     [Fact]
+    public void Extract_returns_core_props_but_no_body_for_an_unknown_office_extension()
+    {
+        // A valid OOXML container whose extension isn't one of the three known bodies:
+        // core properties still read, but the body switch falls through to empty text.
+        var path = Ooxml(".zipx", ("docProps/core.xml", Core));
+
+        var content = new OfficeExtractor().Extract(path);
+
+        Assert.Equal("", content.Text);
+        Assert.Equal("Q3 Report", content.Metadata["Title"]);
+    }
+
+    [Fact]
     public async Task FolderScrubber_scrubs_pii_in_office_metadata()
     {
         // The author field is an email — it must be scrubbed out of the metadata too.
