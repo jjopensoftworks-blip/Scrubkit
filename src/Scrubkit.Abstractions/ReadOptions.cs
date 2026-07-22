@@ -62,6 +62,14 @@ public sealed class ReadOptions
         new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Files to skip entirely, matched by full path (case-insensitive on Windows via
+    /// normalization). Useful to keep a run from ingesting its own output — e.g. a CSV/JSON
+    /// table or a manifest written into the scanned folder. Empty by default.
+    /// </summary>
+    public ISet<string> ExcludePaths { get; } =
+        new HashSet<string>(StringComparer.Ordinal);
+
+    /// <summary>
     /// Extra format extractors (your own or from an add-on package). Tried BEFORE the
     /// built-ins, so an add-on can also override a built-in extractor.
     /// </summary>

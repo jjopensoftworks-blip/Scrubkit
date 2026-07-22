@@ -28,6 +28,8 @@ that must stay on-device.
   Parquet output.
 - **Runs from a shell.** The [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI
   (`dotnet tool install -g Scrubkit.Tool`) scans a folder with zero code.
+- **Incremental.** Re-scan only what changed via a lightweight manifest — big win on repeated
+  runs over large trees.
 
 ![Scrubkit playground output — a table of extracted files with type, size and text length](assets/playground.png)
 

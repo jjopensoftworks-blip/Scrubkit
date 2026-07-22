@@ -7,6 +7,38 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.6.0
+
+![Pre-release](https://img.shields.io/badge/release-Unreleased-orange?style=flat-square) &nbsp; 🏷️ `v1.6.0` &nbsp;·&nbsp; 📅 Unreleased
+
+&nbsp;
+
+---
+
+A capability release for real pipelines: only reprocess what changed.
+
+### 🚀 Incremental scans + a manifest
+
+- **`FolderScrubber.ReadChangesAsync(root, baseline)`** scrubs only the files that changed since
+  a baseline **`Manifest`** — added / modified files are extracted and returned in
+  `IncrementalResult.Changed`, gone-from-disk paths in `Removed`, and a complete up-to-date
+  `Manifest` (changed + carried-forward unchanged) comes back to persist for next time.
+  Unchanged files (same size + last-write time) are **never re-extracted**.
+- **`Manifest`** is a zero-dependency text sidecar (`Manifest.Save` / `Manifest.Load`, and
+  `Manifest.From(records)` after a full run) — one line per file, no extra packages.
+- **CLI:** `scrubkit scan <folder> --since <manifest> --manifest <manifest> --out delta.jsonl`
+  emits only the changed files and rewrites the manifest. A missing baseline = first run.
+
+### 🚀 Exclude paths
+
+- **`ReadOptions.ExcludePaths`** skips files by full path — so a run never ingests its own
+  output. The CLI adds its `--out` and `--manifest` files automatically.
+
+### 🔧 Fixes
+
+- **CLI writes UTF-8 without a BOM** for CSV / JSON / JSON Lines / manifest output (a leading
+  BOM tripped some downstream parsers).
+
 ## 1.5.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.5.0` &nbsp;·&nbsp; 📅 2026-07-21
