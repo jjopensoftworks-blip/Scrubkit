@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
 using Scrubkit;
 
 // scrubkit — the Scrubkit command-line tool.
@@ -69,12 +70,27 @@ internal static class Cli
 
     private static async Task<int> ScanAsync(Options opts)
     {
+        // A --rules file builds a configured StandardRedactor (custom rules + allow/deny/disable),
+        // which takes precedence over the plain --redact level. Loading errors are usage errors.
+        IRedactor? rulesRedactor = null;
+        if (opts.Rules is not null)
+        {
+            try { rulesRedactor = BuildRedactorFromRules(opts.Rules, opts.Redaction); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                          or System.Text.Json.JsonException or ArgumentException)
+            {
+                Error($"could not load rules from '{opts.Rules}': {ex.Message}");
+                return 1;
+            }
+        }
+
         var readOptions = new ReadOptions
         {
             Recursion = opts.Recurse ? Recursion.AllNested : Recursion.TopOnly,
-            Redaction = opts.Redaction,
             ComputeContentHash = opts.Hash,
         };
+        if (rulesRedactor is not null) readOptions.Redactor = rulesRedactor;
+        else readOptions.Redaction = opts.Redaction;
         if (opts.MaxFiles is { } mf) readOptions.MaxFiles = mf;
         if (opts.MaxBytes is { } mb) readOptions.MaxBytesPerFile = mb;
         if (opts.MaxText is { } mt) readOptions.MaxTextLength = mt;
@@ -164,6 +180,51 @@ internal static class Cli
         return Manifest.Load(reader);
     }
 
+    // Build a StandardRedactor from a JSON rules file. Throws IOException / JsonException /
+    // ArgumentException (bad regex) on a problem — the caller turns those into a usage error.
+    private static IRedactor BuildRedactorFromRules(string path, RedactionLevel level)
+    {
+        var cfg = JsonSerializer.Deserialize<RulesConfig>(
+                      File.ReadAllText(path),
+                      new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                  ?? new RulesConfig();
+
+        // --rules implies redaction; keep an explicit --redact=aggressive if given.
+        var options = new StandardRedactorOptions
+        {
+            Level = level == RedactionLevel.Off ? RedactionLevel.Standard : level,
+        };
+        foreach (var r in cfg.Rules ?? new())
+            options.CustomRules.Add(new CustomRedactionRule
+            {
+                Category = r.Category ?? "",
+                Pattern = r.Pattern ?? "",
+                Token = r.Token,
+                IgnoreCase = r.IgnoreCase,
+            });
+        foreach (var a in cfg.Allow ?? new()) options.AllowList.Add(a);
+        foreach (var d in cfg.Deny ?? new()) options.DenyTerms.Add(d);
+        foreach (var c in cfg.Disable ?? new()) options.DisabledCategories.Add(c);
+
+        return new StandardRedactor(options);   // validates the rules (throws on a bad regex)
+    }
+
+    private sealed class RulesConfig
+    {
+        public List<RuleDto>? Rules { get; set; }
+        public List<string>? Allow { get; set; }
+        public List<string>? Deny { get; set; }
+        public List<string>? Disable { get; set; }
+    }
+
+    private sealed class RuleDto
+    {
+        public string? Category { get; set; }
+        public string? Pattern { get; set; }
+        public string? Token { get; set; }
+        public bool IgnoreCase { get; set; }
+    }
+
     private static async Task WriteAsync(IReadOnlyList<FileRecord> records, Options opts)
     {
         if (opts.Format == OutputFormat.Parquet)
@@ -212,6 +273,8 @@ OPTIONS
   --out <file>          Write to a file instead of stdout. Required for parquet.
   --redact[=<level>]    Redact PII + secrets. Level: standard (default) or aggressive.
                         Omit the flag to extract without redacting.
+  --rules <file>        JSON file of custom redaction rules + allow/deny/disable lists
+                        (implies --redact). See the format in the Scrubkit.Tool README.
   --no-recurse          Only the top folder (default: recurse all nested folders).
   --hash                Compute a SHA-256 content hash per file.
   --include <exts>      Comma-separated extension filter, e.g. --include .pdf,.docx
@@ -250,6 +313,7 @@ internal sealed class Options
     public bool Utc { get; private set; } = true;
     public string? Since { get; private set; }
     public string? Manifest { get; private set; }
+    public string? Rules { get; private set; }
     public List<string> Include { get; } = new();
     public int? MaxFiles { get; private set; }
     public long? MaxBytes { get; private set; }
@@ -296,6 +360,9 @@ internal sealed class Options
                     break;
                 case "--manifest":
                     opts.Manifest = Value(key, inlineValue, args, ref i);
+                    break;
+                case "--rules":
+                    opts.Rules = Value(key, inlineValue, args, ref i);
                     break;
                 case "--include":
                     foreach (var ext in Value(key, inlineValue, args, ref i).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

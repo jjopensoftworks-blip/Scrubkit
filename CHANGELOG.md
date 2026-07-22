@@ -7,6 +7,27 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.7.0
+
+![Pre-release](https://img.shields.io/badge/release-Unreleased-orange?style=flat-square) &nbsp; 🏷️ `v1.7.0` &nbsp;·&nbsp; 📅 Unreleased
+
+&nbsp;
+
+---
+
+Bring your own redaction rules — no code required.
+
+### 🚀 Custom redaction rules
+
+- **`StandardRedactorOptions.CustomRules`** takes caller-defined **`CustomRedactionRule`**s
+  (`{ Category, Pattern, Token?, IgnoreCase }`) — your own regexes, reported under your own
+  categories. They run **before** the built-in patterns, so a domain rule (e.g. an employee-ID
+  format) wins an overlap with a looser built-in. Patterns compile with a **match timeout**, so a
+  runaway regex can't hang a scan; an invalid pattern throws at construction.
+- **CLI `--rules <file>`** loads custom rules plus `allow` / `deny` / `disable` lists from JSON
+  and implies redaction (`--redact=aggressive` still composes). JSON parsing lives in the CLI, so
+  the core stays zero-dependency.
+
 ## 1.6.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.6.0` &nbsp;·&nbsp; 📅 2026-07-22

@@ -40,4 +40,11 @@ public sealed class StandardRedactorOptions
 
     /// <summary>Token used for <see cref="DenyTerms"/> matches. Default <c>[REDACTED]</c>.</summary>
     public string DenyToken { get; set; } = "[REDACTED]";
+
+    /// <summary>
+    /// Caller-defined regex rules, matched <b>before</b> the built-in patterns (so a domain rule
+    /// wins an overlap with a looser built-in). Each reports under its own category; an invalid
+    /// pattern throws when the redactor is constructed. See <see cref="CustomRedactionRule"/>.
+    /// </summary>
+    public IList<CustomRedactionRule> CustomRules { get; } = new List<CustomRedactionRule>();
 }
