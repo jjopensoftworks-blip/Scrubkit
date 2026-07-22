@@ -74,6 +74,12 @@ public class StreamingTests : IDisposable
     [Fact]
     public async Task Parallelism_is_bounded_by_MaxDegreeOfParallelism()
     {
+        // Ensure the thread pool has workers ready, so the Task.Run work actually overlaps.
+        // Without this, a constrained CI runner can inject pool threads slower than the short
+        // per-file work completes and serialize it — making this concurrency check flaky.
+        ThreadPool.GetMinThreads(out var minWorker, out var minIo);
+        ThreadPool.SetMinThreads(Math.Max(minWorker, 8), minIo);
+
         for (int i = 0; i < 12; i++) Write($"f{i}.txt", "x");
         var probe = new ConcurrencyProbe();
         var options = new ReadOptions { MaxDegreeOfParallelism = 4 };
