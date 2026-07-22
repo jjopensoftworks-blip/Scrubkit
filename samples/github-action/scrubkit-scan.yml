@@ -1,0 +1,55 @@
+# Sample GitHub Action — scan a folder with Scrubkit in CI.
+#
+# Copy this into your own repo's .github/workflows/. It installs the `scrubkit` CLI, scrubs
+# PII + secrets from a folder, and uploads a redacted JSON Lines artifact. Everything runs on
+# the runner — no network calls beyond installing the tool.
+#
+# Two common uses are shown:
+#   1. Produce a scrubbed corpus artifact (e.g. for a downstream embedding / RAG job).
+#   2. Fail the build if any secret/PII would have leaked (a lightweight pre-share gate).
+#
+# Scrubbing is best-effort, not a compliance tool — use it as a safety net, not a guarantee.
+
+name: Scrubkit scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  scrub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install Scrubkit CLI
+        run: dotnet tool install --global Scrubkit.Tool
+
+      # 1) Produce a redacted JSON Lines corpus and upload it as an artifact.
+      - name: Scrub docs → JSON Lines
+        run: scrubkit scan ./docs --redact --format jsonl --out scrubbed.jsonl
+
+      - name: Upload scrubbed corpus
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrubbed-corpus
+          path: scrubbed.jsonl
+
+      # 2) Optional gate: fail if aggressive redaction found anything in the folder you're
+      #    about to share. `--redact=aggressive` casts the widest net; the summary line
+      #    ("N value(s) redacted") goes to stderr, so grep it and exit non-zero on a hit.
+      - name: Fail if secrets/PII detected
+        run: |
+          summary=$(scrubkit scan ./to-share --redact=aggressive --format jsonl --out /dev/null 2>&1 >/dev/null)
+          echo "$summary"
+          redacted=$(echo "$summary" | grep -oE '[0-9]+ value' | grep -oE '[0-9]+' | head -1)
+          if [ "${redacted:-0}" -gt 0 ]; then
+            echo "::error::Scrubkit found ${redacted} sensitive value(s) — resolve before sharing."
+            exit 1
+          fi
+          echo "No sensitive values detected."

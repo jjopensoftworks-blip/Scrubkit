@@ -16,8 +16,8 @@
 
     <!-- A tool package intentionally has no public API surface and ships as an app, not a lib. -->
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <!-- Brand-new package: no published baseline to diff against yet. Remove this override once
-         the first version is on NuGet so it inherits the shared baseline. -->
+    <!-- Package validation (cross-TFM + baseline API diff) doesn't apply to a single-TFM tool
+         that exposes no consumable library surface — kept off permanently, like Scrubkit.All. -->
     <EnablePackageValidation>false</EnablePackageValidation>
     <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
