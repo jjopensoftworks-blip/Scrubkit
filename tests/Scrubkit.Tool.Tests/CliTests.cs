@@ -208,6 +208,59 @@ public class CliTests
     }
 
     [Fact]
+    public void Parses_rules_option()
+    {
+        Assert.Equal("r.json", Options.Parse(new[] { "f", "--rules", "r.json" }).Rules);
+    }
+
+    [Fact]
+    public async Task Rules_file_applies_custom_rules_and_implies_redaction()
+    {
+        var dir = MakeFolder();   // a.txt: email + card
+        File.WriteAllText(Path.Combine(dir, "note.txt"), "Employee E123456 on duty");
+        var aux = Path.Combine(Path.GetTempPath(), "scrubkit-rules-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(aux);
+        var rules = Path.Combine(aux, "rules.json");
+        var outFile = Path.Combine(aux, "o.jsonl");
+        File.WriteAllText(rules, "{\"rules\":[{\"category\":\"EmployeeId\",\"pattern\":\"E[0-9]{6}\",\"token\":\"[EMP]\"}]}");
+        try
+        {
+            var code = await Cli.RunAsync(new[] { "scan", dir, "--rules", rules, "--out", outFile });
+            Assert.Equal(0, code);
+
+            var text = File.ReadAllText(outFile);
+            Assert.Contains("[EMP]", text);          // custom rule applied
+            Assert.DoesNotContain("E123456", text);
+            Assert.Contains("[EMAIL]", text);        // --rules implied redaction, so built-ins ran too
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+            Directory.Delete(aux, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task Missing_or_invalid_rules_file_returns_one()
+    {
+        var dir = MakeFolder();
+        var aux = Path.Combine(Path.GetTempPath(), "scrubkit-rules-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(aux);
+        var badRegex = Path.Combine(aux, "bad.json");
+        File.WriteAllText(badRegex, "{\"rules\":[{\"category\":\"Bad\",\"pattern\":\"(\"}]}");
+        try
+        {
+            Assert.Equal(1, await Cli.RunAsync(new[] { "scan", dir, "--rules", Path.Combine(aux, "missing.json") }));
+            Assert.Equal(1, await Cli.RunAsync(new[] { "scan", dir, "--rules", badRegex }));   // invalid regex
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+            Directory.Delete(aux, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task Scan_writes_parquet_file()
     {
         var dir = MakeFolder();

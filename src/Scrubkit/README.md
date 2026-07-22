@@ -161,6 +161,15 @@ var scrubber = new FolderScrubber(new ReadOptions { Redaction = RedactionLevel.S
 // "AWS key AKIAIOSFODNN7EXAMPLE" → "AWS key [API_KEY]"
 ```
 
+Add your own **custom rules** (matched before the built-ins) plus allow/deny/disable lists via
+`StandardRedactorOptions` — or from a JSON file with the CLI's `--rules`:
+
+```csharp
+var options = new StandardRedactorOptions { Level = RedactionLevel.Standard };
+options.CustomRules.Add(new CustomRedactionRule { Category = "EmployeeId", Pattern = @"\bE\d{6}\b", Token = "[EMP]" });
+var scrubber = new FolderScrubber(new ReadOptions { Redactor = new StandardRedactor(options) });
+```
+
 ---
 
 ## Export the table
