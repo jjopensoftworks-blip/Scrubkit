@@ -143,6 +143,71 @@ public class CliTests
     }
 
     [Fact]
+    public void Parses_incremental_options()
+    {
+        var o = Options.Parse(new[] { "f", "--since", "old.txt", "--manifest", "new.txt" });
+        Assert.Equal("old.txt", o.Since);
+        Assert.Equal("new.txt", o.Manifest);
+    }
+
+    [Fact]
+    public async Task Incremental_scan_emits_only_changed_and_writes_a_bom_free_manifest()
+    {
+        var dir = MakeFolder();   // one file: a.txt
+        // Outputs live outside the scanned folder, so a run never re-ingests them.
+        var outDir = Path.Combine(Path.GetTempPath(), "scrubkit-out-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(outDir);
+        var manifest = Path.Combine(outDir, "state.txt");
+        var out1 = Path.Combine(outDir, "d1.jsonl");
+        var out2 = Path.Combine(outDir, "d2.jsonl");
+        try
+        {
+            // First run: no baseline yet → everything is "changed", manifest written.
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", dir, "--since", manifest, "--manifest", manifest, "--out", out1 }));
+            Assert.Single(File.ReadAllLines(out1));
+            Assert.True(File.Exists(manifest));
+
+            // Manifest must not start with a UTF-8 BOM.
+            var bom = new byte[3];
+            using (var fs = File.OpenRead(manifest)) { _ = fs.Read(bom, 0, 3); }
+            Assert.False(bom[0] == 0xEF && bom[1] == 0xBB && bom[2] == 0xBF, "manifest should have no BOM");
+
+            // Second run, nothing changed → empty delta.
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", dir, "--since", manifest, "--out", out2 }));
+            Assert.Empty(File.ReadAllText(out2).Trim());
+
+            // Add a file → only it appears in the delta.
+            File.WriteAllText(Path.Combine(dir, "b.txt"), "new file with jane@example.com");
+            var out3 = Path.Combine(outDir, "d3.jsonl");
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", dir, "--since", manifest, "--out", out3 }));
+            var line = Assert.Single(File.ReadAllLines(out3));
+            Assert.Contains("b.txt", line);
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+            Directory.Delete(outDir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task Manifest_written_on_a_full_scan_too()
+    {
+        var dir = MakeFolder();
+        var manifest = Path.Combine(dir, "state.txt");
+        try
+        {
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", dir, "--manifest", manifest, "--out", Path.Combine(dir, "o.csv") }));
+            var reloaded = Manifest.Load(new StringReader(File.ReadAllText(manifest)));
+            Assert.Equal(1, reloaded.Count);
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task Scan_writes_parquet_file()
     {
         var dir = MakeFolder();

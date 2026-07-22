@@ -26,6 +26,7 @@ natural first step for RAG ingestion, search indexing, and on-device data prep.
 - **Scrub PII & secrets** — opt-in redaction of emails, cards, IPs, and secrets (API keys,
   JWTs, private keys, connection strings).
 - **RAG-ready** — a `Chunker` for overlapping windows and CSV / JSON / **JSON Lines** / Parquet output.
+- **Incremental** — re-scan only what changed via a lightweight `Manifest` (`ReadChangesAsync`).
 - **Runs from a shell** — the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI (`dotnet tool`) scans a folder with zero code.
 - **Pluggable** — add or override formats with `IFileExtractor`.
 - **Scales** — stream results and process files in parallel for large trees.
@@ -88,6 +89,31 @@ await foreach (var r in new FolderScrubber(options).ReadStreamAsync(@"C:\Docs"))
 
 Output order is preserved. Above a degree of 1, custom extractors should be thread-safe
 (the built-ins are).
+
+---
+
+## Incremental: re-scan only what changed
+
+Keep a lightweight `Manifest` (size + last-write time per file) and, on the next run, extract
+only the added or modified files — unchanged ones are never re-read:
+
+```csharp
+var scrubber = new FolderScrubber();
+var baseline = File.Exists("state.txt")
+    ? Manifest.Load(new StreamReader("state.txt"))
+    : Manifest.Empty;
+
+IncrementalResult result = await scrubber.ReadChangesAsync(@"C:\Docs", baseline);
+
+foreach (var doc in result.Changed) Index(doc);        // added + modified — (re)embed these
+foreach (var gone in result.Removed) index.Delete(gone); // drop deleted files downstream
+
+using var w = new StreamWriter("state.txt");
+result.Manifest.Save(w);                                // persist for next time
+```
+
+Change detection is size + last-write time (no re-read), so a touched-but-identical file counts
+as modified. The manifest is a zero-dependency text sidecar.
 
 ---
 

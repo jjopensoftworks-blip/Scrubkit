@@ -54,12 +54,40 @@ jobs:
         with:
           user: ${{ vars.NUGET_USER }}
 
+      # Push each package on its own, with retries. A single glob push aborts the whole
+      # batch on one transient NuGet error — which once left the family half-published.
+      # Here every package is attempted, each retried with backoff; --skip-duplicate keeps
+      # retries (and re-runs) idempotent. The step fails only if something still can't push.
       - name: Push to NuGet
-        run: >
-          dotnet nuget push "./artifacts/*.nupkg"
-          --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+        shell: bash
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          set -uo pipefail
+          source="https://api.nuget.org/v3/index.json"
+          failed=()
+          for pkg in ./artifacts/*.nupkg; do
+            name=$(basename "$pkg")
+            pushed=0
+            for attempt in 1 2 3 4 5; do
+              echo "::group::push $name (attempt $attempt)"
+              if dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source "$source" --skip-duplicate; then
+                pushed=1
+                echo "::endgroup::"
+                break
+              fi
+              echo "::endgroup::"
+              wait=$((attempt * 15))
+              echo "push failed for $name (attempt $attempt); retrying in ${wait}s"
+              sleep "$wait"
+            done
+            [ "$pushed" -eq 1 ] || failed+=("$name")
+          done
+          if [ ${#failed[@]} -ne 0 ]; then
+            echo "::error::Failed to push after retries: ${failed[*]}"
+            exit 1
+          fi
+          echo "All packages pushed."
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

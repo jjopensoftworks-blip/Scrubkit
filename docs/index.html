@@ -204,6 +204,36 @@
 </div>
 </div>
 </section>
+<!-- CLI Section -->
+<section class="mb-24">
+<div class="bento-card overflow-hidden">
+<div class="flex flex-col md:flex-row">
+<div class="p-bento-padding md:w-1/3 flex flex-col justify-center">
+<p class="font-label-sm text-electric-blue mb-2">NO CODE? USE THE CLI</p>
+<h2 class="font-headline-lg text-headline-lg mb-4">Run it from a shell</h2>
+<p class="text-text-muted font-body-md mb-4">The <code>scrubkit</code> <code>dotnet tool</code> scans a folder, redacts PII + secrets, and writes CSV / JSON / JSON Lines / Parquet — from any shell or CI, no code. Table to stdout, summary to stderr.</p>
+<a href="https://www.nuget.org/packages/Scrubkit.Tool" class="font-label-sm text-electric-blue hover:underline">Scrubkit.Tool on NuGet →</a>
+</div>
+<div class="md:w-2/3 bg-surface-deep p-bento-padding flex items-center">
+<div class="w-full code-container rounded border border-surface-border p-6 font-code-md">
+<pre class="overflow-x-auto text-sm"><span class="text-secondary">$</span> <span class="text-on-surface">dotnet tool install --global Scrubkit.Tool</span>
+
+<span class="text-text-muted"># extract → CSV on stdout</span>
+<span class="text-secondary">$</span> <span class="text-on-surface">scrubkit scan ./docs</span>
+
+<span class="text-text-muted"># scrub PII + secrets → JSON Lines, ready to embed</span>
+<span class="text-secondary">$</span> <span class="text-on-surface">scrubkit scan ./repo --redact --format jsonl --out docs.jsonl</span>
+
+<span class="text-text-muted"># widest net, only PDFs and email</span>
+<span class="text-secondary">$</span> <span class="text-on-surface">scrubkit scan ./data --redact=aggressive --include .pdf,.eml</span></pre>
+</div>
+</div>
+</div>
+</div>
+<p class="text-center text-text-muted font-body-md text-xs mt-4">
+                    In CI? Copy the <a class="text-electric-blue hover:underline" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/samples/github-action/scrubkit-scan.yml">sample GitHub Action</a> to produce a scrubbed corpus artifact — or fail a build if secrets would leak.
+                </p>
+</section>
 <!-- Quick Start & Playground Visual -->
 <section class="grid grid-cols-1 lg:grid-cols-2 gap-container-gap mb-24">
 <div class="flex flex-col justify-between">
@@ -253,7 +283,7 @@
 </li>
 <li class="flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
-<span class="font-label-sm text-on-surface">Length-clipped, index-friendly chunks</span>
+<span class="font-label-sm text-on-surface"><code>Chunker</code> → overlapping windows + JSON Lines</span>
 </li>
 <li class="flex items-center gap-3">
 <span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
