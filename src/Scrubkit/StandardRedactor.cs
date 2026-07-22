@@ -20,14 +20,53 @@ namespace Scrubkit;
 public sealed class StandardRedactor : IRedactor
 {
     private readonly StandardRedactorOptions _options;
+    private readonly MatchRule[] _customRules;
+    private readonly IReadOnlyDictionary<string, string> _customTokens;
 
     /// <summary>Creates a redactor at the given level with default behaviour.</summary>
     public StandardRedactor(RedactionLevel level = RedactionLevel.Standard)
         : this(new StandardRedactorOptions { Level = level }) { }
 
     /// <summary>Creates a redactor from fine-grained <see cref="StandardRedactorOptions"/>.</summary>
-    public StandardRedactor(StandardRedactorOptions options) =>
+    /// <exception cref="ArgumentException">A <see cref="CustomRedactionRule"/> has an empty category/pattern or an invalid regex.</exception>
+    public StandardRedactor(StandardRedactorOptions options)
+    {
         _options = options ?? throw new ArgumentNullException(nameof(options));
+        (_customRules, _customTokens) = BuildCustomRules(_options.CustomRules);
+    }
+
+    // Compile the caller's custom rules once, failing fast on a bad category/pattern/regex. Each
+    // pattern gets a match timeout so an accidental catastrophic regex can't hang a run.
+    private static (MatchRule[] Rules, IReadOnlyDictionary<string, string> Tokens) BuildCustomRules(
+        IEnumerable<CustomRedactionRule> rules)
+    {
+        var compiled = new List<MatchRule>();
+        var tokens = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var r in rules)
+        {
+            if (r is null) continue;
+            if (string.IsNullOrEmpty(r.Category))
+                throw new ArgumentException("A custom redaction rule has an empty Category.");
+            if (string.IsNullOrEmpty(r.Pattern))
+                throw new ArgumentException($"Custom rule '{r.Category}' has an empty Pattern.");
+
+            Regex regex;
+            try
+            {
+                var opts = RegexOptions.CultureInvariant | (r.IgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None);
+                regex = new Regex(r.Pattern, opts, TimeSpan.FromSeconds(1));
+            }
+            catch (ArgumentException ex)
+            {
+                throw new ArgumentException($"Custom rule '{r.Category}' has an invalid regex: {ex.Message}", ex);
+            }
+
+            var token = string.IsNullOrEmpty(r.Token) ? $"[{r.Category.ToUpperInvariant()}]" : r.Token!;
+            compiled.Add(new MatchRule { Regex = regex, Category = r.Category, Token = token });
+            tokens[r.Category] = token;
+        }
+        return (compiled.ToArray(), tokens);
+    }
 
     // ---- patterns (declared before the rule table that references them) -----
 
@@ -186,23 +225,20 @@ public sealed class StandardRedactor : IRedactor
         // Reuse one string view of the masked buffer across rules, rebuilding it only after a
         // rule actually masked something (most rules match nothing on a given text).
         var current = new string(work);
+
+        // Caller's custom rules run before the built-ins, so a domain pattern claims its text
+        // ahead of a looser built-in.
+        foreach (var rule in _customRules)
+        {
+            if (_options.DisabledCategories.Contains(rule.Category)) continue;
+            if (ApplyRule(rule, current, work, claimed, spans)) current = new string(work);
+        }
+
         foreach (var rule in Rules)
         {
             if (rule.Aggressive && _options.Level != RedactionLevel.Aggressive) continue;
             if (_options.DisabledCategories.Contains(rule.Category)) continue;
-
-            var masked = false;
-            foreach (Match m in rule.Regex.Matches(current))
-            {
-                if (rule.Validate is not null && !rule.Validate(m)) continue;
-                if (_options.AllowList.Contains(m.Value)) continue;
-                if (TryClaim(m.Index, m.Length, rule.Category, claimed, spans))
-                {
-                    Mask(work, m.Index, m.Length);
-                    masked = true;
-                }
-            }
-            if (masked) current = new string(work);
+            if (ApplyRule(rule, current, work, claimed, spans)) current = new string(work);
         }
 
         if (spans.Count == 0)
@@ -223,6 +259,32 @@ public sealed class StandardRedactor : IRedactor
         sb.Append(text, pos, text.Length - pos);
 
         return new RedactionResult(sb.ToString(), counts, spans);
+    }
+
+    // Match one rule against the masked working text, claiming + masking each accepted match.
+    // Returns true if anything was masked (so the caller rebuilds the string view). Custom-rule
+    // regexes carry a match timeout; a timeout is treated as "no match" and never throws.
+    private bool ApplyRule(MatchRule rule, string current, char[] work, bool[] claimed, List<RedactionSpan> spans)
+    {
+        var masked = false;
+        try
+        {
+            foreach (Match m in rule.Regex.Matches(current))
+            {
+                if (rule.Validate is not null && !rule.Validate(m)) continue;
+                if (_options.AllowList.Contains(m.Value)) continue;
+                if (TryClaim(m.Index, m.Length, rule.Category, claimed, spans))
+                {
+                    Mask(work, m.Index, m.Length);
+                    masked = true;
+                }
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            // A pathological custom pattern timed out — skip it rather than fail the redaction.
+        }
+        return masked;
     }
 
     private const char MaskChar = '￿';   // non-word, non-digit — matches no pattern
@@ -248,6 +310,7 @@ public sealed class StandardRedactor : IRedactor
     private string TokenFor(string category)
     {
         if (_options.Tokens.TryGetValue(category, out var custom)) return custom;
+        if (_customTokens.TryGetValue(category, out var customRuleToken)) return customRuleToken;
         if (category == RedactionCategories.Custom) return _options.DenyToken;
         return DefaultTokens[category];
     }

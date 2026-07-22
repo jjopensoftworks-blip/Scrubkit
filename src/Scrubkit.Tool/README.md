@@ -42,6 +42,7 @@ scrubkit scan ./docs --since state.txt --manifest state.txt --out delta.jsonl
 | `--format <fmt>` | `csv`, `json`, `jsonl`, or `parquet`. Default: inferred from `--out`'s extension, else `csv`. |
 | `--out <file>` | Write to a file instead of stdout. Required for `parquet`. |
 | `--redact[=<level>]` | Redact PII + secrets. Level `standard` (default) or `aggressive`. Omit to extract without redacting. |
+| `--rules <file>` | JSON file of custom redaction rules + allow/deny/disable lists (implies `--redact`). Format below. |
 | `--no-recurse` | Only the top folder (default: recurse all nested). |
 | `--hash` | Compute a SHA-256 content hash per file. |
 | `--include <exts>` | Comma-separated extension filter, e.g. `--include .pdf,.docx`. |
@@ -58,6 +59,33 @@ The table goes to **stdout** (or `--out`); progress and a summary go to **stderr
 pipe the output cleanly. Exit code is `0` on success, `1` on a usage or I/O error.
 
 Scrubbing is **best-effort, not a compliance tool.**
+
+## Custom rules (`--rules`)
+
+Add your own patterns (and allow/deny/disable lists) without code. Custom rules run **before** the
+built-ins, so a domain pattern wins an overlap. Using `--rules` turns redaction on
+(`--redact=aggressive` still composes). Example `rules.json`:
+
+```json
+{
+  "rules": [
+    { "category": "EmployeeId", "pattern": "\\bE\\d{6}\\b", "token": "[EMP]" },
+    { "category": "CaseNo",     "pattern": "\\bC-\\d+\\b", "ignoreCase": false }
+  ],
+  "allow": ["support@ourco.com"],
+  "deny":  ["Project Titan"],
+  "disable": ["Phone"]
+}
+```
+
+- `rules` — each is `{ category, pattern (.NET regex), token?, ignoreCase? }`; `token` defaults to
+  `[CATEGORY]`. Patterns run with a match timeout, so a runaway regex can't hang a scan.
+- `allow` — exact values never redacted; `deny` — literal terms always redacted; `disable` —
+  built-in categories to switch off (e.g. `Email`, `Phone`).
+
+```sh
+scrubkit scan ./docs --rules rules.json --out clean.jsonl
+```
 
 ## Links
 
