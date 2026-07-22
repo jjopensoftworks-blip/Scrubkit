@@ -14,6 +14,10 @@ return await Cli.RunAsync(args);
 
 internal static class Cli
 {
+    // UTF-8 without a BOM — the right default for the machine-readable files we emit
+    // (CSV / JSON / JSON Lines / manifest); a leading BOM trips many parsers.
+    private static readonly System.Text.Encoding Utf8NoBom = new System.Text.UTF8Encoding(false);
+
     public static async Task<int> RunAsync(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -76,6 +80,10 @@ internal static class Cli
         if (opts.MaxText is { } mt) readOptions.MaxTextLength = mt;
         foreach (var ext in opts.Include) readOptions.IncludeExtensions.Add(ext);
 
+        // Never let the scan ingest its own output / manifest if written inside the folder.
+        if (opts.Out is not null) readOptions.ExcludePaths.Add(opts.Out);
+        if (opts.Manifest is not null) readOptions.ExcludePaths.Add(opts.Manifest);
+
         // Register every add-on extractor so the CLI handles the whole format family.
         readOptions.Extractors.Add(new EmailExtractor());
         readOptions.Extractors.Add(new OpenDocumentExtractor());
@@ -83,18 +91,31 @@ internal static class Cli
 
         var scrubber = new FolderScrubber(readOptions);
 
-        var records = new List<FileRecord>();
-        var redactionTotal = 0;
-        var withWarnings = 0;
+        IReadOnlyList<FileRecord> records;
+        Manifest? manifest = null;
+        var removed = 0;
         try
         {
-            await foreach (var record in scrubber.ReadStreamAsync(opts.Folder!))
+            if (opts.Since is not null)
             {
-                records.Add(record);
-                redactionTotal += record.Redactions.Values.Sum();
-                if (record.Warnings.Count > 0) withWarnings++;
-                if (records.Count % 50 == 0)
-                    Console.Error.Write($"\r  scanned {records.Count} files…");
+                // Incremental: extract only what changed since the baseline manifest.
+                var baseline = LoadBaseline(opts.Since);
+                var result = await scrubber.ReadChangesAsync(opts.Folder!, baseline);
+                records = result.Changed;
+                removed = result.Removed.Count;
+                manifest = result.Manifest;   // complete (changed + carried-forward unchanged)
+            }
+            else
+            {
+                var list = new List<FileRecord>();
+                await foreach (var record in scrubber.ReadStreamAsync(opts.Folder!))
+                {
+                    list.Add(record);
+                    if (list.Count % 50 == 0)
+                        Console.Error.Write($"\r  scanned {list.Count} files…");
+                }
+                records = list;
+                if (opts.Manifest is not null) manifest = Manifest.From(records);
             }
         }
         catch (DirectoryNotFoundException)
@@ -106,6 +127,11 @@ internal static class Cli
         try
         {
             await WriteAsync(records, opts);
+            if (opts.Manifest is not null && manifest is not null)
+            {
+                using var mw = new StreamWriter(opts.Manifest, append: false, Utf8NoBom);
+                manifest.Save(mw);
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -113,11 +139,29 @@ internal static class Cli
             return 1;
         }
 
+        var redactionTotal = records.Sum(r => r.Redactions.Values.Sum());
+        var withWarnings = records.Count(r => r.Warnings.Count > 0);
+        var label = opts.Since is null ? "file(s)" : "changed file(s)";
         Console.Error.Write("\r");   // clear the progress line
         Console.Error.WriteLine(
-            $"Done: {records.Count} file(s), {redactionTotal} value(s) redacted, {withWarnings} with warnings" +
-            (opts.Out is null ? "." : $" → {opts.Out}."));
+            $"Done: {records.Count} {label}, {redactionTotal} value(s) redacted, {withWarnings} with warnings" +
+            (opts.Since is null ? "" : $", {removed} removed") +
+            (opts.Out is null ? "." : $" → {opts.Out}.") +
+            (opts.Manifest is not null ? $" Manifest → {opts.Manifest}." : ""));
         return 0;
+    }
+
+    // Load the baseline manifest for an incremental run. A missing file is not an error — it
+    // means "first run": treat every file as new.
+    private static Manifest LoadBaseline(string path)
+    {
+        if (!File.Exists(path))
+        {
+            Console.Error.WriteLine($"scrubkit: no baseline at '{path}' — treating every file as new.");
+            return Manifest.Empty;
+        }
+        using var reader = new StreamReader(path, System.Text.Encoding.UTF8);
+        return Manifest.Load(reader);
     }
 
     private static async Task WriteAsync(IReadOnlyList<FileRecord> records, Options opts)
@@ -130,7 +174,7 @@ internal static class Cli
 
         TextWriter writer = opts.Out is null
             ? Console.Out
-            : new StreamWriter(opts.Out, append: false, System.Text.Encoding.UTF8);
+            : new StreamWriter(opts.Out, append: false, Utf8NoBom);
         try
         {
             switch (opts.Format)
@@ -171,6 +215,9 @@ OPTIONS
   --no-recurse          Only the top folder (default: recurse all nested folders).
   --hash                Compute a SHA-256 content hash per file.
   --include <exts>      Comma-separated extension filter, e.g. --include .pdf,.docx
+  --since <manifest>    Incremental scan: only output files changed since <manifest>
+                        (a missing file = first run). Skips unchanged files.
+  --manifest <file>     Write a manifest of this scan to <file> (for a later --since).
   --max-files <n>       Stop after n files (0 = no limit).
   --max-bytes <n>       Skip files larger than n bytes (0 = no limit).
   --max-text <n>        Clip extracted text to n characters (0 = no clip).
@@ -183,6 +230,7 @@ EXAMPLES
   scrubkit scan ./docs --redact --format jsonl --out docs.jsonl
   scrubkit scan ./docs --redact=aggressive --include .pdf,.eml --hash
   scrubkit scan ./data --format parquet --out data.parquet
+  scrubkit scan ./docs --since state.txt --manifest state.txt --out delta.jsonl
 
 Everything runs on your machine — no network calls. Best-effort scrubbing, not a
 compliance tool.");
@@ -200,6 +248,8 @@ internal sealed class Options
     public string? Out { get; private set; }
     public bool Hash { get; private set; }
     public bool Utc { get; private set; } = true;
+    public string? Since { get; private set; }
+    public string? Manifest { get; private set; }
     public List<string> Include { get; } = new();
     public int? MaxFiles { get; private set; }
     public long? MaxBytes { get; private set; }
@@ -240,6 +290,12 @@ internal sealed class Options
                     break;
                 case "--local-time":
                     opts.Utc = false;
+                    break;
+                case "--since":
+                    opts.Since = Value(key, inlineValue, args, ref i);
+                    break;
+                case "--manifest":
+                    opts.Manifest = Value(key, inlineValue, args, ref i);
                     break;
                 case "--include":
                     foreach (var ext in Value(key, inlineValue, args, ref i).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

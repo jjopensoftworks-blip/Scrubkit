@@ -37,7 +37,16 @@ public sealed class FolderScrubber
             new PlainTextExtractor(),
             new ImageExtractor(),
         };
+
+        // Normalize the exclusion set to full paths once, so a run never ingests its own output.
+        _excluded = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var p in _options.ExcludePaths)
+        {
+            try { _excluded.Add(Path.GetFullPath(p)); } catch { /* ignore an unparseable path */ }
+        }
     }
+
+    private readonly HashSet<string> _excluded;
 
     /// <summary>
     /// Scrub every eligible file under <paramref name="rootPath"/> and return the whole
@@ -95,6 +104,71 @@ public sealed class FolderScrubber
         }
     }
 
+    /// <summary>
+    /// Scrub only the files that changed since <paramref name="baseline"/>. A file is
+    /// <em>unchanged</em> when its path is in the baseline with the same size and last-write
+    /// time; unchanged files are skipped (never re-extracted) and carried into the result
+    /// manifest as-is. Added / modified files are extracted and returned in
+    /// <see cref="IncrementalResult.Changed"/>; paths gone from disk are in
+    /// <see cref="IncrementalResult.Removed"/>. Persist <see cref="IncrementalResult.Manifest"/>
+    /// and pass it back as the baseline next time.
+    ///
+    /// Change detection is size + mtime only (no re-read), so a file that was touched but not
+    /// edited counts as modified. Pass <see cref="Manifest.Empty"/> to treat every file as new.
+    /// </summary>
+    /// <exception cref="DirectoryNotFoundException">The root folder does not exist.</exception>
+    public Task<IncrementalResult> ReadChangesAsync(
+        string rootPath, Manifest baseline, CancellationToken ct = default)
+    {
+        if (baseline is null) throw new ArgumentNullException(nameof(baseline));
+        return Task.Run(() => ReadChanges(rootPath, baseline, ct), ct);
+    }
+
+    private IncrementalResult ReadChanges(string rootPath, Manifest baseline, CancellationToken ct)
+    {
+        if (!Directory.Exists(rootPath))
+            throw new DirectoryNotFoundException($"Folder not found: {rootPath}");
+
+        var changed = new List<FileRecord>();
+        var entries = new List<ManifestEntry>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var path in Enumerate(rootPath))
+        {
+            ct.ThrowIfCancellationRequested();
+            seen.Add(path);
+
+            long size = -1;
+            DateTime modified = DateTime.MinValue;
+            try { var info = new FileInfo(path); size = info.Length; modified = info.LastWriteTimeUtc; }
+            catch { /* stat failed → treat as changed so it gets reprocessed */ }
+
+            if (size >= 0 && baseline.TryGet(path, out var prev) &&
+                prev.SizeBytes == size && prev.Modified == modified)
+            {
+                entries.Add(prev);   // unchanged: carry forward, no extraction
+                _options.OnDiagnostic?.Invoke(new ScrubDiagnostic(path, "unchanged", "unchanged", isWarning: false));
+                continue;
+            }
+
+            var record = ReadOne(path);
+            changed.Add(record);
+            entries.Add(ManifestEntry.From(record));
+        }
+
+        var removed = baseline.Entries
+            .Select(e => e.Path)
+            .Where(p => !seen.Contains(p))
+            .ToList();
+
+        return new IncrementalResult
+        {
+            Changed = changed,
+            Removed = removed,
+            Manifest = new Manifest(entries),
+        };
+    }
+
     private IEnumerable<string> Enumerate(string root)
     {
         var opt = _options.Recursion == Recursion.AllNested
@@ -111,6 +185,12 @@ public sealed class FolderScrubber
                 !_options.IncludeExtensions.Contains(ext.TrimStart('.')) &&
                 !_options.IncludeExtensions.Contains(ext))
                 continue;
+            if (_excluded.Count > 0)
+            {
+                string full;
+                try { full = Path.GetFullPath(f); } catch { full = f; }
+                if (_excluded.Contains(full)) continue;
+            }
             yield return f;
         }
     }

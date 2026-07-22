@@ -30,6 +30,9 @@ scrubkit scan ./docs --redact=aggressive --include .pdf,.eml --hash
 
 # Columnar output for analytics
 scrubkit scan ./data --format parquet --out data.parquet
+
+# Incremental: only output files changed since the last run, and update the manifest
+scrubkit scan ./docs --since state.txt --manifest state.txt --out delta.jsonl
 ```
 
 ## Options
@@ -42,6 +45,8 @@ scrubkit scan ./data --format parquet --out data.parquet
 | `--no-recurse` | Only the top folder (default: recurse all nested). |
 | `--hash` | Compute a SHA-256 content hash per file. |
 | `--include <exts>` | Comma-separated extension filter, e.g. `--include .pdf,.docx`. |
+| `--since <manifest>` | Incremental: only output files changed since `<manifest>` (a missing file = first run). Skips unchanged files. |
+| `--manifest <file>` | Write a manifest of this scan to `<file>` (for a later `--since`). |
 | `--max-files <n>` | Stop after `n` files (`0` = no limit). |
 | `--max-bytes <n>` | Skip files larger than `n` bytes (`0` = no limit). |
 | `--max-text <n>` | Clip extracted text to `n` characters (`0` = no clip). |
