@@ -75,15 +75,23 @@ await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 
 ## No code? Use the CLI
 
-Install the `scrubkit` tool and scan a folder straight from a shell or CI:
+Install the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) tool and scan a folder
+straight from a shell or CI:
 
 ```sh
 dotnet tool install --global Scrubkit.Tool
-scrubkit scan ./docs --redact --format jsonl --out docs.jsonl
+
+scrubkit scan ./docs                                          # extract → CSV on stdout
+scrubkit scan ./repo --redact --format jsonl --out docs.jsonl # scrub PII + secrets → JSON Lines
+scrubkit scan ./data --redact=aggressive --include .pdf,.eml  # widest net, filtered
 ```
 
-It extracts, optionally redacts PII + secrets, and writes CSV / JSON / JSON Lines / Parquet —
-fully offline. See [`src/Scrubkit.Tool`](src/Scrubkit.Tool/README.md).
+The table goes to stdout (or `--out`); progress + a summary go to stderr, so it pipes cleanly.
+Output formats: CSV / JSON / JSON Lines / Parquet. Exit code `0` on success, `1` on a usage /
+I/O error. Full flag list: [`src/Scrubkit.Tool`](src/Scrubkit.Tool/README.md).
+
+**In CI:** copy [`samples/github-action/scrubkit-scan.yml`](samples/github-action/scrubkit-scan.yml)
+to produce a scrubbed corpus artifact, or fail a build if secrets/PII would leak.
 
 ## Try it without installing
 
