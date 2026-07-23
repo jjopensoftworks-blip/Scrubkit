@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <PackageId>Scrubkit.Email</PackageId>
-    <Title>Scrubkit.Email — .eml (email) extractor for Scrubkit</Title>
-    <Description>Add-on IFileExtractor for Scrubkit that reads .eml (MIME email) files: the From/To/Cc/Subject/Date headers become metadata and the message body becomes text. Handles multipart messages, base64 and quoted-printable encodings, common charsets, and RFC 2047 encoded-word headers — fully offline with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>
-    <PackageTags>scrubkit;email;eml;mime;extraction;text-extraction;offline;rag;ingestion</PackageTags>
+    <Title>Scrubkit.Email — .eml / .msg (email) extractors for Scrubkit</Title>
+    <Description>Add-on IFileExtractors for Scrubkit that read email files: .eml (MIME) and .msg (Outlook / OLE2). The From/To/Cc/Subject/Date fields become metadata and the message body becomes text. Handles multipart MIME, base64 and quoted-printable encodings, common charsets, RFC 2047 encoded-word headers, and the Outlook compound-file format — fully offline with no dependencies beyond Scrubkit.Abstractions. Register them via ReadOptions.Extractors.</Description>
+    <PackageTags>scrubkit;email;eml;msg;outlook;mime;extraction;text-extraction;offline;rag;ingestion</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

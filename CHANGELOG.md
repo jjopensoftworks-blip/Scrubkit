@@ -29,6 +29,14 @@ Clean text out of HTML and RTF — markup stripped, not dumped.
   the previous "read verbatim, markup included" behaviour for these three extensions is
   replaced. `.xml` is still read as-is.
 
+### 🚀 Outlook `.msg` support (`Scrubkit.Email`)
+
+- **`MsgExtractor`** reads Outlook **`.msg`** (OLE2 / compound-file) messages, completing the
+  email family alongside `.eml` — no new package. `From` / `To` / `Cc` / `Subject` / `Date`
+  become metadata and the body becomes text; it prefers the Unicode MAPI property streams and
+  falls back to ANSI. A small built-in compound-file reader keeps the add-on **zero-dependency**
+  (only `Scrubkit.Abstractions`). Register it via `ReadOptions.Extractors.Add(new MsgExtractor())`.
+
 ## 1.7.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.7.0` &nbsp;·&nbsp; 📅 2026-07-22
