@@ -7,6 +7,28 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.8.0
+
+![Pre-release](https://img.shields.io/badge/release-Unreleased-orange?style=flat-square) &nbsp; 🏷️ `v1.8.0` &nbsp;·&nbsp; 📅 Unreleased
+
+&nbsp;
+
+---
+
+Clean text out of HTML and RTF — markup stripped, not dumped.
+
+### 🚀 HTML & RTF clean-text extractors
+
+- **`.html` / `.htm`** now route to a new **`HtmlExtractor`**: it drops `<script>`/`<style>`
+  blocks and comments, strips tags, decodes HTML entities, and pulls the document
+  `<title>` into metadata — instead of returning the raw markup.
+- **`.rtf`** now routes to a new **`RtfExtractor`**: it strips control words and groups,
+  expands `\'hh` and `\uN` escapes, and drops non-text destinations (font/colour tables,
+  pictures, document metadata).
+- Both are **zero-dependency** (BCL only) and register ahead of the plain-text reader, so
+  the previous "read verbatim, markup included" behaviour for these three extensions is
+  replaced. `.xml` is still read as-is.
+
 ## 1.7.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.7.0` &nbsp;·&nbsp; 📅 2026-07-22

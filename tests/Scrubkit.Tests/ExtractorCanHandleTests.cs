@@ -32,15 +32,32 @@ public class ExtractorCanHandleTests
     [InlineData(".log", true)]
     [InlineData(".json", true)]
     [InlineData(".xml", true)]
-    [InlineData(".html", true)]
-    [InlineData(".htm", true)]
-    [InlineData(".rtf", true)]
+    [InlineData(".html", false)]   // handled by HtmlExtractor
+    [InlineData(".htm", false)]    // handled by HtmlExtractor
+    [InlineData(".rtf", false)]    // handled by RtfExtractor
     [InlineData(".pdf", false)]
     [InlineData(".docx", false)]
     [InlineData(".jpg", false)]
     [InlineData(".eml", false)]
     public void PlainText(string ext, bool expected) =>
         Assert.Equal(expected, new PlainTextExtractor().CanHandle(ext));
+
+    [Theory]
+    [InlineData(".html", true)]
+    [InlineData(".htm", true)]
+    [InlineData(".rtf", false)]
+    [InlineData(".txt", false)]
+    [InlineData(".xml", false)]
+    public void Html(string ext, bool expected) =>
+        Assert.Equal(expected, new HtmlExtractor().CanHandle(ext));
+
+    [Theory]
+    [InlineData(".rtf", true)]
+    [InlineData(".html", false)]
+    [InlineData(".txt", false)]
+    [InlineData(".doc", false)]
+    public void Rtf(string ext, bool expected) =>
+        Assert.Equal(expected, new RtfExtractor().CanHandle(ext));
 
     [Theory]
     [InlineData(".jpg", true)]

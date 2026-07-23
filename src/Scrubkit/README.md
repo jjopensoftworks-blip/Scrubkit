@@ -62,13 +62,15 @@ Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, `SizeBy
 
 | Category      | Extensions                                       |
 | ------------- | ------------------------------------------------ |
-| Documents     | PDF, DOCX                                        |
+| Documents     | PDF, DOCX, RTF                                   |
 | Spreadsheets  | XLSX, CSV                                        |
 | Presentations | PPTX                                             |
-| Text          | TXT, MD, LOG, JSON, XML, HTML, HTM, RTF          |
+| Web / markup  | HTML, HTM                                        |
+| Text          | TXT, MD, LOG, JSON, XML                          |
 | Images        | JPG, PNG, TIFF, HEIC, WebP, GIF, BMP (EXIF only) |
 
-Text-family formats are read as raw text — markup in RTF/HTML/XML is **not** stripped.
+HTML and RTF are stripped to **clean text** (tags/control words removed, entities decoded).
+Plain-text formats are read as-is — markup in XML is **not** stripped.
 Images yield **EXIF metadata only** (make / model / software) — no pixels, no OCR.
 Unknown types return a metadata-only row. Extraction never throws to the caller —
 per-file problems land in `FileRecord.Warnings`.
