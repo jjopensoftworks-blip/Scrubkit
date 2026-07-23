@@ -37,6 +37,19 @@ Clean text out of HTML and RTF — markup stripped, not dumped.
   falls back to ANSI. A small built-in compound-file reader keeps the add-on **zero-dependency**
   (only `Scrubkit.Abstractions`). Register it via `ReadOptions.Extractors.Add(new MsgExtractor())`.
 
+### 🚀 De-identification: stable tokens & format-preserving masks
+
+- **`StandardRedactorOptions.StableTokens`** gives each masked value a deterministic suffix
+  (`[EMAIL_3f9a1c8e]`) so identical values collapse to the same token and records stay
+  **joinable** for analytics. **`TokenSalt`** mixes in a secret so tokens can't be correlated
+  across corpora or recovered by hashing candidate values.
+- **`RevealLast`** renders a **format-preserving mask** that keeps the last _n_ characters of a
+  value per category — e.g. `RevealLast["Card"] = 4` turns `4111 1111 1111 1111` into
+  `**** **** **** 1111` (separators preserved; `MaskChar` configurable).
+- Both surface through the CLI `--rules` JSON (`stableTokens`, `tokenSalt`, `revealLast`,
+  `maskChar`). Spans and per-category counts are unchanged; de-identification is best-effort,
+  not a cryptographic guarantee.
+
 ## 1.7.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.7.0` &nbsp;·&nbsp; 📅 2026-07-22

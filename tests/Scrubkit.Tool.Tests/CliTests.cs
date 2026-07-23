@@ -261,6 +261,33 @@ public class CliTests
     }
 
     [Fact]
+    public async Task Rules_file_enables_stable_tokens_and_reveal_last()
+    {
+        var dir = MakeFolder();   // a.txt: "Email jane@example.com and card 4111111111111111."
+        var aux = Path.Combine(Path.GetTempPath(), "scrubkit-rules-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(aux);
+        var rules = Path.Combine(aux, "rules.json");
+        var outFile = Path.Combine(aux, "o.jsonl");
+        File.WriteAllText(rules, "{\"stableTokens\":true,\"revealLast\":{\"Card\":4}}");
+        try
+        {
+            var code = await Cli.RunAsync(new[] { "scan", dir, "--rules", rules, "--out", outFile });
+            Assert.Equal(0, code);
+
+            var text = File.ReadAllText(outFile);
+            Assert.Matches(@"\[EMAIL_[0-9a-f]{8}\]", text);   // stable token
+            Assert.Contains("************1111", text);         // format-preserving card mask
+            Assert.DoesNotContain("jane@example.com", text);
+            Assert.DoesNotContain("4111111111111111", text);
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+            Directory.Delete(aux, recursive: true);
+        }
+    }
+
+    [Fact]
     public async Task Scan_writes_parquet_file()
     {
         var dir = MakeFolder();

@@ -172,6 +172,19 @@ options.CustomRules.Add(new CustomRedactionRule { Category = "EmployeeId", Patte
 var scrubber = new FolderScrubber(new ReadOptions { Redactor = new StandardRedactor(options) });
 ```
 
+**De-identify while keeping data joinable.** Turn on `StableTokens` so identical values collapse
+to the same deterministic token (`jane@example.com` → `[EMAIL_3f9a1c8e]`), and use `RevealLast`
+for a format-preserving mask that keeps a value's tail (e.g. the last 4 of a card):
+
+```csharp
+var options = new StandardRedactorOptions { Level = RedactionLevel.Standard, StableTokens = true };
+options.TokenSalt = "per-deployment-secret";   // so tokens can't be correlated or reversed
+options.RevealLast["Card"] = 4;                 // 4111 1111 1111 1111 -> **** **** **** 1111
+```
+
+De-identification is best-effort, not a cryptographic guarantee — with a low-entropy value and no
+salt, a stable token can be recovered by hashing candidates; set `TokenSalt` to mitigate that.
+
 ---
 
 ## Export the table
