@@ -47,4 +47,34 @@ public sealed class StandardRedactorOptions
     /// pattern throws when the redactor is constructed. See <see cref="CustomRedactionRule"/>.
     /// </summary>
     public IList<CustomRedactionRule> CustomRules { get; } = new List<CustomRedactionRule>();
+
+    /// <summary>
+    /// When <c>true</c>, each masked value gets a <b>stable</b>, deterministic suffix derived from
+    /// the value itself, so identical values collapse to the same token (e.g. every
+    /// <c>jane@example.com</c> becomes <c>[EMAIL_3f9a1c8e]</c>). This de-identifies the text while
+    /// keeping records <b>joinable</b> for analytics. Categories listed in <see cref="RevealLast"/>
+    /// are rendered as a format-preserving mask instead and are unaffected. Default <c>false</c>.
+    /// </summary>
+    public bool StableTokens { get; set; }
+
+    /// <summary>
+    /// Optional secret mixed into the <see cref="StableTokens"/> hash. Set it to a per-deployment
+    /// secret so tokens can't be correlated across corpora and low-entropy values (SSNs, cards)
+    /// can't be recovered by hashing candidates. With no salt, tokens are stable but guessable —
+    /// this is de-identification, not a cryptographic guarantee.
+    /// </summary>
+    public string? TokenSalt { get; set; }
+
+    /// <summary>
+    /// Per-category count of trailing alphanumeric characters to keep in the clear as a
+    /// <b>format-preserving mask</b> — e.g. <c>{ ["Card"] = 4 }</c> renders
+    /// <c>4111 1111 1111 1111</c> as <c>**** **** **** 1111</c>. Separators are preserved; the
+    /// revealed tail keeps the value joinable. Best used on long, structured categories (card,
+    /// phone, IBAN, SSN). A category here is masked in place and ignores <see cref="StableTokens"/>.
+    /// </summary>
+    public IDictionary<string, int> RevealLast { get; } =
+        new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Character used to mask hidden positions in a <see cref="RevealLast"/> mask. Default <c>'*'</c>.</summary>
+    public char MaskChar { get; set; } = '*';
 }

@@ -34,6 +34,8 @@ public sealed class FolderScrubber
         {
             new PdfExtractor(),
             new OfficeExtractor(),
+            new HtmlExtractor(),
+            new RtfExtractor(),
             new PlainTextExtractor(),
             new ImageExtractor(),
         };

@@ -74,7 +74,10 @@ built-ins, so a domain pattern wins an overlap. Using `--rules` turns redaction 
   ],
   "allow": ["support@ourco.com"],
   "deny":  ["Project Titan"],
-  "disable": ["Phone"]
+  "disable": ["Phone"],
+  "stableTokens": true,
+  "tokenSalt": "per-deployment-secret",
+  "revealLast": { "Card": 4 }
 }
 ```
 
@@ -82,6 +85,11 @@ built-ins, so a domain pattern wins an overlap. Using `--rules` turns redaction 
   `[CATEGORY]`. Patterns run with a match timeout, so a runaway regex can't hang a scan.
 - `allow` — exact values never redacted; `deny` — literal terms always redacted; `disable` —
   built-in categories to switch off (e.g. `Email`, `Phone`).
+- `stableTokens` — give each value a deterministic suffix so identical values share a token
+  (e.g. `[EMAIL_3f9a1c8e]`) and stay **joinable** for analytics. `tokenSalt` mixes a secret into
+  that hash so tokens can't be correlated across corpora or reversed by guessing.
+- `revealLast` — per-category count of trailing characters to keep as a **format-preserving mask**,
+  e.g. `{ "Card": 4 }` renders `**** **** **** 1111`. `maskChar` sets the mask character (default `*`).
 
 ```sh
 scrubkit scan ./docs --rules rules.json --out clean.jsonl

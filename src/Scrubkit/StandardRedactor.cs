@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,6 +17,11 @@ namespace Scrubkit;
 /// <see cref="RedactionResult.Spans"/> (offsets into the original text) alongside the counts.
 /// Configure per-category behaviour, custom tokens, and allow/deny lists via
 /// <see cref="StandardRedactorOptions"/>.
+///
+/// For analytics-friendly de-identification, <see cref="StandardRedactorOptions.StableTokens"/>
+/// emits a deterministic per-value suffix (so equal values share a token and stay joinable) and
+/// <see cref="StandardRedactorOptions.RevealLast"/> renders a format-preserving mask that keeps a
+/// value's trailing characters (e.g. the last 4 of a card).
 /// </summary>
 public sealed class StandardRedactor : IRedactor
 {
@@ -252,7 +258,7 @@ public sealed class StandardRedactor : IRedactor
         foreach (var span in spans)
         {
             sb.Append(text, pos, span.Start - pos);
-            sb.Append(TokenFor(span.Category));
+            sb.Append(Render(span.Category, text, span.Start, span.Length));
             counts[span.Category] = counts.GetValueOrDefault(span.Category) + 1;
             pos = span.Start + span.Length;
         }
@@ -305,6 +311,52 @@ public sealed class StandardRedactor : IRedactor
     private static void Mask(char[] work, int start, int length)
     {
         for (var i = start; i < start + length; i++) work[i] = MaskChar;
+    }
+
+    // Render a claimed span: a format-preserving mask when the category opts into RevealLast,
+    // a stable per-value token when StableTokens is on, otherwise the plain category token.
+    private string Render(string category, string text, int start, int length)
+    {
+        if (_options.RevealLast.TryGetValue(category, out var reveal) && reveal >= 0)
+            return FormatPreservingMask(text, start, length, reveal);
+
+        var token = TokenFor(category);
+        if (!_options.StableTokens) return token;
+
+        var code = StableCode(text.Substring(start, length));
+        // Insert the code inside a "[TOKEN]" wrapper, else append it: "[EMAIL_ab12cd34]".
+        return token.Length >= 2 && token[0] == '[' && token[token.Length - 1] == ']'
+            ? $"{token.Substring(0, token.Length - 1)}_{code}]"
+            : $"{token}_{code}";
+    }
+
+    // Keep the last `reveal` alphanumeric characters of the value; replace earlier alphanumerics
+    // with the mask char and pass separators (spaces, dashes, dots, @) through unchanged.
+    private string FormatPreservingMask(string text, int start, int length, int reveal)
+    {
+        var kept = 0;
+        var chars = new char[length];
+        for (var i = length - 1; i >= 0; i--)
+        {
+            var c = text[start + i];
+            if (char.IsLetterOrDigit(c))
+                chars[i] = kept++ < reveal ? c : _options.MaskChar;
+            else
+                chars[i] = c;
+        }
+        return new string(chars);
+    }
+
+    // A short, deterministic code for a value: hex of the first 4 bytes of SHA-256(salt + value).
+    // Equal values (with the same salt) always produce the same code, so records stay joinable.
+    private string StableCode(string value)
+    {
+        var salted = (_options.TokenSalt ?? "") + "\0" + value;
+        using var sha = SHA256.Create();
+        var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(salted));
+        var sb = new StringBuilder(8);
+        for (var i = 0; i < 4; i++) sb.Append(hash[i].ToString("x2"));
+        return sb.ToString();
     }
 
     private string TokenFor(string category)

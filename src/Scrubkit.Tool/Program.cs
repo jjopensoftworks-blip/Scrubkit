@@ -206,6 +206,12 @@ internal static class Cli
         foreach (var d in cfg.Deny ?? new()) options.DenyTerms.Add(d);
         foreach (var c in cfg.Disable ?? new()) options.DisabledCategories.Add(c);
 
+        // De-identification: stable per-value tokens and/or per-category format-preserving masks.
+        options.StableTokens = cfg.StableTokens;
+        options.TokenSalt = cfg.TokenSalt;
+        if (!string.IsNullOrEmpty(cfg.MaskChar)) options.MaskChar = cfg.MaskChar![0];
+        foreach (var kv in cfg.RevealLast ?? new()) options.RevealLast[kv.Key] = kv.Value;
+
         return new StandardRedactor(options);   // validates the rules (throws on a bad regex)
     }
 
@@ -215,6 +221,10 @@ internal static class Cli
         public List<string>? Allow { get; set; }
         public List<string>? Deny { get; set; }
         public List<string>? Disable { get; set; }
+        public bool StableTokens { get; set; }
+        public string? TokenSalt { get; set; }
+        public Dictionary<string, int>? RevealLast { get; set; }
+        public string? MaskChar { get; set; }
     }
 
     private sealed class RuleDto
