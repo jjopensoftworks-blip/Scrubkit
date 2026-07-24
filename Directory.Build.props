@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.6.0 — Incremental scans. FolderScrubber.ReadChangesAsync(root, baseline) extracts only files added or modified since a Manifest (size + last-write time); returns the delta, removed paths, and a fresh complete manifest to persist. Manifest is a zero-dependency text sidecar (Save/Load/From). New ReadOptions.ExcludePaths keeps a run from ingesting its own output. CLI: --since / --manifest flags; output is now UTF-8 without a BOM. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.7.0 — Custom redaction rules. StandardRedactorOptions.CustomRules takes caller-defined CustomRedactionRules (category/pattern/token/ignoreCase), matched before the built-ins so a domain rule wins an overlap; patterns compile with a match timeout (ReDoS-safe) and an invalid pattern throws at construction. CLI: --rules &lt;file&gt; loads custom rules plus allow/deny/disable lists from JSON and implies redaction. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
@@ -55,7 +55,7 @@
          baseline diff against the last stable release so accidental breaking changes fail
          the build. Bump the baseline to each new stable version as it ships. -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>1.6.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.7.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' != 'false'">
