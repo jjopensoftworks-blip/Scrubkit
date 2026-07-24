@@ -62,13 +62,15 @@ Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, `SizeBy
 
 | Category      | Extensions                                       |
 | ------------- | ------------------------------------------------ |
-| Documents     | PDF, DOCX                                        |
+| Documents     | PDF, DOCX, RTF                                   |
 | Spreadsheets  | XLSX, CSV                                        |
 | Presentations | PPTX                                             |
-| Text          | TXT, MD, LOG, JSON, XML, HTML, HTM, RTF          |
+| Web / markup  | HTML, HTM                                        |
+| Text          | TXT, MD, LOG, JSON, XML                          |
 | Images        | JPG, PNG, TIFF, HEIC, WebP, GIF, BMP (EXIF only) |
 
-Text-family formats are read as raw text — markup in RTF/HTML/XML is **not** stripped.
+HTML and RTF are stripped to **clean text** (tags/control words removed, entities decoded).
+Plain-text formats are read as-is — markup in XML is **not** stripped.
 Images yield **EXIF metadata only** (make / model / software) — no pixels, no OCR.
 Unknown types return a metadata-only row. Extraction never throws to the caller —
 per-file problems land in `FileRecord.Warnings`.
@@ -169,6 +171,19 @@ var options = new StandardRedactorOptions { Level = RedactionLevel.Standard };
 options.CustomRules.Add(new CustomRedactionRule { Category = "EmployeeId", Pattern = @"\bE\d{6}\b", Token = "[EMP]" });
 var scrubber = new FolderScrubber(new ReadOptions { Redactor = new StandardRedactor(options) });
 ```
+
+**De-identify while keeping data joinable.** Turn on `StableTokens` so identical values collapse
+to the same deterministic token (`jane@example.com` → `[EMAIL_3f9a1c8e]`), and use `RevealLast`
+for a format-preserving mask that keeps a value's tail (e.g. the last 4 of a card):
+
+```csharp
+var options = new StandardRedactorOptions { Level = RedactionLevel.Standard, StableTokens = true };
+options.TokenSalt = "per-deployment-secret";   // so tokens can't be correlated or reversed
+options.RevealLast["Card"] = 4;                 // 4111 1111 1111 1111 -> **** **** **** 1111
+```
+
+De-identification is best-effort, not a cryptographic guarantee — with a low-entropy value and no
+salt, a stable token can be recovered by hashing candidates; set `TokenSalt` to mitigate that.
 
 ---
 
