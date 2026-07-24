@@ -68,4 +68,36 @@ public class RtfExtractorTests
     {
         Assert.Equal("a—b", Extract(@"{\rtf1 a\emdash b}"));
     }
+
+    [Fact]
+    public void Maps_dashes_quotes_and_bullet()
+    {
+        var t = Extract(@"{\rtf1 \endash\lquote\rquote\ldblquote\rdblquote\bullet}");
+        Assert.Contains("–", t);   // endash
+        Assert.Contains("‘", t);   // lquote
+        Assert.Contains("’", t);   // rquote
+        Assert.Contains("“", t);   // ldblquote
+        Assert.Contains("”", t);   // rdblquote
+        Assert.Contains("•", t);   // bullet
+    }
+
+    [Fact]
+    public void Tab_and_cell_become_spaces()
+    {
+        Assert.Equal("a b", Extract(@"{\rtf1 a\tab b}"));
+        Assert.Equal("a b", Extract(@"{\rtf1 a\cell b}"));
+    }
+
+    [Fact]
+    public void Handles_nbsp_and_hyphen_control_symbols()
+    {
+        Assert.Equal("a b-c-d", Extract(@"{\rtf1 a\~b\_c\-d}"));
+    }
+
+    [Fact]
+    public void Uc_override_skips_multiple_fallback_chars()
+    {
+        // \uc2 sets the fallback width to 2, so both '?'s after \u233 are dropped.
+        Assert.Equal("café", Extract(@"{\rtf1\uc2 caf\u233??}"));
+    }
 }
