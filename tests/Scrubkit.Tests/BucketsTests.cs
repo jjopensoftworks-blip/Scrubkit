@@ -8,6 +8,7 @@ public class BucketsTests
     [Theory]
     // Documents
     [InlineData(".pdf", "Document")]
+    [InlineData(".doc", "Document")]
     [InlineData(".docx", "Document")]
     [InlineData(".rtf", "Document")]
     [InlineData(".odt", "Document")]
