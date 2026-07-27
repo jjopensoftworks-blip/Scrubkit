@@ -7,8 +7,8 @@
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <PackageId>Scrubkit.All</PackageId>
     <Title>Scrubkit.All — the whole Scrubkit family in one reference</Title>
-    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml, OpenDocument, .epub), the AddScrubkit dependency-injection integration, and — on net8.0 — Parquet output. Install this to read everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
-    <PackageTags>scrubkit;bundle;meta;all;extraction;text-extraction;pdf;office;email;epub;opendocument;parquet;offline;rag;ingestion</PackageTags>
+    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml/.msg email, OpenDocument, .epub, legacy binary Office .doc/.xls/.ppt), the AddScrubkit dependency-injection integration, and — on net8.0 — Parquet output. Install this to read everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
+    <PackageTags>scrubkit;bundle;meta;all;extraction;text-extraction;pdf;office;email;epub;opendocument;legacyoffice;parquet;offline;rag;ingestion</PackageTags>
 
     <!-- No compiled output, no API surface: it's purely a dependency aggregator. -->
     <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Scrubkit.Email\Scrubkit.Email.csproj" />
     <ProjectReference Include="..\Scrubkit.OpenDocument\Scrubkit.OpenDocument.csproj" />
     <ProjectReference Include="..\Scrubkit.Epub\Scrubkit.Epub.csproj" />
+    <ProjectReference Include="..\Scrubkit.LegacyOffice\Scrubkit.LegacyOffice.csproj" />
     <ProjectReference Include="..\Scrubkit.Extensions.DependencyInjection\Scrubkit.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 

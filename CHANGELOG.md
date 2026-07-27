@@ -7,6 +7,29 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.9.0
+
+![Pre-release](https://img.shields.io/badge/release-Unreleased-orange?style=flat-square) &nbsp; 🏷️ `v1.9.0` &nbsp;·&nbsp; 📅 Unreleased
+
+&nbsp;
+
+---
+
+Legacy binary Office — the biggest remaining raw-format gap, closed with zero dependencies.
+
+### 🚀 `Scrubkit.LegacyOffice` — `.doc` / `.xls` / `.ppt`
+
+- New add-on package reads the **pre-2007 binary** Office formats: Word (`.doc`), Excel (`.xls`),
+  and PowerPoint (`.ppt`). Body text becomes the record text and `Title` / `Author` / `Subject`
+  become metadata (from the OLE `SummaryInformation`).
+- **Zero-dependency** — parses the OLE2 compound file and each format's streams with the BCL
+  (Word FIB + piece table, Excel shared-string table with `CONTINUE` splits, PowerPoint text
+  atoms). No NPOI, no interop. Multi-targets `netstandard2.0`/`net8.0`.
+- Each format's parser sits behind its own internal reader, so one can be improved or swapped
+  without changing the package's public surface. Register via
+  `ReadOptions.Extractors.Add(new LegacyOfficeExtractor())`; `Scrubkit.All` bundles it.
+- `Buckets.For` now maps `.doc` to the **Document** bucket.
+
 ## 1.8.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.8.0` &nbsp;·&nbsp; 📅 2026-07-25
