@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.8.0 — HTML/RTF clean-text, Outlook .msg, and de-identification. New HtmlExtractor (.html/.htm) and RtfExtractor (.rtf) strip markup/control words to clean text instead of returning raw markup (BCL-only). New MsgExtractor reads Outlook .msg (OLE2 compound file) in Scrubkit.Email, completing the email family with no new package. StandardRedactorOptions gains StableTokens (+ TokenSalt) for deterministic, joinable pseudonymisation and RevealLast/MaskChar for format-preserving masks (keep the last 4 of a card); both are also exposed via the CLI --rules JSON. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.9.0 — Legacy binary Office. New Scrubkit.LegacyOffice add-on reads pre-2007 binary Word (.doc), Excel (.xls), and PowerPoint (.ppt) straight off the OLE2 compound file with the BCL — zero dependencies, no NPOI, no Office interop. Body text becomes the record text; Title/Author/Subject come from the shared SummaryInformation (HPSF) reader. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
