@@ -9,8 +9,9 @@ namespace Scrubkit;
 /// </summary>
 internal static class SummaryInformation
 {
-    // The directory entry name is a 0x05 control byte followed by "SummaryInformation".
-    private const string StreamName = "SummaryInformation";
+    // Real files store this stream as "\x05SummaryInformation" (leading OLE control byte);
+    // CompoundFile also indexes it under the stripped name, which is what we look up here.
+    private const string StreamName = "SummaryInformation";
     private const int PidCodepage = 0x01, PidTitle = 0x02, PidSubject = 0x03, PidAuthor = 0x04;
     private const uint VtI2 = 0x02, VtLpstr = 0x1E, VtLpwstr = 0x1F;
 
