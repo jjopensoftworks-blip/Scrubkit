@@ -6,10 +6,6 @@
     <Title>Scrubkit.LegacyOffice — .doc/.xls/.ppt (legacy binary Office) extractor for Scrubkit</Title>
     <Description>Add-on IFileExtractor for Scrubkit that reads the pre-2007 binary Microsoft Office formats — Word (.doc), Excel (.xls), and PowerPoint (.ppt). Extracts the body text and the Title/Author/Subject document properties directly from the OLE2 compound-file streams — best-effort, fully offline, and with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>
     <PackageTags>scrubkit;office;word;excel;powerpoint;doc;xls;ppt;legacy;ole2;extraction;text-extraction;offline;rag;ingestion</PackageTags>
-
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against yet.
-         Remove this override after the first version publishes so it inherits the shared baseline. -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
