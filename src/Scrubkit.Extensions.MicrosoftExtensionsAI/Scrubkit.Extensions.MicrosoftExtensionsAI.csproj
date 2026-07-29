@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <PackageId>Scrubkit.Extensions.MicrosoftExtensionsAI</PackageId>
+    <Title>Scrubkit.Extensions.MicrosoftExtensionsAI — Microsoft.Extensions.AI integration for Scrubkit</Title>
+    <Description>Microsoft.Extensions.AI integration for Scrubkit. Provides RedactingChatClient (inheriting from DelegatingChatClient) and RedactingEmbeddingGenerator (inheriting from DelegatingEmbeddingGenerator) to redact user prompts and inputs locally and offline before sending them to external/cloud LLM providers.</Description>
+    <PackageTags>scrubkit;ai;microsoft-extensions-ai;chat-client;embedding-generator;pii-redaction;secrets-detection;llm-security</PackageTags>
+
+    <!-- Brand-new package: no prior stable version on nuget.org to diff against yet.
+         Remove this override after the first version publishes so it inherits the shared baseline. -->
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Scrubkit\Scrubkit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.AI" />
+    <PackageReference Include="PolySharp" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
