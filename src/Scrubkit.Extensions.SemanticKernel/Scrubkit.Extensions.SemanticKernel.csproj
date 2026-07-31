@@ -6,9 +6,6 @@
     <Title>Scrubkit.Extensions.SemanticKernel — Semantic Kernel integration for Scrubkit</Title>
     <Description>Semantic Kernel integration for Scrubkit. Provides helper extension methods to easily ingest, redact, chunk, and index folder contents directly into Semantic Kernel's ISemanticTextMemory or modern IVectorStoreRecordCollection stores.</Description>
     <PackageTags>scrubkit;ai;semantic-kernel;vector-store;vector-database;pii-redaction;secrets-detection;rag-ingestion</PackageTags>
-
-    <!-- Brand-new package: no prior stable version on nuget.org to diff against yet. -->
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
     <NoWarn>$(NoWarn);SKEXP0001</NoWarn>
   </PropertyGroup>
 
