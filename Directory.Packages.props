@@ -19,8 +19,10 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
     <!-- Microsoft.Extensions.AI integration (Scrubkit.Extensions.MicrosoftExtensionsAI) -->
-    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.0.0-preview.9.24507.7" />
-    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.0.0-preview.9.24507.7" />
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.0.0-preview.9.24525.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="9.0.0-preview.9.24525.1" />
+    <!-- Semantic Kernel integration (Scrubkit.Extensions.SemanticKernel) -->
+    <PackageVersion Include="Microsoft.SemanticKernel.Abstractions" Version="1.30.0" />
   </ItemGroup>
 
   <ItemGroup>

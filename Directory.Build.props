@@ -40,7 +40,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.9.0 — Legacy binary Office. New Scrubkit.LegacyOffice add-on reads pre-2007 binary Word (.doc), Excel (.xls), and PowerPoint (.ppt) straight off the OLE2 compound file with the BCL — zero dependencies, no NPOI, no Office interop. Body text becomes the record text; Title/Author/Subject come from the shared SummaryInformation (HPSF) reader. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.10.0 — Ecosystem Integrations. New Scrubkit.Extensions.MicrosoftExtensionsAI package brings local PII &amp; secret redaction middleware for IChatClient and IEmbeddingGenerator. New Scrubkit.Extensions.SemanticKernel package provides extension methods to scan, redact, chunk, and ingest documents directly into ISemanticTextMemory and modern IVectorStoreRecordCollection stores. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion;vector-database;semantic-kernel;text-chunking;offline-rag;document-parser;data-prep;secrets-detection;gpt-sanitize</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->

@@ -78,75 +78,30 @@ await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 ```
 
 ### 2. Semantic Kernel Integration
-Load local document directories straight into **Semantic Kernel** memories with automatic local chunking:
+Load local document directories straight into **Semantic Kernel** memories with automatic redaction and chunking, or use `Scrubkit.Extensions.SemanticKernel` for direct one-line ingestion into `ISemanticTextMemory` or modern `IVectorStoreRecordCollection` stores:
 
 ```csharp
-using Microsoft.SemanticKernel.Memory;
 using Scrubkit;
 
-var memoryStore = new VolatileMemoryStore();
-var memory = new MemoryBuilder()
-    .WithTextEmbeddingGeneration(new MyTextEmbeddingService()) // e.g. Azure OpenAI or local ONNX
-    .WithMemoryStore(memoryStore)
-    .Build();
-
-var scrubber = new FolderScrubber();
-var chunker = new Chunker();
-
-await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
+// Import local directory directly into Semantic Kernel vector collection with redaction & chunking
+var keys = await collection.ImportFolderAsync(scrubber, @"C:\Docs", chunk => new MyVectorRecord
 {
-    if (doc.Text.Length == 0) continue;
-
-    foreach (var chunk in chunker.Chunk(doc))
-    {
-        await memory.SaveInformationAsync(
-            collection: "kb_docs",
-            text: chunk.Text,
-            id: $"{chunk.Path}#{chunk.Index}",
-            description: $"Parsed chunk from {chunk.Path}",
-            additionalMetadata: System.Text.Json.JsonSerializer.Serialize(chunk.Metadata));
-    }
-}
+    Id = $"{chunk.Path}#{chunk.Index}",
+    Text = chunk.Text,
+    Source = chunk.Name
+});
 ```
 
 ### 3. Microsoft.Extensions.AI Chat Middleware (Offline Redactor)
-Intercept user chat messages and scrub PII or API secrets locally using the offline `StandardRedactor` before sending them to cloud LLMs (Azure OpenAI, Claude, etc.):
+Intercept user chat messages and scrub PII or API secrets locally using `Scrubkit.Extensions.MicrosoftExtensionsAI` before sending them to cloud LLMs (Azure OpenAI, Claude, etc.):
 
 ```csharp
 using Microsoft.Extensions.AI;
 using Scrubkit;
 
-// 1. Define the redacting middleware
-public class RedactingChatClient : DelegatingChatClient
-{
-    private readonly IRedactor _redactor;
-
-    public RedactingChatClient(IChatClient innerClient, IRedactor redactor) : base(innerClient)
-    {
-        _redactor = redactor;
-    }
-
-    public override async Task<ChatCompletion> CompleteAsync(
-        IList<ChatMessage> chatMessages,
-        ChatOptions? options = null,
-        CancellationToken cancellationToken = default)
-    {
-        foreach (var message in chatMessages)
-        {
-            if (message.Text is string text)
-            {
-                // Local redactor runs fully offline to strip secrets and PII
-                var result = _redactor.Redact(text);
-                message.Text = result.RedactedText;
-            }
-        }
-        return await base.CompleteAsync(chatMessages, options, cancellationToken);
-    }
-}
-
-// 2. Wire it up in your application pipeline
+// Wire up redacting middleware in your application pipeline
 IChatClient chatClient = new ChatClientBuilder()
-    .Use(inner => new RedactingChatClient(inner, new StandardRedactor()))
+    .UseRedaction(new StandardRedactor())
     .UseChatClient(new OllamaChatClient(new Uri("http://localhost:11434"), "llama3"));
 ```
 
