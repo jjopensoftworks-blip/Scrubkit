@@ -50,12 +50,14 @@ IReadOnlyList<FileRecord> table = await scrubber.ReadAsync(@"C:\Docs");
 
 See [`src/Scrubkit/README.md`](src/Scrubkit/README.md) for the full API.
 
-## Recipe: prepare a folder for RAG
+## Recipes & AI Integrations
 
-Stream a document folder straight into a vector store — text + metadata ready to embed,
-rows with no text skipped:
+### 1. Basic RAG Ingestion Pipeline
+Stream local documents, chunk them, and skip empty/metadata-only files:
 
 ```csharp
+using Scrubkit;
+
 var scrubber = new FolderScrubber(new ReadOptions
 {
     MaxTextLength = 8_000,   // keep chunks index-friendly
@@ -65,13 +67,84 @@ var chunker = new Chunker();   // overlapping windows, whitespace-snapped
 
 await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 {
-    if (doc.Text.Length == 0) continue;   // skip metadata-only rows
+    if (doc.Text.Length == 0) continue;
 
     foreach (var chunk in chunker.Chunk(doc))
         await index.UpsertAsync(
             id: $"{chunk.Path}#{chunk.Index}",
             text: chunk.Text,             // ready to embed
             metadata: chunk.Metadata);
+}
+```
+
+### 2. Semantic Kernel Integration
+Load local document directories straight into **Semantic Kernel** memories with automatic redaction and chunking, or use `Scrubkit.Extensions.SemanticKernel` for direct one-line ingestion into `ISemanticTextMemory` or modern `IVectorStoreRecordCollection` stores:
+
+```csharp
+using Scrubkit;
+
+// Import local directory directly into Semantic Kernel vector collection with redaction & chunking
+var keys = await collection.ImportFolderAsync(scrubber, @"C:\Docs", chunk => new MyVectorRecord
+{
+    Id = $"{chunk.Path}#{chunk.Index}",
+    Text = chunk.Text,
+    Source = chunk.Name
+});
+```
+
+### 3. Microsoft.Extensions.AI Chat Middleware (Offline Redactor)
+Intercept user chat messages and scrub PII or API secrets locally using `Scrubkit.Extensions.MicrosoftExtensionsAI` before sending them to cloud LLMs (Azure OpenAI, Claude, etc.):
+
+```csharp
+using Microsoft.Extensions.AI;
+using Scrubkit;
+
+// Wire up redacting middleware in your application pipeline
+IChatClient chatClient = new ChatClientBuilder()
+    .UseRedaction(new StandardRedactor())
+    .UseChatClient(new OllamaChatClient(new Uri("http://localhost:11434"), "llama3"));
+```
+
+### 4. Vector Database & Embedding Pipeline (Qdrant / MEAI)
+Combine Scrubkit parsing, `Microsoft.Extensions.AI` embedding generators, and **Qdrant** for a full local-first pipeline:
+
+```csharp
+using Microsoft.Extensions.AI;
+using Qdrant.Client;
+using Qdrant.Client.Grpc;
+using Scrubkit;
+
+var qdrantClient = new QdrantClient("localhost");
+IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator = 
+    new OllamaEmbeddingGenerator(new Uri("http://localhost:11434"), "nomic-embed-text");
+
+var scrubber = new FolderScrubber();
+var chunker = new Chunker();
+
+await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
+{
+    if (doc.Text.Length == 0) continue;
+
+    foreach (var chunk in chunker.Chunk(doc))
+    {
+        // 1. Generate text embedding offline
+        var embedding = await embeddingGenerator.GenerateEmbeddingVectorAsync(chunk.Text);
+
+        // 2. Upsert to Qdrant vector database
+        var point = new PointStruct
+        {
+            Id = Guid.NewGuid(), // or a deterministic Guid hashed from path+index
+            Vectors = embedding.ToArray(),
+            Payload = 
+            {
+                ["path"] = chunk.Path,
+                ["chunk_index"] = chunk.Index,
+                ["text"] = chunk.Text
+            }
+        };
+
+        await qdrantClient.UpsertAsync("docs_collection", new[] { point });
+    }
 }
 ```
 

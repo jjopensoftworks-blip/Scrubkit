@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- No coverlet.collector here on purpose: it would drag the solution-wide coverage gate. -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Scrubkit.Extensions.MicrosoftExtensionsAI\Scrubkit.Extensions.MicrosoftExtensionsAI.csproj" />
+  </ItemGroup>
+
+</Project>
