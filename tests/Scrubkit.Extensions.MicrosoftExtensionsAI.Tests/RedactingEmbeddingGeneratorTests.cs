@@ -14,8 +14,6 @@ namespace Scrubkit.Tests
         {
             public IEnumerable<string>? LastInputs { get; private set; }
 
-            EmbeddingGeneratorMetadata IEmbeddingGenerator<string, Embedding<float>>.Metadata => new EmbeddingGeneratorMetadata("test");
-
             public Task<GeneratedEmbeddings<Embedding<float>>> GenerateAsync(
                 IEnumerable<string> inputs,
                 EmbeddingGenerationOptions? options = null,
@@ -26,7 +24,7 @@ namespace Scrubkit.Tests
                 return Task.FromResult(new GeneratedEmbeddings<Embedding<float>>(list));
             }
 
-            TService? IEmbeddingGenerator<string, Embedding<float>>.GetService<TService>(object? serviceKey) where TService : class => null;
+            public object? GetService(Type serviceType, object? serviceKey = null) => null;
 
             public void Dispose() { }
         }
@@ -79,9 +77,9 @@ namespace Scrubkit.Tests
             Assert.IsType<RedactingEmbeddingGenerator<Embedding<float>>>(wrappedGen);
 
             // Builder wrapping
-            var builtGen = new EmbeddingGeneratorBuilder<string, Embedding<float>>(services: null)
+            var builtGen = new EmbeddingGeneratorBuilder<string, Embedding<float>>(inner)
                 .UseRedaction(redactor)
-                .Use(inner);
+                .Build();
 
             var inputs = new[] { "Send an email to admin@example.com" };
 
