@@ -11,6 +11,7 @@
     <Project Path="src/Scrubkit.LegacyOffice/Scrubkit.LegacyOffice.csproj" />
     <Project Path="src/Scrubkit.Extensions.DependencyInjection/Scrubkit.Extensions.DependencyInjection.csproj" />
     <Project Path="src/Scrubkit.Extensions.MicrosoftExtensionsAI/Scrubkit.Extensions.MicrosoftExtensionsAI.csproj" />
+    <Project Path="src/Scrubkit.Extensions.SemanticKernel/Scrubkit.Extensions.SemanticKernel.csproj" />
     <Project Path="src/Scrubkit.Parquet/Scrubkit.Parquet.csproj" />
     <Project Path="src/Scrubkit.All/Scrubkit.All.csproj" />
     <Project Path="src/Scrubkit.Tool/Scrubkit.Tool.csproj" />
@@ -24,6 +25,7 @@
     <Project Path="tests/Scrubkit.LegacyOffice.Tests/Scrubkit.LegacyOffice.Tests.csproj" />
     <Project Path="tests/Scrubkit.Extensions.DependencyInjection.Tests/Scrubkit.Extensions.DependencyInjection.Tests.csproj" />
     <Project Path="tests/Scrubkit.Extensions.MicrosoftExtensionsAI.Tests/Scrubkit.Extensions.MicrosoftExtensionsAI.Tests.csproj" />
+    <Project Path="tests/Scrubkit.Extensions.SemanticKernel.Tests/Scrubkit.Extensions.SemanticKernel.Tests.csproj" />
     <Project Path="tests/Scrubkit.Parquet.Tests/Scrubkit.Parquet.Tests.csproj" />
     <Project Path="tests/Scrubkit.Tool.Tests/Scrubkit.Tool.Tests.csproj" />
   </Folder>

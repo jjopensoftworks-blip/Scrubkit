@@ -7,6 +7,34 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.10.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.10.0` &nbsp;·&nbsp; 📅 2026-08-01
+
+&nbsp;
+
+---
+
+Ecosystem integrations — native support for standard .NET AI orchestrators.
+
+### 🚀 `Scrubkit.Extensions.MicrosoftExtensionsAI`
+
+- New integration package bringing offline PII and secret redaction middleware to `Microsoft.Extensions.AI`.
+- **`RedactingChatClient`** — wraps any `IChatClient` (such as OpenAI, Ollama, etc.) as a delegating client, sanitizing chat history and prompts before they are sent to external endpoints.
+- **`RedactingEmbeddingGenerator`** — wraps `IEmbeddingGenerator` to redact text chunks before vectorization.
+- **Fluent Builders** — pipeline configuration methods (e.g. `builder.UseRedaction(redactor)`).
+
+### 🚀 `Scrubkit.Extensions.SemanticKernel`
+
+- New integration package containing extensions for Microsoft's **Semantic Kernel** memory and vector store systems.
+- **`ISemanticTextMemory` Extensions** — `SaveChunksAsync` and `ImportFolderAsync` automate folder scanning, redacting, chunking, and uploading to the legacy semantic memory store with stable chunk IDs and JSON metadata.
+- **`IVectorStoreRecordCollection` Extensions** — `UpsertChunksAsync` and `ImportFolderAsync` map and ingest folder contents directly into modern .NET Vector Store collections using a user-supplied mapper.
+- Multi-targets `netstandard2.0` and `net8.0` with suppressed `SKEXP0001` experimental warnings.
+
+### 📦 `Scrubkit.All`
+
+- Updated the meta-bundle package to reference the new integrations so developers get them out of the box.
+
 ## 1.9.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.9.0` &nbsp;·&nbsp; 📅 2026-07-28
