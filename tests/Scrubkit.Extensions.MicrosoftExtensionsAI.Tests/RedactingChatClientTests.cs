@@ -14,33 +14,31 @@ namespace Scrubkit.Tests
         {
             public IList<ChatMessage>? LastMessagesSent { get; private set; }
 
-            ChatClientMetadata IChatClient.Metadata => new ChatClientMetadata("test");
-
-            public Task<ChatCompletion> CompleteAsync(
-                IList<ChatMessage> chatMessages,
+            public Task<ChatResponse> GetResponseAsync(
+                IEnumerable<ChatMessage> messages,
                 ChatOptions? options = null,
                 CancellationToken cancellationToken = default)
             {
-                LastMessagesSent = chatMessages;
-                return Task.FromResult(new ChatCompletion(new ChatMessage(ChatRole.Assistant, "Hello!")));
+                LastMessagesSent = new List<ChatMessage>(messages);
+                return Task.FromResult(new ChatResponse(new ChatMessage(ChatRole.Assistant, "Hello!")));
             }
 
-            public async IAsyncEnumerable<StreamingChatCompletionUpdate> CompleteStreamingAsync(
-                IList<ChatMessage> chatMessages,
+            public async IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(
+                IEnumerable<ChatMessage> messages,
                 ChatOptions? options = null,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
-                LastMessagesSent = chatMessages;
-                yield return new StreamingChatCompletionUpdate { Role = ChatRole.Assistant, Text = "Hello!" };
+                LastMessagesSent = new List<ChatMessage>(messages);
+                yield return new ChatResponseUpdate(ChatRole.Assistant, "Hello!");
             }
 
-            TService? IChatClient.GetService<TService>(object? serviceKey) where TService : class => null;
+            public object? GetService(Type serviceType, object? serviceKey = null) => null;
 
             public void Dispose() { }
         }
 
         [Fact]
-        public async Task CompleteAsync_RedactsUserMessages_WhenUserOnlyIsTrue()
+        public async Task GetResponseAsync_RedactsUserMessages_WhenUserOnlyIsTrue()
         {
             // Arrange
             var inner = new TestChatClient();
@@ -55,7 +53,7 @@ namespace Scrubkit.Tests
             };
 
             // Act
-            await client.CompleteAsync(messages);
+            await client.GetResponseAsync(messages);
 
             // Assert
             Assert.NotNull(inner.LastMessagesSent);
@@ -69,7 +67,7 @@ namespace Scrubkit.Tests
         }
 
         [Fact]
-        public async Task CompleteAsync_RedactsAllMessages_WhenUserOnlyIsFalse()
+        public async Task GetResponseAsync_RedactsAllMessages_WhenUserOnlyIsFalse()
         {
             // Arrange
             var inner = new TestChatClient();
@@ -83,7 +81,7 @@ namespace Scrubkit.Tests
             };
 
             // Act
-            await client.CompleteAsync(messages);
+            await client.GetResponseAsync(messages);
 
             // Assert
             Assert.NotNull(inner.LastMessagesSent);
@@ -96,7 +94,7 @@ namespace Scrubkit.Tests
         }
 
         [Fact]
-        public async Task CompleteStreamingAsync_RedactsUserMessages()
+        public async Task GetStreamingResponseAsync_RedactsUserMessages()
         {
             // Arrange
             var inner = new TestChatClient();
@@ -109,7 +107,7 @@ namespace Scrubkit.Tests
             };
 
             // Act
-            var stream = client.CompleteStreamingAsync(messages);
+            var stream = client.GetStreamingResponseAsync(messages);
             await foreach (var update in stream)
             {
                 // Consume stream
@@ -142,16 +140,16 @@ namespace Scrubkit.Tests
             Assert.IsType<RedactingChatClient>(wrappedClient);
 
             // Builder wrapping
-            var builtClient = new ChatClientBuilder(services: null)
+            var builtClient = new ChatClientBuilder(inner)
                 .UseRedaction(redactor)
-                .Use(inner);
-            
+                .Build();
+
             var messages = new List<ChatMessage>
             {
                 new ChatMessage(ChatRole.User, "Send to user@example.com")
             };
 
-            await builtClient.CompleteAsync(messages);
+            await builtClient.GetResponseAsync(messages);
 
             Assert.NotNull(inner.LastMessagesSent);
             Assert.Contains("[EMAIL]", inner.LastMessagesSent[0].Text);

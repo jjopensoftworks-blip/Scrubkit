@@ -29,55 +29,54 @@ namespace Scrubkit
         }
 
         /// <inheritdoc />
-        public override async Task<ChatCompletion> CompleteAsync(
-            IList<ChatMessage> chatMessages,
+        public override async Task<ChatResponse> GetResponseAsync(
+            IEnumerable<ChatMessage> messages,
             ChatOptions? options = null,
             CancellationToken cancellationToken = default)
         {
-            if (chatMessages == null)
+            if (messages == null)
             {
-                throw new ArgumentNullException(nameof(chatMessages));
+                throw new ArgumentNullException(nameof(messages));
             }
 
-            foreach (var message in chatMessages)
-            {
-                if (!_redactUserMessagesOnly || message.Role == ChatRole.User)
-                {
-                    if (message.Text is string text && !string.IsNullOrEmpty(text))
-                    {
-                        var result = _redactor.Redact(text);
-                        message.Text = result.Text;
-                    }
-                }
-            }
+            RedactMessages(messages);
 
-            return await base.CompleteAsync(chatMessages, options, cancellationToken);
+            return await base.GetResponseAsync(messages, options, cancellationToken);
         }
 
         /// <inheritdoc />
-        public override IAsyncEnumerable<StreamingChatCompletionUpdate> CompleteStreamingAsync(
-            IList<ChatMessage> chatMessages,
+        public override IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(
+            IEnumerable<ChatMessage> messages,
             ChatOptions? options = null,
             CancellationToken cancellationToken = default)
         {
-            if (chatMessages == null)
+            if (messages == null)
             {
-                throw new ArgumentNullException(nameof(chatMessages));
+                throw new ArgumentNullException(nameof(messages));
             }
 
-            foreach (var message in chatMessages)
+            RedactMessages(messages);
+
+            return base.GetStreamingResponseAsync(messages, options, cancellationToken);
+        }
+
+        private void RedactMessages(IEnumerable<ChatMessage> messages)
+        {
+            foreach (var message in messages)
             {
-                if (!_redactUserMessagesOnly || message.Role == ChatRole.User)
+                if (_redactUserMessagesOnly && message.Role != ChatRole.User)
                 {
-                    if (message.Text is string text && !string.IsNullOrEmpty(text))
+                    continue;
+                }
+
+                foreach (var content in message.Contents)
+                {
+                    if (content is TextContent textContent && !string.IsNullOrEmpty(textContent.Text))
                     {
-                        var result = _redactor.Redact(text);
-                        message.Text = result.Text;
+                        textContent.Text = _redactor.Redact(textContent.Text).Text;
                     }
                 }
             }
-
-            return base.CompleteStreamingAsync(chatMessages, options, cancellationToken);
         }
     }
 }
