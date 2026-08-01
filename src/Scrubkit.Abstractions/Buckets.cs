@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 namespace Scrubkit;
 
 /// <summary>Coarse type buckets, shared by the reader and (optionally) extractors.</summary>

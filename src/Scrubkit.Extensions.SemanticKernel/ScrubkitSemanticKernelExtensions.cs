@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 #pragma warning disable SKEXP0001 // Suppress Semantic Kernel Experimental API warnings
 
 using System;
