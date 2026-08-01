@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;

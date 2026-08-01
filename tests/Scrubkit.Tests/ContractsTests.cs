@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using Scrubkit;
 using Xunit;
 
@@ -81,5 +83,19 @@ public class ContractsTests
         Assert.Null(o.Redactor);
         Assert.Empty(o.Extractors);
         Assert.Empty(o.IncludeExtensions);
+    }
+
+    [Fact]
+    public void Assembly_has_copyright_and_company_metadata()
+    {
+        var asm = typeof(ChunkOptions).Assembly;
+        var copyrightAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyCopyrightAttribute>(asm);
+        var companyAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<System.Reflection.AssemblyCompanyAttribute>(asm);
+
+        Assert.NotNull(copyrightAttr);
+        Assert.Equal("Copyright © 2026 jjopensoftworks-blip", copyrightAttr.Copyright);
+
+        Assert.NotNull(companyAttr);
+        Assert.Equal("jjopensoftworks-blip", companyAttr.Company);
     }
 }

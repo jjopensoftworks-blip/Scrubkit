@@ -26,11 +26,17 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Authors>jjopensoftworks-blip</Authors>
+    <Company>jjopensoftworks-blip</Company>
+    <Copyright>Copyright © 2026 jjopensoftworks-blip</Copyright>
+  </PropertyGroup>
+
   <!-- Shared package metadata for shipping (packable) projects only. -->
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
-    <Authors>OpenFreeSoftwares</Authors>
-    <Company>OpenFreeSoftwares</Company>
-    <Copyright>Copyright © OpenFreeSoftwares</Copyright>
+    <Authors>jjopensoftworks-blip</Authors>
+    <Company>jjopensoftworks-blip</Company>
+    <Copyright>Copyright © 2026 jjopensoftworks-blip</Copyright>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://jjopensoftworks-blip.github.io/Scrubkit/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjopensoftworks-blip/Scrubkit.git</RepositoryUrl>

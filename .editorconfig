@@ -18,6 +18,8 @@ indent_size = 2
 trim_trailing_whitespace = false
 
 [*.cs]
+file_header_template = Copyright © 2026 jjopensoftworks-blip
+
 # Namespaces
 csharp_style_namespace_declarations = file_scoped:warning
 
