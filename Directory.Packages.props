@@ -15,9 +15,9 @@
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.10" />
     <!-- DI integration package (AddScrubkit); Abstractions is the runtime dep, the full
          package is used by its test project for a concrete container. -->
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
     <!-- Microsoft.Extensions.AI integration (Scrubkit.Extensions.MicrosoftExtensionsAI) -->
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.5.0" />
     <PackageVersion Include="Microsoft.Extensions.AI" Version="9.5.0" />
