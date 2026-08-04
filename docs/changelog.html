@@ -97,13 +97,17 @@
 <span class="material-symbols-outlined text-electric-blue text-[24px]">cleaning_services</span>
 <div>
 <p class="font-headline-md text-[16px] text-on-surface leading-tight">Scrubkit</p>
-<p class="font-label-sm text-[10px] text-text-muted">v1.10.0 · STABLE</p>
+<p class="font-label-sm text-[10px] text-text-muted">v1.11.0 · STABLE</p>
 </div>
 </div>
 <p class="font-label-sm text-[10px] text-text-muted mb-3">JUMP TO VERSION</p>
 <nav class="space-y-1">
-<a href="#v1-10-0" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-electric-blue/10 text-electric-blue font-body-md text-sm border border-electric-blue/20">
+<a href="#v1-11-0" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-electric-blue/10 text-electric-blue font-body-md text-sm border border-electric-blue/20">
 <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                            v1.11.0 (Stable)
+                        </a>
+<a href="#v1-10-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">history</span>
                             v1.10.0 (Stable)
                         </a>
 <a href="#v1-9-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
@@ -165,7 +169,7 @@
 <div class="mb-12">
 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm mb-4">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Latest: v1.10.0
+                    Latest: v1.11.0
                 </span>
 <h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Changelog</h1>
 <p class="font-body-lg text-body-lg text-text-muted max-w-2xl leading-relaxed">
@@ -178,6 +182,32 @@
 <div class="relative">
 <!-- vertical line -->
 <div class="absolute left-[7px] top-2 bottom-2 w-[2px] tl-line hidden sm:block"></div>
+
+<!-- ── v1.11.0 (stable) ───────────────────────────────── -->
+<section id="v1-11-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
+<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
+<div class="mb-4">
+<p class="font-label-sm text-label-sm text-on-surface">V1.11.0</p>
+<p class="font-body-md text-sm text-text-muted mb-2">2026-08-04</p>
+<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
+</div>
+<div class="bento-card rounded-xl p-bento-padding md:p-8">
+<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Platform Expansion — .NET 10.0 (LTS) Support</h2>
+<p class="font-body-md text-text-muted mb-6 leading-relaxed">
+                            Official multi-targeting support for .NET 10.0 (LTS) across all Scrubkit library packages, integration extensions, CLI tools, samples, benchmarks, and test suites.
+                        </p>
+<div class="mb-8">
+<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> HIGHLIGHTS
+                            </p>
+<div class="space-y-3">
+<p class="font-body-md text-on-surface/90"><span class="font-semibold">.NET 10.0 Multi-Targeting.</span> <span class="text-text-muted">Added <code>net10.0</code> TFM across core (<code>Scrubkit</code>), contracts (<code>Scrubkit.Abstractions</code>), extractor add-ons (<code>Email</code>, <code>OpenDocument</code>, <code>Epub</code>, <code>LegacyOffice</code>), integration packages (<code>DependencyInjection</code>, <code>MicrosoftExtensionsAI</code>, <code>SemanticKernel</code>), and <code>Scrubkit.All</code>.</span></p>
+<p class="font-body-md text-on-surface/90"><span class="font-semibold">Parquet &amp; CLI Tooling.</span> <span class="text-text-muted">Multi-targeted <code>net8.0;net10.0</code> for <code>Scrubkit.Parquet</code> and <code>Scrubkit.Tool</code>.</span></p>
+<p class="font-body-md text-on-surface/90"><span class="font-semibold">Cross-TFM Test Execution.</span> <span class="text-text-muted">All xUnit test projects multi-target <code>net8.0;net10.0</code>, verifying full functionality on both .NET 8 and .NET 10 runtimes.</span></p>
+</div>
+</div>
+</div>
+</section>
 
 <!-- ── v1.10.0 (stable) ───────────────────────────────── -->
 <section id="v1-10-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
