@@ -78,6 +78,31 @@ public sealed class ReadOptions
     public IList<IFileExtractor> Extractors { get; } = new List<IFileExtractor>();
 
     /// <summary>
+    /// Adds a format extractor instance to <see cref="Extractors"/> for this run.
+    /// </summary>
+    /// <param name="extractor">The extractor instance to register.</param>
+    /// <returns>This <see cref="ReadOptions"/> instance for fluent chaining.</returns>
+    public ReadOptions AddExtractor(IFileExtractor extractor)
+    {
+        if (extractor == null) throw new ArgumentNullException(nameof(extractor));
+        if (!Extractors.Contains(extractor))
+        {
+            Extractors.Add(extractor);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Instantiates and registers a format extractor of type <typeparamref name="T"/> to <see cref="Extractors"/>.
+    /// </summary>
+    /// <typeparam name="T">The concrete <see cref="IFileExtractor"/> type to instantiate.</typeparam>
+    /// <returns>This <see cref="ReadOptions"/> instance for fluent chaining.</returns>
+    public ReadOptions AddExtractor<T>() where T : IFileExtractor, new()
+    {
+        return AddExtractor(new T());
+    }
+
+    /// <summary>
     /// Convenience level for the built-in redactor, applied only when <see cref="Redactor"/>
     /// is null and this is not <see cref="RedactionLevel.Off"/>. Default: <c>Off</c> — the
     /// core extracts and does not redact unless you ask it to.
