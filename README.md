@@ -186,7 +186,7 @@ dotnet run --project samples/Scrubkit.Playground -- "C:\Docs"
 ## Build & test
 
 ```sh
-dotnet build -c Release        # builds all packages (netstandard2.0 + net8.0)
+dotnet build -c Release        # builds all packages (netstandard2.0 + net8.0 + net10.0)
 dotnet test  -c Release        # runs the test suite
 ```
 

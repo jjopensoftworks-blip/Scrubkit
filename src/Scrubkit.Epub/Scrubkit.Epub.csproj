@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.Epub</PackageId>
     <Title>Scrubkit.Epub — .epub e-book extractor for Scrubkit</Title>
     <Description>Add-on IFileExtractor for Scrubkit that reads .epub e-books: the Title/Author/Subject become metadata and the book's text (from the XHTML spine, tags stripped) becomes text. Fully offline with no dependencies beyond Scrubkit.Abstractions. Register it via ReadOptions.Extractors.</Description>

@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- net8.0 only: it references Scrubkit.Parquet (net8.0) for Parquet output, and a global
+    <!-- Modern .NET TFMs: it references Scrubkit.Parquet for Parquet output, and a global
          tool doesn't need netstandard reach. -->
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
 
     <!-- Ship as a dotnet global/local tool: `dotnet tool install -g Scrubkit.Tool` → `scrubkit`. -->
     <PackAsTool>true</PackAsTool>

@@ -30,7 +30,7 @@ natural first step for RAG ingestion, search indexing, and on-device data prep.
 - **Runs from a shell** — the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI (`dotnet tool`) scans a folder with zero code.
 - **Pluggable** — add or override formats with `IFileExtractor`.
 - **Scales** — stream results and process files in parallel for large trees.
-- **Multi-target** — `net8.0` and `netstandard2.0`.
+- **Multi-target** — `net8.0`, `net10.0`, and `netstandard2.0`.
 
 ---
 
