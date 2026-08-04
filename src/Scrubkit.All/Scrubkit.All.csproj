@@ -3,11 +3,11 @@
   <PropertyGroup>
     <!-- Meta-package: ships no code of its own, just pulls in the whole family as
          dependencies. Multi-targets so netstandard2.0 consumers get everything except
-         Parquet (which is net8.0-only, referenced below only for net8.0). -->
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+         Parquet (which is modern .NET only, referenced below for net8.0/net10.0). -->
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.All</PackageId>
     <Title>Scrubkit.All — the whole Scrubkit family in one reference</Title>
-    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml/.msg email, OpenDocument, .epub, legacy binary Office .doc/.xls/.ppt), the AddScrubkit dependency-injection integration, the Microsoft.Extensions.AI local redaction integration, the Semantic Kernel vector store integration, and — on net8.0 — Parquet output. Install this to get everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
+    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml/.msg email, OpenDocument, .epub, legacy binary Office .doc/.xls/.ppt), the AddScrubkit dependency-injection integration, the Microsoft.Extensions.AI local redaction integration, the Semantic Kernel vector store integration, and — on net8.0/net10.0 — Parquet output. Install this to get everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
     <PackageTags>scrubkit;bundle;meta;all;extraction;text-extraction;pdf;office;email;epub;opendocument;legacyoffice;parquet;offline;rag;ingestion;ai;microsoft-extensions-ai;semantic-kernel</PackageTags>
 
     <!-- No compiled output, no API surface: it's purely a dependency aggregator. -->
@@ -33,8 +33,8 @@
     <ProjectReference Include="..\Scrubkit.Extensions.SemanticKernel\Scrubkit.Extensions.SemanticKernel.csproj" />
   </ItemGroup>
 
-  <!-- Parquet output is net8.0-only, so it joins the bundle only for that TFM. -->
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+  <!-- Parquet output is modern .NET-only, so it joins the bundle for net8.0 and net10.0. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net10.0'">
     <ProjectReference Include="..\Scrubkit.Parquet\Scrubkit.Parquet.csproj" />
   </ItemGroup>
 

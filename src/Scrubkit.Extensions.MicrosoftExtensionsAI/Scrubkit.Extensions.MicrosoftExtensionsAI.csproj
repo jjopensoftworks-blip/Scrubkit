@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.Extensions.MicrosoftExtensionsAI</PackageId>
     <Title>Scrubkit.Extensions.MicrosoftExtensionsAI — Microsoft.Extensions.AI integration for Scrubkit</Title>
     <Description>Microsoft.Extensions.AI integration for Scrubkit. Provides RedactingChatClient (inheriting from DelegatingChatClient) and RedactingEmbeddingGenerator (inheriting from DelegatingEmbeddingGenerator) to redact user prompts and inputs locally and offline before sending them to external/cloud LLM providers.</Description>

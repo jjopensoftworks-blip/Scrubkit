@@ -10,7 +10,7 @@ By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 Requires the .NET SDK (8.0 or newer — see [`global.json`](global.json)).
 
 ```bash
-dotnet build Scrubkit.slnx -c Release     # build all packages (netstandard2.0 + net8.0)
+dotnet build Scrubkit.slnx -c Release     # build all packages (netstandard2.0 + net8.0 + net10.0)
 dotnet test  Scrubkit.slnx -c Release     # run the test suite
 dotnet run --project samples/Scrubkit.Playground   # try it on a generated demo folder
 ```

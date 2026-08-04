@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.Extensions.SemanticKernel</PackageId>
     <Title>Scrubkit.Extensions.SemanticKernel — Semantic Kernel integration for Scrubkit</Title>
     <Description>Semantic Kernel integration for Scrubkit. Provides helper extension methods to easily ingest, redact, chunk, and index folder contents directly into Semantic Kernel's ISemanticTextMemory or modern IVectorStoreRecordCollection stores.</Description>

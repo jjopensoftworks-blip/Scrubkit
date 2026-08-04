@@ -32,4 +32,4 @@ reference `Scrubkit` or `Scrubkit.Abstractions`.
 `IFileExtractor` · `ExtractedContent` · `IRedactor` · `RedactionResult` · `FileRecord` ·
 `ReadOptions` · `Recursion` · `RedactionLevel` · `Buckets`
 
-Multi-targets `net8.0` and `netstandard2.0`. Fully offline — no dependencies.
+Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`. Fully offline — no dependencies.

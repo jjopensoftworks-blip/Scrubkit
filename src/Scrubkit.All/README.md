@@ -17,7 +17,7 @@ dotnet add package Scrubkit.All
 | **Scrubkit.OpenDocument** | OpenDocument `.odt` / `.ods` / `.odp`. |
 | **Scrubkit.Epub** | `.epub` e-books. |
 | **Scrubkit.Extensions.DependencyInjection** | `services.AddScrubkit(…)` for ASP.NET Core and worker hosts. |
-| **Scrubkit.Parquet** *(net8.0 only)* | Apache Parquet output via Parquet.Net. |
+| **Scrubkit.Parquet** *(net8.0/net10.0)* | Apache Parquet output via Parquet.Net. |
 
 `Scrubkit.Abstractions` (the contracts) comes in transitively.
 
@@ -25,7 +25,7 @@ dotnet add package Scrubkit.All
 
 If you want a lean footprint, reference just the packages you need instead — e.g. the core
 alone reads PDF/Office/text out of the box, and each add-on is opt-in. On **netstandard2.0**
-this bundle includes everything except **Scrubkit.Parquet**, which is net8.0-only.
+this bundle includes everything except **Scrubkit.Parquet**, which requires a modern .NET TFM (net8.0/net10.0).
 
 The add-on extractors register via `ReadOptions.Extractors`; see the core package's README
 for usage.
