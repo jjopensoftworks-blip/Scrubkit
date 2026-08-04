@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 namespace Scrubkit;
 
 /// <summary>Reads plain-text-ish files directly (.txt/.md/.csv/.log/.json/.xml).</summary>

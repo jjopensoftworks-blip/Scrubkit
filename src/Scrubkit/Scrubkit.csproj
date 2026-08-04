@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit</PackageId>
     <Title>Scrubkit — offline text &amp; metadata extraction for .NET</Title>
     <Description>High-performance, offline document parser and data prep library for .NET RAG and AI pipelines. Extracts text and metadata (PDF, Word, Excel, PowerPoint, HTML, RTF, Email, EPUB, OpenDocument) and redacts PII and secrets locally before sending to LLMs. Features parallel streaming, incremental scans via manifests, pluggable format extractors, and built-in chunking.</Description>

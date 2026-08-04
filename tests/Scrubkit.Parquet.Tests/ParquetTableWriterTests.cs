@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using Parquet.Serialization;
 using Scrubkit;
 using Xunit;

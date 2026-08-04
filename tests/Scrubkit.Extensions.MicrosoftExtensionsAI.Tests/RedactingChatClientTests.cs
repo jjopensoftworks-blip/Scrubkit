@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

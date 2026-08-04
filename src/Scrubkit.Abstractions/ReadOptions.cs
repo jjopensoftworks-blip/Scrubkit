@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 namespace Scrubkit;
 
 /// <summary>How deep to walk from the root path.</summary>

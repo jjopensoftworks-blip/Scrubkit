@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 namespace Scrubkit;
 
 /// <summary>Camera/software metadata from images (EXIF only — no pixels, no OCR).</summary>

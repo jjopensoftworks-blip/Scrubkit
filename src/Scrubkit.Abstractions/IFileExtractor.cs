@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 namespace Scrubkit;
 
 /// <summary>Text + embedded metadata pulled from one file.</summary>

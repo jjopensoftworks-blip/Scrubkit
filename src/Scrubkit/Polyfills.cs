@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 #if NETSTANDARD2_0
 namespace Scrubkit;
 

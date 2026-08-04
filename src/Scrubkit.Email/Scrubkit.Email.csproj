@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.Email</PackageId>
     <Title>Scrubkit.Email — .eml / .msg (email) extractors for Scrubkit</Title>
     <Description>Add-on IFileExtractors for Scrubkit that read email files: .eml (MIME) and .msg (Outlook / OLE2). The From/To/Cc/Subject/Date fields become metadata and the message body becomes text. Handles multipart MIME, base64 and quoted-printable encodings, common charsets, RFC 2047 encoded-word headers, and the Outlook compound-file format — fully offline with no dependencies beyond Scrubkit.Abstractions. Register them via ReadOptions.Extractors.</Description>

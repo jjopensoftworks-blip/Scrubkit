@@ -5,7 +5,7 @@
 
 `Microsoft.SemanticKernel` integration for [**Scrubkit**](https://www.nuget.org/packages/Scrubkit) — scan, redact, chunk, and index folder contents directly into Semantic Kernel vector memory systems.
 
-It multi-targets `netstandard2.0` and `net8.0` and provides extension methods for both `ISemanticTextMemory` and modern `IVectorStoreRecordCollection<TKey, TRecord>` vector stores.
+It multi-targets `netstandard2.0`, `net8.0`, and `net10.0` and provides extension methods for both `ISemanticTextMemory` and modern `IVectorStoreRecordCollection<TKey, TRecord>` vector stores.
 
 ## Install
 

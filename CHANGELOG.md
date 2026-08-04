@@ -7,6 +7,23 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.11.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.11.0` &nbsp;·&nbsp; 📅 2026-08-04
+
+&nbsp;
+
+---
+
+Platform expansion — .NET 10.0 (LTS) target framework support across the entire library family.
+
+### 🚀 `.NET 10.0 (LTS)` Support
+
+- Added **`net10.0`** Target Framework Moniker across all library packages, integration extensions, CLI tool, sample, benchmark, and unit test projects.
+- Multi-targeted `netstandard2.0;net8.0;net10.0` for core (`Scrubkit`), contracts (`Scrubkit.Abstractions`), extractor add-ons (`Scrubkit.Email`, `Scrubkit.OpenDocument`, `Scrubkit.Epub`, `Scrubkit.LegacyOffice`), integration packages (`Scrubkit.Extensions.DependencyInjection`, `Scrubkit.Extensions.MicrosoftExtensionsAI`, `Scrubkit.Extensions.SemanticKernel`), and the meta-bundle (`Scrubkit.All`).
+- Multi-targeted `net8.0;net10.0` for columnar Parquet output (`Scrubkit.Parquet`) and the CLI application (`Scrubkit.Tool`).
+- Multi-targeted `net8.0;net10.0` across all xUnit test projects in `tests/`, verifying full functionality on both .NET 8 and .NET 10 runtimes.
+
 ## 1.10.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.10.0` &nbsp;·&nbsp; 📅 2026-08-01

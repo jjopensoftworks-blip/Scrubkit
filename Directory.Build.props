@@ -26,11 +26,17 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Authors>jjopensoftworks-blip</Authors>
+    <Company>jjopensoftworks-blip</Company>
+    <Copyright>Copyright © 2026 jjopensoftworks-blip</Copyright>
+  </PropertyGroup>
+
   <!-- Shared package metadata for shipping (packable) projects only. -->
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
-    <Authors>OpenFreeSoftwares</Authors>
-    <Company>OpenFreeSoftwares</Company>
-    <Copyright>Copyright © OpenFreeSoftwares</Copyright>
+    <Authors>jjopensoftworks-blip</Authors>
+    <Company>jjopensoftworks-blip</Company>
+    <Copyright>Copyright © 2026 jjopensoftworks-blip</Copyright>
     <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://jjopensoftworks-blip.github.io/Scrubkit/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jjopensoftworks-blip/Scrubkit.git</RepositoryUrl>
@@ -40,7 +46,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>1.10.0 — Ecosystem Integrations. New Scrubkit.Extensions.MicrosoftExtensionsAI package brings local PII &amp; secret redaction middleware for IChatClient and IEmbeddingGenerator. New Scrubkit.Extensions.SemanticKernel package provides extension methods to scan, redact, chunk, and ingest documents directly into ISemanticTextMemory and modern IVectorStoreRecordCollection stores. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>1.11.0 — Platform Expansion. Added .NET 10.0 (LTS) target framework support across all Scrubkit library packages, integration extensions, CLI tool, and test suites alongside net8.0 and netstandard2.0. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion;vector-database;semantic-kernel;text-chunking;offline-rag;document-parser;data-prep;secrets-detection;gpt-sanitize</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->
@@ -55,7 +61,7 @@
          baseline diff against the last stable release so accidental breaking changes fail
          the build. Bump the baseline to each new stable version as it ships. -->
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageValidationBaselineVersion>1.9.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>1.10.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' != 'false'">

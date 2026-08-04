@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;

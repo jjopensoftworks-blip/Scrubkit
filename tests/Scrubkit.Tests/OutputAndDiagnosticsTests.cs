@@ -1,3 +1,5 @@
+// Copyright © 2026 jjopensoftworks-blip
+
 using System.Text.Json;
 using Scrubkit;
 using Xunit;
