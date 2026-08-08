@@ -215,6 +215,9 @@ public sealed class StandardRedactor : IRedactor
         var claimed = new bool[text.Length];
         var spans = new List<RedactionSpan>();
 
+        // A working copy where claimed characters are masked out, so a later, looser pattern
+        // can't reach back into text a more specific one already took (e.g. a phone pattern
+        // grabbing the trailing octet of a claimed IP). Masking preserves length, so match
         // offsets still map 1:1 onto the original text.
         var work = text.ToCharArray();
         var workModified = false;
