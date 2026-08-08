@@ -220,6 +220,7 @@ public sealed class StandardRedactor : IRedactor
         // grabbing the trailing octet of a claimed IP). Masking preserves length, so match
         // offsets still map 1:1 onto the original text.
         var work = text.ToCharArray();
+        var workModified = false;
 
         // Deny-list terms win over the pattern categories.
         foreach (var term in _options.DenyTerms)
@@ -227,12 +228,15 @@ public sealed class StandardRedactor : IRedactor
             if (string.IsNullOrEmpty(term)) continue;
             for (var i = 0; (i = text.IndexOf(term, i, StringComparison.OrdinalIgnoreCase)) >= 0; i += term.Length)
                 if (TryClaim(i, term.Length, RedactionCategories.Custom, claimed, spans))
+                {
                     Mask(work, i, term.Length);
+                    workModified = true;
+                }
         }
 
         // Reuse one string view of the masked buffer across rules, rebuilding it only after a
         // rule actually masked something (most rules match nothing on a given text).
-        var current = new string(work);
+        var current = workModified ? new string(work) : text;
 
         // Caller's custom rules run before the built-ins, so a domain pattern claims its text
         // ahead of a looser built-in.
@@ -295,7 +299,7 @@ public sealed class StandardRedactor : IRedactor
         return masked;
     }
 
-    private const char MaskChar = '￿';   // non-word, non-digit — matches no pattern
+    private const char MaskChar = '\uFFFD';   // non-word, non-digit — matches no pattern
 
     // Claim [start, start+length) unless it overlaps an already-claimed (higher-priority)
     // range. Returns true when the claim was taken.
@@ -354,11 +358,27 @@ public sealed class StandardRedactor : IRedactor
     private string StableCode(string value)
     {
         var salted = (_options.TokenSalt ?? "") + "\0" + value;
-        using var sha = SHA256.Create();
-        var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(salted));
-        var sb = new StringBuilder(8);
-        for (var i = 0; i < 4; i++) sb.Append(hash[i].ToString("x2"));
-        return sb.ToString();
+        byte[] hash;
+#if NET8_0_OR_GREATER
+        hash = SHA256.HashData(Encoding.UTF8.GetBytes(salted));
+#else
+        using (var sha = SHA256.Create())
+            hash = sha.ComputeHash(Encoding.UTF8.GetBytes(salted));
+#endif
+        return Hex4Bytes(hash);
+    }
+
+    private static string Hex4Bytes(byte[] bytes)
+    {
+        const string hexChars = "0123456789abcdef";
+        char[] chars = new char[8];
+        for (int i = 0; i < 4; i++)
+        {
+            byte val = bytes[i];
+            chars[i * 2] = hexChars[val >> 4];
+            chars[i * 2 + 1] = hexChars[val & 0x0F];
+        }
+        return new string(chars);
     }
 
     private string TokenFor(string category)
@@ -398,25 +418,64 @@ public sealed class StandardRedactor : IRedactor
 
     private static double ShannonEntropy(string s)
     {
-        var counts = new Dictionary<char, int>();
-        foreach (var c in s) counts[c] = counts.GetValueOrDefault(c) + 1;
+        Span<int> counts = stackalloc int[128];
+        Dictionary<char, int>? nonAsciiCounts = null;
+
+        foreach (var c in s)
+        {
+            if (c < 128)
+            {
+                counts[c]++;
+            }
+            else
+            {
+                nonAsciiCounts ??= new Dictionary<char, int>();
+                nonAsciiCounts[c] = nonAsciiCounts.GetValueOrDefault(c) + 1;
+            }
+        }
 
         double entropy = 0;
-        foreach (var count in counts.Values)
+        double len = s.Length;
+
+        for (int i = 0; i < 128; i++)
         {
-            double p = (double)count / s.Length;
-            entropy -= p * Math.Log(p, 2);
+            int count = counts[i];
+            if (count > 0)
+            {
+                double p = count / len;
+                entropy -= p * Math.Log(p, 2);
+            }
         }
+
+        if (nonAsciiCounts is not null)
+        {
+            foreach (var count in nonAsciiCounts.Values)
+            {
+                double p = count / len;
+                entropy -= p * Math.Log(p, 2);
+            }
+        }
+
         return entropy;
     }
 
     private static bool IsLuhnCard(Match m)
     {
-        var digits = m.Value.Where(char.IsDigit).ToArray();
-        return digits.Length is >= 13 and <= 16 && LuhnValid(digits);
+        ReadOnlySpan<char> val = m.Value.AsSpan();
+        Span<char> digits = stackalloc char[16];
+        int count = 0;
+        foreach (char c in val)
+        {
+            if (char.IsDigit(c))
+            {
+                if (count >= 16) return false;
+                digits[count++] = c;
+            }
+        }
+        return count is >= 13 and <= 16 && LuhnValid(digits.Slice(0, count));
     }
 
-    private static bool LuhnValid(char[] digits)
+    private static bool LuhnValid(ReadOnlySpan<char> digits)
     {
         int sum = 0;
         bool alt = false;
