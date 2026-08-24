@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Scrubkit.Sample.RagIngestion</RootNamespace>
+    <AssemblyName>scrubkit-rag-sample</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Scrubkit\Scrubkit.csproj" />
+    <ProjectReference Include="..\..\src\Scrubkit.Email\Scrubkit.Email.csproj" />
+    <ProjectReference Include="..\..\src\Scrubkit.Extensions.MicrosoftExtensionsAI\Scrubkit.Extensions.MicrosoftExtensionsAI.csproj" />
+    <ProjectReference Include="..\..\src\Scrubkit.Extensions.SemanticKernel\Scrubkit.Extensions.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\Scrubkit.Parquet\Scrubkit.Parquet.csproj" />
+  </ItemGroup>
+
+</Project>

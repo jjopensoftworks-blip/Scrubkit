@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/samples/">
     <Project Path="samples/Scrubkit.Playground/Scrubkit.Playground.csproj" />
+    <Project Path="samples/Scrubkit.Sample.RagIngestion/Scrubkit.Sample.RagIngestion.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Scrubkit.Abstractions/Scrubkit.Abstractions.csproj" />

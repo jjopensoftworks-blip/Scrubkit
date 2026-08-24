@@ -79,24 +79,24 @@ public sealed class StandardRedactor : IRedactor
     // ---- patterns (declared before the rule table that references them) -----
 
     private static readonly Regex Email =
-        new(@"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b", RegexOptions.Compiled);
+        new(@"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Ssn =
-        new(@"\b\d{3}-\d{2}-\d{4}\b", RegexOptions.Compiled);
+        new(@"\b\d{3}-\d{2}-\d{4}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // 13–16 digit runs, optionally separated by spaces/dashes — Luhn-validated below.
     private static readonly Regex CardLike =
-        new(@"\b(?:\d[ -]?){13,16}\b", RegexOptions.Compiled);
+        new(@"\b(?:\d[ -]?){13,16}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Country (2 letters) + check digits (2) + up to 30 alphanumerics, optionally spaced.
     private static readonly Regex Iban =
-        new(@"\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b", RegexOptions.Compiled);
+        new(@"\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Mac =
-        new(@"\b(?:[A-Fa-f0-9]{2}[:\-]){5}[A-Fa-f0-9]{2}\b", RegexOptions.Compiled);
+        new(@"\b(?:[A-Fa-f0-9]{2}[:\-]){5}[A-Fa-f0-9]{2}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Ipv4 =
-        new(@"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b", RegexOptions.Compiled);
+        new(@"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Full and compressed IPv6 forms (Stephen Ryan's well-known pattern), bounded so it
     // doesn't nibble into surrounding words or MAC addresses.
@@ -112,55 +112,55 @@ public sealed class StandardRedactor : IRedactor
         @"|[A-Fa-f0-9]{1,4}:(?::[A-Fa-f0-9]{1,4}){1,6}" +
         @"|:(?::[A-Fa-f0-9]{1,4}){1,7}" +
         @")(?![\w:])",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Phone =
         new(@"(?<!\d)(?:\+?\d{1,3}[ .\-]?)?(?:\(\d{2,4}\)[ .\-]?)?\d{3,4}[ .\-]\d{3,4}(?:[ .\-]\d{2,4})?(?!\d)",
-            RegexOptions.Compiled);
+            RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only:
     private static readonly Regex Geo =
-        new(@"[-+]?\d{1,3}\.\d{3,}\s*,\s*[-+]?\d{1,3}\.\d{3,}", RegexOptions.Compiled);
+        new(@"[-+]?\d{1,3}\.\d{3,}\s*,\s*[-+]?\d{1,3}\.\d{3,}", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex DobLike =
-        new(@"\b(?:\d{1,2}[/\-.]){2}(?:19|20)\d{2}\b", RegexOptions.Compiled);
+        new(@"\b(?:\d{1,2}[/\-.]){2}(?:19|20)\d{2}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex LongDigitRun =
-        new(@"\b\d{7,}\b", RegexOptions.Compiled);
+        new(@"\b\d{7,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // ---- secrets / credentials -----
 
     // A whole PEM private-key block, header to footer, across lines.
     private static readonly Regex PrivateKey = new(
         @"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----[\s\S]*?-----END (?:[A-Z0-9 ]+ )?PRIVATE KEY-----",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // header.payload.signature, each base64url; the header always starts "eyJ" ('{"' in base64).
     private static readonly Regex Jwt = new(
-        @"\beyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b", RegexOptions.Compiled);
+        @"\beyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // AWS access key id: AKIA/ASIA + 16 uppercase alphanumerics (20 total).
-    private static readonly Regex AwsKey = new(@"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", RegexOptions.Compiled);
+    private static readonly Regex AwsKey = new(@"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Google API key: "AIza" + 35 url-safe chars.
-    private static readonly Regex GcpKey = new(@"\bAIza[A-Za-z0-9_\-]{35}\b", RegexOptions.Compiled);
+    private static readonly Regex GcpKey = new(@"\bAIza[A-Za-z0-9_\-]{35}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // GitHub token (ghp_/gho_/ghu_/ghs_/ghr_) and Slack token (xoxb-/xoxp-/…).
-    private static readonly Regex GitHubToken = new(@"\bgh[pousr]_[A-Za-z0-9]{36,}\b", RegexOptions.Compiled);
-    private static readonly Regex SlackToken = new(@"\bxox[baprs]-[A-Za-z0-9\-]{10,}\b", RegexOptions.Compiled);
+    private static readonly Regex GitHubToken = new(@"\bgh[pousr]_[A-Za-z0-9]{36,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+    private static readonly Regex SlackToken = new(@"\bxox[baprs]-[A-Za-z0-9\-]{10,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // A credentialed URI: scheme://user:pass@host (mongodb, postgres, redis, amqp, …).
     private static readonly Regex ConnectionUri = new(
-        @"\b[a-z][a-z0-9+.\-]*://[^\s:@/]+:[^\s:@/]+@[^\s/]+", RegexOptions.Compiled);
+        @"\b[a-z][a-z0-9+.\-]*://[^\s:@/]+:[^\s:@/]+@[^\s/]+", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only: a "key = value" credential assignment (password/secret/token/api key …).
     private static readonly Regex SecretAssignment = new(
         @"(?i)\b(?:pass(?:word|wd)?|pwd|secret|token|api[_\- ]?key|access[_\- ]?key|client[_\- ]?secret)\b\s*[=:]\s*[""']?[^\s""';,}{]{6,}",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only: a long high-entropy token (base64/hex-ish). Entropy-gated below.
     private static readonly Regex HighEntropyToken = new(
-        @"(?<![A-Za-z0-9+/_\-])[A-Za-z0-9+/_\-]{32,}={0,2}(?![A-Za-z0-9+/_\-])", RegexOptions.Compiled);
+        @"(?<![A-Za-z0-9+/_\-])[A-Za-z0-9+/_\-]{32,}={0,2}(?![A-Za-z0-9+/_\-])", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // ---- rule table (priority order: specific patterns claim their text first) ----
 

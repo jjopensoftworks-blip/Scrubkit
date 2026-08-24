@@ -351,8 +351,94 @@ public sealed class FolderScrubber
         return new string(chars);
     }
 
-    private static readonly Regex WhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
+    public static string Normalize(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return "";
 
-    private static string Normalize(string s) =>
-        string.IsNullOrWhiteSpace(s) ? "" : WhitespaceRegex.Replace(s, " ").Trim();
+        ReadOnlySpan<char> span = s.AsSpan().Trim();
+        if (span.IsEmpty)
+            return "";
+
+        bool needsNormalization = false;
+        int targetLen = 0;
+        bool inWhitespace = false;
+
+        for (int i = 0; i < span.Length; i++)
+        {
+            char c = span[i];
+            if (char.IsWhiteSpace(c))
+            {
+                if (!inWhitespace)
+                {
+                    inWhitespace = true;
+                    targetLen++;
+                    if (c != ' ')
+                        needsNormalization = true;
+                }
+                else
+                {
+                    needsNormalization = true;
+                }
+            }
+            else
+            {
+                inWhitespace = false;
+                targetLen++;
+            }
+        }
+
+        if (!needsNormalization && span.Length == s.Length)
+            return s;
+
+        if (!needsNormalization)
+            return span.ToString();
+
+#if NET8_0_OR_GREATER
+        return string.Create(targetLen, s, (dest, src) =>
+        {
+            ReadOnlySpan<char> srcSpan = src.AsSpan().Trim();
+            int writeIdx = 0;
+            bool insideWs = false;
+            for (int i = 0; i < srcSpan.Length; i++)
+            {
+                char c = srcSpan[i];
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!insideWs)
+                    {
+                        insideWs = true;
+                        dest[writeIdx++] = ' ';
+                    }
+                }
+                else
+                {
+                    insideWs = false;
+                    dest[writeIdx++] = c;
+                }
+            }
+        });
+#else
+        var sb = new System.Text.StringBuilder(targetLen);
+        bool insideWs = false;
+        for (int i = 0; i < span.Length; i++)
+        {
+            char c = span[i];
+            if (char.IsWhiteSpace(c))
+            {
+                if (!insideWs)
+                {
+                    insideWs = true;
+                    sb.Append(' ');
+                }
+            }
+            else
+            {
+                insideWs = false;
+                sb.Append(c);
+            }
+        }
+        return sb.ToString();
+#endif
+    }
 }
