@@ -7,6 +7,27 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 1.12.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.12.0` &nbsp;·&nbsp; 📅 2026-08-24
+
+&nbsp;
+
+---
+
+Engine Hardening & Micro-Optimizations — Zero-allocation text normalization, ReDoS regex safety timeouts, and RAG ingestion sample pipeline.
+
+### ⚡ Performance & Engine Micro-Optimizations
+- **Span-Based Text Normalization**: Replaced `Regex.Replace(@"\s+", " ").Trim()` with `FolderScrubber.Normalize`, leveraging `Span<T>` and `string.Create(targetLen, ...)` for single-pass zero/low-allocation whitespace normalization. Clean strings require **0 allocations** (same reference).
+
+### 🔒 Security & ReDoS Resilience
+- **Explicit Match Timeouts**: Configured all static built-in regex rules in `StandardRedactor` (`Email`, `CardLike`, `ConnectionUri`, `Jwt`, `PrivateKey`, etc.) with `TimeSpan.FromSeconds(1)` timeouts to protect against pathological Regular Expression Denial of Service (ReDoS).
+- **ReDoS Unit Test Suite**: Added `ReDosTests.cs` verifying timeout safety on custom and built-in rules under adversarial inputs.
+
+### 🚀 RAG Ingestion Sample & Documentation
+- **`Scrubkit.Sample.RagIngestion`**: Added runnable sample application (`samples/Scrubkit.Sample.RagIngestion`) demonstrating offline folder scanning, automated PII redaction, text chunking via `Chunker`, and JSON manifest generation.
+- **RAG Ingestion Guide**: Published [`docs/RAG-INGESTION-RECIPES.md`](docs/RAG-INGESTION-RECIPES.md) covering `Microsoft.Extensions.AI`, `SemanticKernel`, vector stores, and Parquet exports.
+
 ## 1.11.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.11.0` &nbsp;·&nbsp; 📅 2026-08-04

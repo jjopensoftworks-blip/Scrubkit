@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RAG & AI Ingestion Recipes — Scrubkit</title>
+<meta name="description" content="Offline RAG ingestion, PII redaction middleware, Semantic Kernel, Microsoft.Extensions.AI, and Parquet export recipes for Scrubkit."/>
+<meta property="og:title" content="RAG & AI Ingestion Recipes — Scrubkit"/>
+<meta property="og:description" content="End-to-end recipes for local AI ingestion, document chunking, and PII redaction."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/jjopensoftworks-blip/Scrubkit/main/assets/social-preview.png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#0b1326",
+                    "surface-container-highest": "#2d3449",
+                    "surface-variant": "#2d3449",
+                    "electric-blue": "#60A5FA",
+                    "surface-container-high": "#222a3d",
+                    "on-surface": "#dae2fd",
+                    "secondary-container": "#00a572",
+                    "secondary": "#4edea3",
+                    "primary": "#adc6ff",
+                    "error-red": "#EF4444",
+                    "surface-deep": "#020617",
+                    "tertiary": "#ffb95f",
+                    "surface-dim": "#0b1326",
+                    "warning-amber": "#D97706",
+                    "primary-container": "#4d8eff",
+                    "surface-border": "#1E293B",
+                    "background": "#0b1326",
+                    "surface-container": "#171f33",
+                    "on-primary-container": "#00285d",
+                    "on-surface-variant": "#c2c6d6",
+                    "on-primary": "#002e6a",
+                    "text-muted": "#94A3B8"
+            },
+            "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+            "spacing": { "container-gap": "24px", "gutter": "16px", "bento-padding": "24px", "margin-page": "32px", "unit": "4px" },
+            "fontFamily": {
+                    "body-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "label-sm": ["JetBrains Mono"],
+                    "headline-lg": ["Hanken Grotesk"], "body-md": ["Hanken Grotesk"], "code-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .code-container { background-color: #020617; position: relative; }
+        .bento-card { border: 1px solid #1E293B; background-color: #0F172A; }
+    </style>
+</head>
+<body class="bg-surface-deep text-on-surface font-body-md selection:bg-electric-blue/30 selection:text-white">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container border-b border-surface-border px-margin-page h-16 flex justify-between items-center max-w-full">
+<div class="flex items-center gap-3">
+<a href="index.html" class="font-headline-md text-headline-md font-bold text-on-surface">Scrubkit</a>
+<span class="text-xs px-2 py-0.5 rounded bg-primary-container/20 text-electric-blue border border-electric-blue/30">RAG Recipes</span>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="index.html">Overview</a>
+<a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1" href="recipes.html">RAG Recipes</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="changelog.html">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
+</nav>
+</header>
+
+<!-- Main Content -->
+<main class="mt-20 p-margin-page max-w-5xl mx-auto pb-24">
+<h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">RAG & AI Ingestion Recipes</h1>
+<p class="font-body-lg text-body-lg text-text-muted mb-12 max-w-3xl leading-relaxed">
+    Complete developer recipes for zero-trust document processing, offline PII redaction, whitespace-snapped chunking, vector stores, and AI client middleware.
+</p>
+
+<!-- Core Principles -->
+<section class="bento-card p-bento-padding mb-12">
+    <h2 class="font-headline-md text-headline-md text-electric-blue mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined">shield</span> Core Principles for RAG Ingestion
+    </h2>
+    <ul class="space-y-3 text-text-muted">
+        <li class="flex items-start gap-2">
+            <span class="text-secondary font-bold">1.</span>
+            <span><strong class="text-on-surface">Zero Data Leaks:</strong> Redact sensitive PII, API keys, credentials, and connection strings <em>before</em> generating vector embeddings.</span>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-secondary font-bold">2.</span>
+            <span><strong class="text-on-surface">Local-First & Offline:</strong> Process files on-premises or on-device without cloud or network API calls.</span>
+        </li>
+        <li class="flex items-start gap-2">
+            <span class="text-secondary font-bold">3.</span>
+            <span><strong class="text-on-surface">Structured Chunking:</strong> Snap chunk boundaries to whitespace to avoid clipping words mid-token.</span>
+        </li>
+    </ul>
+</section>
+
+<!-- Recipe 1 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">1. Microsoft.Extensions.AI Middleware (Redaction)</h3>
+        <p class="text-text-muted mb-6">Wrap any <code>IChatClient</code> or <code>IEmbeddingGenerator</code> with automatic, offline PII/secret redaction middleware:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Microsoft.Extensions.AI;
+<span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-text-muted">// Wrap base client with Scrubkit redaction middleware</span>
+<span class="text-tertiary">IChatClient</span> redactingClient = baseClient.<span class="text-electric-blue">AsRedacting</span>(
+    level: <span class="text-tertiary">RedactionLevel</span>.Standard
+);
+
+<span class="text-text-muted">// Prompts are sanitized BEFORE leaving your boundary</span>
+<span class="text-tertiary">ChatResponse</span> response = <span class="text-secondary">await</span> redactingClient.<span class="text-electric-blue">GetResponseAsync</span>(
+    <span class="text-secondary">"Please analyze account for user email: john.doe@acme.com"</span>
+);</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe 2 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">2. Folder Scanning → Redaction → Vector Chunks</h3>
+        <p class="text-text-muted mb-6">Extract, scrub, and chunk mixed document folders (PDF, Word, Excel, Email, Plain Text) into indexable vector windows:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-secondary">var</span> options = <span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span>
+{
+    Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard,
+    ComputeContentHash = <span class="text-secondary">true</span>,
+    MaxDegreeOfParallelism = <span class="text-tertiary">Environment</span>.ProcessorCount
+};
+
+<span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(options);
+<span class="text-tertiary">IReadOnlyList</span>&lt;<span class="text-tertiary">FileRecord</span>&gt; records = <span class="text-secondary">await</span> scrubber.<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\documents"</span>);
+
+<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span>
+{
+    MaxChars = <span class="text-tertiary">500</span>,
+    OverlapChars = <span class="text-tertiary">50</span>,
+    RespectWordBoundaries = <span class="text-secondary">true</span>
+});
+
+<span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> record <span class="text-secondary">in</span> records)
+{
+    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(record))
+    {
+        <span class="text-text-muted">// Upsert sanitized chunk.Text & chunk.Metadata into Vector DB</span>
+        <span class="text-tertiary">Console</span>.<span class="text-electric-blue">WriteLine</span>(<span class="text-secondary">$"[Chunk #{chunk.Index}] {chunk.Name}: {chunk.Text}"</span>);
+    }
+}</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe 3 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">3. Semantic Kernel Memory Ingestion</h3>
+        <p class="text-text-muted mb-6">Direct ingestion into Semantic Kernel vector memories using <code>Scrubkit.Extensions.SemanticKernel</code>:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Microsoft.SemanticKernel.Memory;
+<span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard })
+    .<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\kb"</span>);
+
+<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">1000</span>, OverlapChars = <span class="text-tertiary">100</span> });
+
+<span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> record <span class="text-secondary">in</span> records)
+{
+    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(record))
+    {
+        <span class="text-secondary">await</span> memory.<span class="text-electric-blue">SaveInformationAsync</span>(
+            collection: <span class="text-secondary">"knowledge-base"</span>,
+            text: chunk.Text,
+            id: <span class="text-secondary">$"</span>{chunk.Name}_{chunk.Index}<span class="text-secondary">"</span>,
+            description: <span class="text-secondary">$"Ingested from {chunk.Path}"</span>
+        );
+    }
+}</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe 4 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2">4. Exporting Sanitized Records to Parquet</h3>
+        <p class="text-text-muted mb-6">Serialize sanitized records to columnar Parquet files using <code>Scrubkit.Parquet</code> for large-scale offline dataset preparation:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Scrubkit;
+<span class="text-secondary">using</span> Scrubkit.Parquet;
+
+<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard })
+    .<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\ingest"</span>);
+
+<span class="text-secondary">await</span> <span class="text-tertiary">ParquetTableWriter</span>.<span class="text-electric-blue">WriteAsync</span>(records, <span class="text-secondary">@"C:\data\output\sanitized_ingestion.parquet"</span>);</pre>
+        </div>
+    </div>
+</section>
+
+</main>
+</body>
+</html>

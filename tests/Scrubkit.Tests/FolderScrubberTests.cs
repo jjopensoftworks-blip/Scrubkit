@@ -277,4 +277,35 @@ public class FolderScrubberTests : IDisposable
         Assert.Contains("stat-failed", rec.Warnings);
         Assert.Equal(0, rec.SizeBytes);
     }
+
+    [Fact]
+    public async Task File_over_MaxBytesPerFile_is_skipped_with_warning()
+    {
+        Write("big.txt", new string('x', 200));
+        var options = new ReadOptions { MaxBytesPerFile = 100 };
+        var rec = Assert.Single(await new FolderScrubber(options).ReadAsync(_dir));
+
+        Assert.Equal("", rec.Text);
+        Assert.Contains(rec.Warnings, w => w.StartsWith("skipped-content"));
+    }
+
+    [Fact]
+    public void Invalid_exclude_path_is_safely_ignored()
+    {
+        var options = new ReadOptions();
+        options.ExcludePaths.Add("\0invalid_path");
+        var scrubber = new FolderScrubber(options);
+        Assert.NotNull(scrubber);
+    }
+
+    [Fact]
+    public async Task MaxTextLength_clips_text_and_records_warning()
+    {
+        Write("long.txt", new string('a', 50));
+        var options = new ReadOptions { MaxTextLength = 10 };
+        var rec = Assert.Single(await new FolderScrubber(options).ReadAsync(_dir));
+
+        Assert.Equal(10, rec.Text.Length);
+        Assert.Contains("text-clipped", rec.Warnings);
+    }
 }

@@ -248,7 +248,7 @@ public sealed class FolderScrubber
             try { content = extractor.Extract(path); }
             catch (Exception e) { content = ExtractedContent.Empty; warnings.Add($"extract-failed: {e.GetType().Name}"); }
 
-            meta = content.Metadata.ToDictionary(kv => kv.Key, kv => kv.Value);
+            meta = CopyDict(content.Metadata);
             var t = Normalize(content.Text);
 
             if (_options.MaxTextLength > 0 && t.Length > _options.MaxTextLength)
@@ -264,10 +264,11 @@ public sealed class FolderScrubber
             {
                 var red = _redactor.Redact(t);
                 text = red.Text;
-                redactions = red.Counts.ToDictionary(kv => kv.Key, kv => kv.Value);
+                redactions = CopyDict(red.Counts);
 
                 // Metadata can carry the same values (authors, subjects) — redact it too.
-                foreach (var key in meta.Keys.ToList())
+                var keys = meta.Keys.ToArray();
+                foreach (var key in keys)
                 {
                     var mr = _redactor.Redact(meta[key]);
                     meta[key] = mr.Text;
@@ -296,6 +297,14 @@ public sealed class FolderScrubber
         };
     }
 
+    private static Dictionary<TKey, TValue> CopyDict<TKey, TValue>(IReadOnlyDictionary<TKey, TValue> source)
+        where TKey : notnull
+    {
+        var dict = new Dictionary<TKey, TValue>(source.Count);
+        foreach (var kv in source) dict[kv.Key] = kv.Value;
+        return dict;
+    }
+
     // Fire the optional per-file diagnostics: one per warning, then a "read" event — but only
     // when the file was actually read (not skipped, extract-failed, or stat-failed).
     private void Emit(string path, string bucket, string text, List<string> warnings)
@@ -318,14 +327,118 @@ public sealed class FolderScrubber
 
     private static string Sha256Hex(string path)
     {
-        using var sha = System.Security.Cryptography.SHA256.Create();
         using var stream = File.OpenRead(path);
-        var bytes = sha.ComputeHash(stream);
-        var sb = new System.Text.StringBuilder(bytes.Length * 2);
-        foreach (var b in bytes) sb.Append(b.ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
-        return sb.ToString();
+        byte[] bytes;
+#if NET8_0_OR_GREATER
+        bytes = System.Security.Cryptography.SHA256.HashData(stream);
+#else
+        using (var sha = System.Security.Cryptography.SHA256.Create())
+            bytes = sha.ComputeHash(stream);
+#endif
+        return HexBytes(bytes);
     }
 
-    private static string Normalize(string s) =>
-        string.IsNullOrWhiteSpace(s) ? "" : Regex.Replace(s, @"\s+", " ").Trim();
+    private static string HexBytes(byte[] bytes)
+    {
+        const string hexChars = "0123456789abcdef";
+        char[] chars = new char[bytes.Length * 2];
+        for (int i = 0; i < bytes.Length; i++)
+        {
+            byte b = bytes[i];
+            chars[i * 2] = hexChars[b >> 4];
+            chars[i * 2 + 1] = hexChars[b & 0x0F];
+        }
+        return new string(chars);
+    }
+
+    public static string Normalize(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return "";
+
+        ReadOnlySpan<char> span = s.AsSpan().Trim();
+        if (span.IsEmpty)
+            return "";
+
+        bool needsNormalization = false;
+        int targetLen = 0;
+        bool inWhitespace = false;
+
+        for (int i = 0; i < span.Length; i++)
+        {
+            char c = span[i];
+            if (char.IsWhiteSpace(c))
+            {
+                if (!inWhitespace)
+                {
+                    inWhitespace = true;
+                    targetLen++;
+                    if (c != ' ')
+                        needsNormalization = true;
+                }
+                else
+                {
+                    needsNormalization = true;
+                }
+            }
+            else
+            {
+                inWhitespace = false;
+                targetLen++;
+            }
+        }
+
+        if (!needsNormalization && span.Length == s.Length)
+            return s;
+
+        if (!needsNormalization)
+            return span.ToString();
+
+#if NET8_0_OR_GREATER
+        return string.Create(targetLen, s, (dest, src) =>
+        {
+            ReadOnlySpan<char> srcSpan = src.AsSpan().Trim();
+            int writeIdx = 0;
+            bool insideWs = false;
+            for (int i = 0; i < srcSpan.Length; i++)
+            {
+                char c = srcSpan[i];
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!insideWs)
+                    {
+                        insideWs = true;
+                        dest[writeIdx++] = ' ';
+                    }
+                }
+                else
+                {
+                    insideWs = false;
+                    dest[writeIdx++] = c;
+                }
+            }
+        });
+#else
+        var sb = new System.Text.StringBuilder(targetLen);
+        bool insideWs = false;
+        for (int i = 0; i < span.Length; i++)
+        {
+            char c = span[i];
+            if (char.IsWhiteSpace(c))
+            {
+                if (!insideWs)
+                {
+                    insideWs = true;
+                    sb.Append(' ');
+                }
+            }
+            else
+            {
+                insideWs = false;
+                sb.Append(c);
+            }
+        }
+        return sb.ToString();
+#endif
+    }
 }

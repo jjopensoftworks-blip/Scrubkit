@@ -3,9 +3,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Changelog — Scrubkit</title>
-<meta name="description" content="The release history of Scrubkit — offline text + metadata extraction for .NET. Version notes on extraction, opt-in redaction, packaging, and tests."/>
+<meta name="description" content="Release history and version notes for Scrubkit — offline text + metadata extraction for .NET."/>
 <meta property="og:title" content="Changelog — Scrubkit"/>
-<meta property="og:description" content="The release history of Scrubkit — offline text + metadata extraction for .NET."/>
+<meta property="og:description" content="High-level release notes for Scrubkit."/>
 <meta property="og:image" content="https://raw.githubusercontent.com/jjopensoftworks-blip/Scrubkit/main/assets/social-preview.png"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
@@ -60,658 +60,267 @@
 <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .bento-card { border: 1px solid #1E293B; background-color: #0F172A; }
-        .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(30, 41, 59, 0.5); }
-        .tl-line { background: linear-gradient(to bottom, #1E293B 0%, #1E293B 100%); }
-        code { font-family: "JetBrains Mono", monospace; font-size: 0.85em; background: rgba(30,41,59,0.6); padding: 1px 5px; border-radius: 4px; color: #dae2fd; }
     </style>
 </head>
 <body class="bg-surface-deep text-on-surface font-body-md selection:bg-electric-blue/30 selection:text-white">
 <!-- TopNavBar -->
 <header class="fixed top-0 w-full z-50 bg-surface-container border-b border-surface-border px-margin-page h-16 flex justify-between items-center max-w-full">
-<a href="index.html" class="flex items-center gap-3">
-<span class="material-symbols-outlined text-electric-blue text-[26px]">cleaning_services</span>
-<span class="font-headline-md text-headline-md font-bold text-on-surface">Scrubkit</span>
-</a>
+<div class="flex items-center gap-3">
+<a href="index.html" class="font-headline-md text-headline-md font-bold text-on-surface">Scrubkit</a>
+<span class="text-xs px-2 py-0.5 rounded bg-primary-container/20 text-electric-blue border border-electric-blue/30">Changelog</span>
+</div>
 <nav class="hidden md:flex gap-8 items-center">
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit#readme">Documentation</a>
-<a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1 hover:text-on-surface transition-colors duration-200" href="changelog.html">Changelog</a>
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="index.html">Overview</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="recipes.html">RAG Recipes</a>
+<a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1" href="changelog.html">Changelog</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
 </nav>
-<div class="flex items-center gap-4">
-<a href="https://www.nuget.org/packages/Scrubkit" class="hidden lg:flex items-center gap-2 bg-primary-container text-on-primary-container px-4 py-2 font-label-sm text-label-sm active:opacity-80 transition-all">
-<span class="material-symbols-outlined text-[18px]">deployed_code</span>
-                Get the package
-            </a>
-</div>
 </header>
-<!-- Main Content Canvas -->
-<main class="mt-16 p-margin-page max-w-7xl mx-auto">
-<div class="flex flex-col lg:flex-row gap-container-gap">
 
-<!-- Sidebar: Jump to version -->
-<aside class="lg:w-64 shrink-0">
-<div class="lg:sticky lg:top-24 space-y-6">
-<div class="bento-card p-4">
-<div class="flex items-center gap-3 mb-4">
-<span class="material-symbols-outlined text-electric-blue text-[24px]">cleaning_services</span>
-<div>
-<p class="font-headline-md text-[16px] text-on-surface leading-tight">Scrubkit</p>
-<p class="font-label-sm text-[10px] text-text-muted">v1.10.0 · STABLE</p>
-</div>
-</div>
-<p class="font-label-sm text-[10px] text-text-muted mb-3">JUMP TO VERSION</p>
-<nav class="space-y-1">
-<a href="#v1-10-0" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-electric-blue/10 text-electric-blue font-body-md text-sm border border-electric-blue/20">
-<span class="material-symbols-outlined text-[18px]">check_circle</span>
-                            v1.10.0 (Stable)
-                        </a>
-<a href="#v1-9-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.9.0 (Stable)
-                        </a>
-<a href="#v1-8-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.8.0 (Stable)
-                        </a>
-<a href="#v1-7-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.7.0 (Stable)
-                        </a>
-<a href="#v1-6-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.6.0 (Stable)
-                        </a>
-<a href="#v1-5-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.5.0 (Stable)
-                        </a>
-<a href="#v1-4-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.4.0 (Stable)
-                        </a>
-<a href="#v1-3-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.3.0 (Stable)
-                        </a>
-<a href="#v1-2-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.2.0
-                        </a>
-<a href="#v1-1-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.1.0
-                        </a>
-<a href="#v1-0-0" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v1.0.0
-                        </a>
-<a href="#v0-1-0-preview-1" class="flex items-center gap-2 px-3 py-2 rounded-lg text-text-muted hover:bg-surface-container-high hover:text-on-surface font-body-md text-sm transition-all">
-<span class="material-symbols-outlined text-[18px]">history</span>
-                            v0.1.0-preview.1
-                        </a>
-</nav>
-</div>
-<a href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md" class="bento-card p-3 flex items-center justify-center gap-2 text-text-muted hover:text-on-surface hover:bg-surface-container-high transition-all font-label-sm text-label-sm">
-<span class="material-symbols-outlined text-[18px]">code</span>
-                    Full changelog on GitHub
-                </a>
-</div>
-</aside>
-
-<!-- Changelog body -->
-<div class="flex-1 min-w-0">
-<!-- Header -->
+<!-- Main Content -->
+<main class="mt-20 p-margin-page max-w-5xl mx-auto pb-24">
 <div class="mb-12">
 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm mb-4">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Latest: v1.10.0
+                    Latest Release: v1.12.0 (Stable)
                 </span>
-<h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Changelog</h1>
-<p class="font-body-lg text-body-lg text-text-muted max-w-2xl leading-relaxed">
-                    The release history of Scrubkit — offline text + metadata extraction for .NET.
-                    Every version, and what changed in extraction, opt-in redaction, packaging, and tests.
-                </p>
+<h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Release History</h1>
+<p class="font-body-lg text-body-lg text-text-muted max-w-3xl leading-relaxed">
+    High-level release notes for Scrubkit — offline text + metadata extraction for .NET.
+</p>
 </div>
 
-<!-- Timeline -->
-<div class="relative">
-<!-- vertical line -->
-<div class="absolute left-[7px] top-2 bottom-2 w-[2px] tl-line hidden sm:block"></div>
+<div class="space-y-8">
 
-<!-- ── v1.10.0 (stable) ───────────────────────────────── -->
-<section id="v1-10-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.10.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-08-01</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Ecosystem Integrations — Microsoft.Extensions.AI &amp; Semantic Kernel</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Native support for standard .NET AI orchestrators, vector stores, and prompt redaction middleware.
-                        </p>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> NEW PACKAGES
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Scrubkit.Extensions.MicrosoftExtensionsAI.</span> <span class="text-text-muted">Brings local PII and secret redaction middleware to <code>Microsoft.Extensions.AI</code> with <code>RedactingChatClient</code> and <code>RedactingEmbeddingGenerator</code>.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Scrubkit.Extensions.SemanticKernel.</span> <span class="text-text-muted">Ingestion extension methods to scan, redact, chunk, and index folder contents directly into <code>ISemanticTextMemory</code> and modern <code>IVectorStoreRecordCollection</code> stores.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Bundled in Scrubkit.All.</span> <span class="text-text-muted">Both packages multi-target <code>netstandard2.0</code> and <code>net8.0</code> and are included in the meta-bundle.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.12.0 -->
+<section id="v1-12-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-electric-blue">v1.12.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-08-24</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Engine Hardening, Micro-Optimizations & RAG Recipes</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Zero-Allocation Text Normalization:</strong> Optimized whitespace scanning with <code>Span&lt;T&gt;</code> to achieve zero string allocations for clean inputs.</li>
+        <li><strong>ReDoS Resilience:</strong> Enforced explicit 1-second execution timeouts across all built-in regex redaction rules.</li>
+        <li><strong>RAG Ingestion Sample:</strong> Published <code>Scrubkit.Sample.RagIngestion</code> and developer guides for <code>Microsoft.Extensions.AI</code>, <code>SemanticKernel</code>, vector databases, and Parquet.</li>
+    </ul>
 </section>
 
-<!-- ── v1.9.0 (stable) ───────────────────────────────── -->
-<section id="v1-9-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.9.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-28</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Legacy binary Office — .doc / .xls / .ppt</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            The biggest remaining raw-format gap, closed with zero dependencies.
-                        </p>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> NEW PACKAGE
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Scrubkit.LegacyOffice.</span> <span class="text-text-muted">Reads pre-2007 binary Office — Word <code>.doc</code>, Excel <code>.xls</code>, PowerPoint <code>.ppt</code>. Body text becomes the record text; Title, Author, and Subject come from the OLE <code>SummaryInformation</code> stream.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Zero-dependency.</span> <span class="text-text-muted">Parses the OLE2 compound file and each format's streams with the BCL alone — Word's FIB + piece table, Excel's shared-string table with <code>CONTINUE</code> splits, PowerPoint's text atoms. No NPOI, no interop. Multi-targets <code>netstandard2.0</code>/<code>net8.0</code> and joins <code>Scrubkit.All</code>.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.11.0 -->
+<section id="v1-11-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.11.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-08-04</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Platform Expansion — .NET 10.0 (LTS) Support</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>.NET 10.0 Multi-Targeting:</strong> Added official <code>net10.0</code> framework support across all 12 Scrubkit packages, CLI tools, and extensions.</li>
+        <li><strong>Broad Framework Compatibility:</strong> Multi-targets <code>netstandard2.0</code>, <code>net8.0</code>, and <code>net10.0</code>.</li>
+    </ul>
 </section>
 
-<!-- ── v1.8.0 (stable) ────────────────────────────────── -->
-<section id="v1-8-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.8.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-25</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Clean text from HTML &amp; RTF, Outlook .msg, and de-identification</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            More formats extracted cleanly, and redaction that de-identifies
-                            while keeping records joinable for analytics.
-                        </p>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> FORMATS &amp; REDACTION
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">HTML &amp; RTF clean-text.</span> <span class="text-text-muted">New <code>HtmlExtractor</code> (<code>.html</code>/<code>.htm</code>) and <code>RtfExtractor</code> (<code>.rtf</code>) strip markup and control words to clean text instead of returning raw markup — BCL-only, zero-dependency.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Outlook <code>.msg</code>.</span> <span class="text-text-muted">A new <code>MsgExtractor</code> reads Outlook <code>.msg</code> (OLE2 compound file) in <code>Scrubkit.Email</code>, completing the email family alongside <code>.eml</code> — no new package.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">De-identification.</span> <span class="text-text-muted"><code>StandardRedactorOptions.StableTokens</code> (+ <code>TokenSalt</code>) gives identical values the same deterministic token so records stay joinable, and <code>RevealLast</code> renders a format-preserving mask (keep the last 4 of a card). Both are on the CLI <code>--rules</code> JSON.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.10.0 -->
+<section id="v1-10-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.10.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-08-01</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">AI Ecosystem Integrations</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Microsoft.Extensions.AI:</strong> Added <code>Scrubkit.Extensions.MicrosoftExtensionsAI</code> for local PII/secret redaction middleware (<code>IChatClient</code> and <code>IEmbeddingGenerator</code>).</li>
+        <li><strong>Semantic Kernel Extensions:</strong> Added <code>Scrubkit.Extensions.SemanticKernel</code> for direct memory and vector store ingestion.</li>
+    </ul>
 </section>
 
-<!-- ── v1.7.0 (stable) ────────────────────────────────── -->
-<section id="v1-7-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.7.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-22</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Custom redaction rules — bring your own patterns</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Add your own redaction patterns and allow/deny/disable lists without code —
-                            in the library or from a JSON file with the CLI.
-                        </p>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> CUSTOM RULES
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">StandardRedactorOptions.CustomRules.</span> <span class="text-text-muted">Caller-defined <code>CustomRedactionRule</code>s (category / pattern / token / ignoreCase), matched <em>before</em> the built-ins so a domain rule wins an overlap. Patterns compile with a match timeout (ReDoS-safe); an invalid pattern throws at construction.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">CLI <code>--rules &lt;file&gt;</code>.</span> <span class="text-text-muted">Loads custom rules plus <code>allow</code> / <code>deny</code> / <code>disable</code> from JSON and implies redaction. JSON parsing lives in the CLI, so the core stays zero-dependency.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.9.0 -->
+<section id="v1-9-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.9.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-28</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Binary Legacy Office Support (.doc, .xls, .ppt)</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Legacy Office Formats:</strong> Introduced <code>Scrubkit.LegacyOffice</code> providing zero-dependency text & metadata extraction for pre-2007 Word (<code>.doc</code>), Excel (<code>.xls</code>), and PowerPoint (<code>.ppt</code>) files.</li>
+    </ul>
 </section>
 
-<!-- ── v1.6.0 (stable) ────────────────────────────────── -->
-<section id="v1-6-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.6.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-22</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Incremental scans: only reprocess what changed</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            A capability release for real pipelines — keep a lightweight manifest and,
-                            on the next run, extract only the files that were added or modified.
-                        </p>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> INCREMENTAL + MANIFEST
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">ReadChangesAsync(root, baseline).</span> <span class="text-text-muted">Extracts only added/modified files vs a <code>Manifest</code> (size + last-write time); returns the delta, removed paths, and a fresh complete manifest to persist. Unchanged files are never re-read.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Manifest.</span> <span class="text-text-muted">A zero-dependency text sidecar (<code>Save</code> / <code>Load</code> / <code>From</code>). CLI: <code>--since &lt;manifest&gt;</code> and <code>--manifest &lt;file&gt;</code>.</span></p>
-</div>
-</div>
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> ALSO
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">ReadOptions.ExcludePaths.</span> <span class="text-text-muted">Skip files by full path, so a run never ingests its own output; the CLI excludes its <code>--out</code> / <code>--manifest</code> automatically.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">BOM-free output.</span> <span class="text-text-muted">The CLI now writes UTF-8 without a BOM for CSV / JSON / JSON Lines / manifest files.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.8.0 -->
+<section id="v1-8-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.8.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-25</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">HTML/RTF Clean Text, Outlook .msg & Masking</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Clean Text Extractors:</strong> Strips markup and extracts metadata from HTML and RTF documents.</li>
+        <li><strong>Outlook .msg Support:</strong> Added binary <code>.msg</code> email extraction to <code>Scrubkit.Email</code>.</li>
+        <li><strong>De-identification Options:</strong> Supported stable tokens, salted token hashing, and format-preserving last-digit masking.</li>
+    </ul>
 </section>
 
-<!-- ── v1.5.0 (stable) ────────────────────────────────── -->
-<section id="v1-5-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.5.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-21</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">The tool release: run it, scrub secrets, chunk for RAG</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Run Scrubkit from a shell with the new <code>scrubkit</code> CLI, redact secrets
-                            (API keys, JWTs, private keys) alongside PII, and turn extracted text into
-                            embedding-ready chunks and JSON Lines.
-                        </p>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> COMMAND-LINE TOOL
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">New package: Scrubkit.Tool.</span> <span class="text-text-muted">A <code>dotnet tool</code> (<code>dotnet tool install -g Scrubkit.Tool</code>) — <code>scrubkit scan &lt;folder&gt; [--redact[=standard|aggressive]] [--format csv|json|jsonl|parquet] [--out &lt;file&gt;] [--hash] [--include .pdf,.docx]</code>. Table to stdout (or <code>--out</code>), progress + summary to stderr, real exit codes. Bundles the whole family, so it handles every supported format out of the box.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> SECRET / CREDENTIAL DETECTION
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Secrets, at the Standard level.</span> <span class="text-text-muted"><code>StandardRedactor</code> now masks PEM private keys, JWTs, credentialed connection strings, and AWS / Google / GitHub / Slack keys. Aggressive additionally catches <code>key = value</code> credential assignments and high-entropy tokens. New categories: <code>PrivateKey</code>, <code>ApiKey</code>, <code>Jwt</code>, <code>ConnectionString</code>, <code>Secret</code>.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> RAG KIT: CHUNKING &amp; JSON LINES
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">A Chunker for embedding.</span> <span class="text-text-muted">Splits a <code>FileRecord</code>'s text into overlapping windows carrying the source path, name, type, and metadata, plus position (<code>Index</code> / <code>Count</code> / <code>StartOffset</code>). Configurable window + overlap; whitespace-snapped so words aren't cut.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">JSON Lines output.</span> <span class="text-text-muted"><code>TableWriter.ToJsonLines</code> / <code>WriteJsonLines</code> for both records and chunks — one JSON object per line, the streaming-friendly default for embedding and log pipelines.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.7.0 -->
+<section id="v1-7-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.7.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-22</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Custom Redaction Rules & Rules JSON</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Caller-Defined Rules:</strong> Configure custom regex patterns with custom tokens and timeout safety guards.</li>
+        <li><strong>CLI Rules Configuration:</strong> Load custom redaction rules and allow/deny lists via <code>scrubkit --rules &lt;file.json&gt;</code>.</li>
+    </ul>
 </section>
 
-<!-- ── v1.4.0 (stable) ────────────────────────────────── -->
-<section id="v1-4-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.4.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-20</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Output, diagnostics, and content hashing</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            A capability release: turn the scrubbed table into CSV, JSON, or Parquet;
-                            watch the run through a diagnostics hook; and hash file content.
-                        </p>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> OUTPUT: CSV / JSON / PARQUET
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">CSV and JSON writers in the core.</span> <span class="text-text-muted">The zero-dependency <code>TableWriter</code> serializes the record table — <code>TableWriter.ToCsv(table)</code> / <code>ToJson(table)</code>. CSV is a flat, RFC 4180-quoted summary; JSON carries the full record including text, metadata, redaction counts, warnings, and content hash.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Timestamps default to UTC, with an opt-in for local time.</span> <span class="text-text-muted"><code>Modified</code> is written in UTC (trailing <code>Z</code>). Pass <code>utc: false</code> to emit machine-local time with an explicit offset (e.g. <code>2026-07-19T15:30:00+05:30</code>) so it stays unambiguous.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">New package: Scrubkit.Parquet.</span> <span class="text-text-muted">Writes the table to Apache Parquet via Parquet.Net (<code>ParquetTableWriter</code>) for data-lake / analytics ingestion. net8.0-only; the core stays zero-dependency. Parquet always stores <code>Modified</code> as a UTC instant.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> DIAGNOSTICS &amp; ILOGGER
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Per-file diagnostics hook.</span> <span class="text-text-muted"><code>ReadOptions.OnDiagnostic</code> is a dependency-free <code>Action&lt;ScrubDiagnostic&gt;</code> the core fires per file — a <code>read</code> event on success, or a warning code (<code>extract-failed</code>, <code>skipped-content</code>, <code>text-clipped</code>, <code>stat-failed</code>, <code>hash-failed</code>) on a problem. <code>AddScrubkit</code> bridges it to <code>ILogger</code>, so the core takes no logging dependency.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-warning-amber mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-warning-amber"></span> CONTENT HASHING
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Opt-in SHA-256 per file.</span> <span class="text-text-muted"><code>ReadOptions.ComputeContentHash</code> populates <code>FileRecord.ContentHash</code> with the file's lower-case hex SHA-256, bounded by <code>MaxBytesPerFile</code> (default lowered to 10&nbsp;MB; oversized files are stat-skipped and never read).</span></p>
-</div>
-</div>
-
-<div class="border-t border-surface-border pt-6 mb-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">bug_report</span> BUG FIXES
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>Redaction no longer drops a valid match that <span class="text-on-surface font-semibold">overlaps a higher-priority span</span> — claimed characters are masked in a working copy so a looser later pattern can't reach into them.</span>
-</li>
-</ul>
-</div>
-
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">build</span> MAINTENANCE
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>CI coverage floor raised to <span class="text-on-surface font-semibold">99%</span> (actual ~99.8%); added a Privacy &amp; disclaimer section to the site and READMEs.</span>
-</li>
-</ul>
-</div>
-</div>
+<!-- v1.6.0 -->
+<section id="v1-6-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.6.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-22</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Incremental Scans & Sidecar Manifests</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Incremental Processing:</strong> Rescan folders by skipping unchanged files using lightweight <code>Manifest</code> baselines.</li>
+        <li><strong>Path Exclusion:</strong> Added <code>ReadOptions.ExcludePaths</code> to prevent self-ingestion loops during CLI or pipeline scans.</li>
+    </ul>
 </section>
 
-<!-- ── v1.3.0 (stable) ────────────────────────────────── -->
-<section id="v1-3-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.3.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-19</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">More add-ons, DI, and a throughput number</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Two more add-on packages, a dependency-injection integration, and a published
-                            benchmark figure.
-                        </p>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-warning-amber mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-warning-amber"></span> NEW PACKAGE: SCRUBKIT.EPUB
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Reads .epub e-books.</span> <span class="text-text-muted">The OPF <code>Title</code> / <code>Author</code> / <code>Subject</code> become metadata and the XHTML spine (tags stripped, entities decoded) becomes text, in reading order. Zero dependencies beyond <code>Scrubkit.Abstractions</code>; <code>.epub</code> files come back as <code>Document</code> rows.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-primary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> NEW PACKAGE: SCRUBKIT.EXTENSIONS.DEPENDENCYINJECTION
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">First-class DI integration.</span> <span class="text-text-muted"><code>services.AddScrubkit(…)</code> registers a configured <code>FolderScrubber</code> as a singleton for ASP.NET Core and worker hosts. Configure recursion, limits, add-on extractors, and an optional redactor via a <code>ReadOptions</code> hook (with an <code>IServiceProvider</code> overload for DI-resolved dependencies).</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> BENCHMARKS
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Published throughput number.</span> <span class="text-text-muted">A BenchmarkDotNet harness extracts on the order of <span class="text-on-surface font-semibold">~12,000 files/sec</span> (4-way parallel; ~4,900 sequential) over a mixed text-file corpus.</span></p>
-</div>
-</div>
-
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">bug_report</span> BUG FIXES
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span><code>.epub</code> files now report <span class="text-on-surface font-semibold">TypeBucket = "Document"</span> — <code>Buckets.For</code> didn't map the extension, so they bucketed as <code>Other</code>.</span>
-</li>
-</ul>
-</div>
-</div>
+<!-- v1.5.0 -->
+<section id="v1-5-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.5.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-21</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Global CLI Tool, Secret Detection & RAG Chunker</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Global CLI Tool (<code>Scrubkit.Tool</code>):</strong> Command-line folder scanner supporting zero-code extractions to CSV, JSON, JSON Lines, and Parquet.</li>
+        <li><strong>Secret & Credential Scrubbing:</strong> Standard redaction for PEM private keys, JWTs, API keys, and connection strings.</li>
+        <li><strong>RAG Text Chunker:</strong> Whitespace-snapped overlapping window text chunker for vector embeddings.</li>
+    </ul>
 </section>
 
-<!-- ── v1.2.0 ─────────────────────────────────────────── -->
-<section id="v1-2-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.2.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-18</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">First add-on packages</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Introduces the first add-on packages — exercising the <code>IFileExtractor</code>
-                            extension seam end to end. Both reference only <code>Scrubkit.Abstractions</code>,
-                            so they pull in no PDF or image libraries.
-                        </p>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> NEW PACKAGE: SCRUBKIT.EMAIL
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Reads .eml (MIME) email.</span> <span class="text-text-muted">The <code>From</code> / <code>To</code> / <code>Cc</code> / <code>Subject</code> / <code>Date</code> headers become metadata and the message body becomes text.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Understands real email.</span> <span class="text-text-muted">Multipart messages, <code>base64</code> and <code>quoted-printable</code> encodings, common charsets, and RFC 2047 encoded-word headers — preferring <code>text/plain</code>, falling back to <code>text/html</code>. Attachments are skipped. Comes back as a <code>TypeBucket = "Email"</code> row.</span></p>
-</div>
-</div>
-
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> NEW PACKAGE: SCRUBKIT.OPENDOCUMENT
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Reads OpenDocument files.</span> <span class="text-text-muted">Text documents (<code>.odt</code>), spreadsheets (<code>.ods</code>), and presentations (<code>.odp</code>) from LibreOffice / OpenOffice — body text becomes <code>Text</code> and the <code>Title</code> / <code>Author</code> / <code>Subject</code> properties become metadata.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Zero-dependency, like the built-ins.</span> <span class="text-text-muted">ODF is a zip of XML, read with the BCL — the same technique the built-in Office extractor uses. Files route to their natural buckets: <code>Document</code> / <code>Spreadsheet</code> / <code>Presentation</code>.</span></p>
-</div>
-</div>
-</div>
+<!-- v1.4.0 -->
+<section id="v1-4-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.4.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-20</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Table Serialization, Parquet Export & Meta-Package</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Table Serialization:</strong> Built-in zero-dependency CSV and JSON table writers.</li>
+        <li><strong>Parquet Support (<code>Scrubkit.Parquet</code>):</strong> Columnar Parquet table exporter for large-scale dataset storage.</li>
+        <li><strong>Meta-Bundle (<code>Scrubkit.All</code>):</strong> Single package installation referencing the complete Scrubkit library family.</li>
+    </ul>
 </section>
 
-<!-- ── v1.1.0 ─────────────────────────────────────────── -->
-<section id="v1-1-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.1.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-17</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">Offline extraction, opt-in redaction</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Repositioned the package around <span class="text-on-surface font-semibold">offline text + metadata
-                            extraction</span>. Redaction is now opt-in instead of applied by default.
-                        </p>
-
-<!-- Behavior-change callout -->
-<div class="border-l-4 border-l-warning-amber bg-warning-amber/5 rounded-r-lg p-4 mb-8">
-<p class="font-label-sm text-label-sm text-tertiary mb-1 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">priority_high</span> BEHAVIOR CHANGE
-                            </p>
-<p class="font-body-md text-sm text-on-surface/90">
-                                Redaction is <span class="font-semibold">opt-in and caller-driven</span>. The core extracts and
-                                returns text + metadata exactly as read, and redacts only when you supply an
-                                <code>IRedactor</code> via <code>ReadOptions.Redactor</code> (or set a <code>Redaction</code> level).
-                                <span class="font-semibold">1.0.0 redacted by default</span> — if you relied on that, set a redactor
-                                or level explicitly after upgrading.
-                            </p>
-</div>
-
-<!-- Positioning & docs -->
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> POSITIONING &amp; DOCS
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Leads with extraction.</span> <span class="text-text-muted">The package <code>Title</code>, description, tags, and both READMEs were rewritten around offline text + metadata extraction for .NET.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Neutral extraction demo.</span> <span class="text-text-muted">The playground was refreshed into an extraction view with an updated screenshot (synthetic sample data only).</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Clarified text-family formats.</span> <span class="text-text-muted">RTF / HTML / XML are read as raw text — markup is not stripped.</span></p>
-</div>
-</div>
-
-<!-- Tests & tooling -->
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> TESTS &amp; TOOLING
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Offline-guarantee test.</span> <span class="text-text-muted">The build fails if either shipping assembly ever references a networking assembly.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">netstandard2.0 runtime test project.</span> <span class="text-text-muted">Runs the <code>netstandard2.0</code> build — its PolySharp polyfills and <code>GetValueOrDefault</code> shim — on the .NET 8 host, so the polyfilled paths are exercised at runtime, not just compiled.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Expanded coverage.</span> <span class="text-text-muted">Extraction, extension filtering, record fields, opt-in and custom redaction, and edge cases (empty folders, uncapped limits, corrupt Office files, a <code>stat-failed</code> guard). CI now publishes a test-status summary on every run.</span></p>
-</div>
-</div>
-
-<!-- Bug fixes -->
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">bug_report</span> BUG FIXES
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span><code>.htm</code> files now report <span class="text-on-surface font-semibold">TypeBucket = "Text"</span>. <code>Buckets.For</code> mapped <code>.html</code> but not <code>.htm</code>, so <code>.htm</code> files extracted correctly yet were bucketed <code>Other</code>.</span>
-</li>
-</ul>
-</div>
-</div>
+<!-- v1.3.0 -->
+<section id="v1-3-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.3.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-19</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">EPUB Extractor & Dependency Injection</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>eBook Extractor (<code>Scrubkit.Epub</code>):</strong> Reads <code>.epub</code> documents and extracts book spine text and metadata.</li>
+        <li><strong>Dependency Injection (<code>Scrubkit.Extensions.DependencyInjection</code>):</strong> <code>services.AddScrubkit(...)</code> host registration.</li>
+    </ul>
 </section>
 
-<!-- ── v1.0.0 ─────────────────────────────────────────── -->
-<section id="v1-0-0" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-secondary ring-4 ring-secondary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V1.0.0</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-15</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-[10px]">STABLE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">First stable release</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            Promoted from the preview to a <span class="text-on-surface font-semibold">stable</span> release —
-                            the same engine and API, with a cleaner first impression and clearer wording throughout.
-                            The public API is stable under SemVer from here on. No new features and no bug fixes.
-                        </p>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> DOCUMENTATION
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Redesigned NuGet pages.</span> <span class="text-text-muted">A scannable highlights list, separate Install and Quick-start sections, a supported-formats table, and clearer dividers — plus a focused <code>Scrubkit.Abstractions</code> page.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Added a "Prepare a folder for RAG" recipe</span> <span class="text-text-muted">and a short guide to writing a custom <code>IFileExtractor</code> or <code>IRedactor</code>.</span></p>
-</div>
-</div>
-
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-secondary mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> PACKAGING &amp; UNDER THE HOOD
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Enabled package validation.</span> <span class="text-text-muted">The build checks that the <code>net8.0</code> and <code>netstandard2.0</code> API surfaces stay compatible within each package.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Sharpened discoverability.</span> <span class="text-text-muted">Rewrote the description to lead with the problem it solves and refreshed the search tags.</span></p>
-</div>
-</div>
-
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">edit_note</span> WORDING &amp; ACCURACY
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>Reworded the scrubbing docs to plain, neutral language and softened absolute claims — the redactor is clearly described as <span class="text-on-surface font-semibold">best-effort</span>.</span>
-</li>
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>Removed references to add-on packages that aren't shipped yet, so the docs describe only what's available today.</span>
-</li>
-</ul>
-</div>
-</div>
+<!-- v1.2.0 -->
+<section id="v1-2-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.2.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-18</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">MIME Email (.eml) & OpenDocument (.odt, .ods, .odp)</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Email Extractor (<code>Scrubkit.Email</code>):</strong> Extracted headers and message bodies from <code>.eml</code> files.</li>
+        <li><strong>OpenDocument Extractor (<code>Scrubkit.OpenDocument</code>):</strong> Zero-dependency text & metadata extraction for OpenOffice / LibreOffice files.</li>
+    </ul>
 </section>
 
-<!-- ── v0.1.0-preview.1 ───────────────────────────────── -->
-<section id="v0-1-0-preview-1" class="relative sm:pl-12 scroll-mt-24 mb-16">
-<div class="hidden sm:flex absolute left-0 top-1 w-4 h-4 rounded-full bg-tertiary ring-4 ring-tertiary/20 items-center justify-center"></div>
-<div class="mb-4">
-<p class="font-label-sm text-label-sm text-on-surface">V0.1.0-PREVIEW.1</p>
-<p class="font-body-md text-sm text-text-muted mb-2">2026-07-13</p>
-<span class="inline-block px-2.5 py-0.5 rounded bg-tertiary/15 text-tertiary font-label-sm text-[10px]">PRE-RELEASE</span>
-</div>
-<div class="bento-card rounded-xl p-bento-padding md:p-8">
-<h2 class="font-headline-lg text-[26px] text-on-surface mb-3">First public release</h2>
-<p class="font-body-md text-text-muted mb-6 leading-relaxed">
-                            The first public release — everything Scrubkit does today shipped here.
-                        </p>
+<!-- v1.1.0 -->
+<section id="v1-1.0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.1.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-17</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Offline Positioning & Opt-in Redaction Architecture</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Opt-In Redaction:</strong> Repositioned core engine around offline extraction with opt-in caller-driven redaction.</li>
+        <li><strong>Offline Guarantee Tests:</strong> Enforced automated unit tests preventing any network API dependencies.</li>
+    </ul>
+</section>
 
-<div class="mb-8">
-<p class="font-label-sm text-label-sm text-electric-blue mb-4 flex items-center gap-2">
-<span class="w-1.5 h-1.5 rounded-full bg-electric-blue"></span> FEATURES
-                            </p>
-<div class="space-y-3">
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Point it at a folder, get a clean table back.</span> <span class="text-text-muted"><code>FolderScrubber</code> walks a directory and returns one row per file — its text, metadata, and warnings — fully offline. Unreadable files never crash the run.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Reads the common formats.</span> <span class="text-text-muted">PDF, Word / Excel / PowerPoint (docx / xlsx / pptx), plain-text files (txt, md, csv, log, json, xml, html), and the camera/software info in image EXIF.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Handles big folders.</span> <span class="text-text-muted">Stream results as they're produced (<code>ReadStreamAsync</code>) and process several files at once (<code>MaxDegreeOfParallelism</code>), with output order preserved.</span></p>
-<p class="font-body-md text-on-surface/90"><span class="font-semibold">Extend it without forking.</span> <span class="text-text-muted">Plug in your own formats (<code>IFileExtractor</code>) or redaction (<code>IRedactor</code>); add-ons only need the tiny <code>Scrubkit.Abstractions</code> package.</span></p>
-</div>
-</div>
+<!-- v1.0.0 -->
+<section id="v1-0-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.0.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-15</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Initial Stable Release</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Stable API:</strong> Production release under Semantic Versioning guarantees.</li>
+        <li><strong>Package Validation:</strong> Enabled API surface compatibility checks between .NET 8 and .NET Standard 2.0.</li>
+    </ul>
+</section>
 
-<div class="border-t border-surface-border pt-6">
-<p class="font-label-sm text-label-sm text-text-muted mb-4 flex items-center gap-2">
-<span class="material-symbols-outlined text-[16px]">info</span> UNDER THE HOOD
-                            </p>
-<ul class="space-y-2">
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>Runs on <span class="text-on-surface font-semibold">.NET 8</span> and <span class="text-on-surface font-semibold">.NET Standard 2.0</span>.</span>
-</li>
-<li class="flex items-start gap-3 font-body-md text-sm text-text-muted">
-<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">check</span>
-<span>Reproducible, source-linked builds with symbol packages; automated tests and publishing.</span>
-</li>
-</ul>
-</div>
-</div>
+<!-- v0.1.0-preview.1 -->
+<section id="v0-1-0-preview-1" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-on-surface">v0.1.0-preview.1</h2>
+            <span class="px-2.5 py-0.5 rounded bg-warning-amber/15 text-warning-amber font-label-sm text-xs">PRE-RELEASE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-07-13</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Initial Public Preview</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Core Engine:</strong> Initial release of <code>FolderScrubber</code>, PDF, Office (docx/xlsx/pptx), plain text, and EXIF extraction.</li>
+    </ul>
 </section>
 
 </div>
-<!-- /timeline -->
-</div>
-<!-- /changelog body -->
-</div>
+
 </main>
-
-<!-- Footer -->
-<footer class="relative w-full bottom-0 bg-surface-deep border-t border-surface-border flex flex-col md:flex-row justify-between items-center px-margin-page py-8 mt-auto">
-<div class="flex flex-col gap-2 mb-6 md:mb-0">
-<p class="font-headline-md text-[20px] text-on-surface">Scrubkit</p>
-<p class="font-body-md text-body-md text-text-muted">© Copyright 2026 jjopensoftworks-blip · Licensed under MPL 2.0.</p>
-</div>
-<div class="flex flex-wrap gap-8">
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://www.nuget.org/packages/Scrubkit">NuGet</a>
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit">GitHub</a>
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="changelog.html">Changelog</a>
-<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE">License</a>
-</div>
-</footer>
-</body></html>
+</body>
+</html>

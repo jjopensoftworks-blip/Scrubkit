@@ -79,24 +79,24 @@ public sealed class StandardRedactor : IRedactor
     // ---- patterns (declared before the rule table that references them) -----
 
     private static readonly Regex Email =
-        new(@"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b", RegexOptions.Compiled);
+        new(@"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Ssn =
-        new(@"\b\d{3}-\d{2}-\d{4}\b", RegexOptions.Compiled);
+        new(@"\b\d{3}-\d{2}-\d{4}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // 13–16 digit runs, optionally separated by spaces/dashes — Luhn-validated below.
     private static readonly Regex CardLike =
-        new(@"\b(?:\d[ -]?){13,16}\b", RegexOptions.Compiled);
+        new(@"\b(?:\d[ -]?){13,16}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Country (2 letters) + check digits (2) + up to 30 alphanumerics, optionally spaced.
     private static readonly Regex Iban =
-        new(@"\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b", RegexOptions.Compiled);
+        new(@"\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Mac =
-        new(@"\b(?:[A-Fa-f0-9]{2}[:\-]){5}[A-Fa-f0-9]{2}\b", RegexOptions.Compiled);
+        new(@"\b(?:[A-Fa-f0-9]{2}[:\-]){5}[A-Fa-f0-9]{2}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Ipv4 =
-        new(@"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b", RegexOptions.Compiled);
+        new(@"\b(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Full and compressed IPv6 forms (Stephen Ryan's well-known pattern), bounded so it
     // doesn't nibble into surrounding words or MAC addresses.
@@ -112,55 +112,55 @@ public sealed class StandardRedactor : IRedactor
         @"|[A-Fa-f0-9]{1,4}:(?::[A-Fa-f0-9]{1,4}){1,6}" +
         @"|:(?::[A-Fa-f0-9]{1,4}){1,7}" +
         @")(?![\w:])",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex Phone =
         new(@"(?<!\d)(?:\+?\d{1,3}[ .\-]?)?(?:\(\d{2,4}\)[ .\-]?)?\d{3,4}[ .\-]\d{3,4}(?:[ .\-]\d{2,4})?(?!\d)",
-            RegexOptions.Compiled);
+            RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only:
     private static readonly Regex Geo =
-        new(@"[-+]?\d{1,3}\.\d{3,}\s*,\s*[-+]?\d{1,3}\.\d{3,}", RegexOptions.Compiled);
+        new(@"[-+]?\d{1,3}\.\d{3,}\s*,\s*[-+]?\d{1,3}\.\d{3,}", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex DobLike =
-        new(@"\b(?:\d{1,2}[/\-.]){2}(?:19|20)\d{2}\b", RegexOptions.Compiled);
+        new(@"\b(?:\d{1,2}[/\-.]){2}(?:19|20)\d{2}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     private static readonly Regex LongDigitRun =
-        new(@"\b\d{7,}\b", RegexOptions.Compiled);
+        new(@"\b\d{7,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // ---- secrets / credentials -----
 
     // A whole PEM private-key block, header to footer, across lines.
     private static readonly Regex PrivateKey = new(
         @"-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----[\s\S]*?-----END (?:[A-Z0-9 ]+ )?PRIVATE KEY-----",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // header.payload.signature, each base64url; the header always starts "eyJ" ('{"' in base64).
     private static readonly Regex Jwt = new(
-        @"\beyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b", RegexOptions.Compiled);
+        @"\beyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // AWS access key id: AKIA/ASIA + 16 uppercase alphanumerics (20 total).
-    private static readonly Regex AwsKey = new(@"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", RegexOptions.Compiled);
+    private static readonly Regex AwsKey = new(@"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Google API key: "AIza" + 35 url-safe chars.
-    private static readonly Regex GcpKey = new(@"\bAIza[A-Za-z0-9_\-]{35}\b", RegexOptions.Compiled);
+    private static readonly Regex GcpKey = new(@"\bAIza[A-Za-z0-9_\-]{35}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // GitHub token (ghp_/gho_/ghu_/ghs_/ghr_) and Slack token (xoxb-/xoxp-/…).
-    private static readonly Regex GitHubToken = new(@"\bgh[pousr]_[A-Za-z0-9]{36,}\b", RegexOptions.Compiled);
-    private static readonly Regex SlackToken = new(@"\bxox[baprs]-[A-Za-z0-9\-]{10,}\b", RegexOptions.Compiled);
+    private static readonly Regex GitHubToken = new(@"\bgh[pousr]_[A-Za-z0-9]{36,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+    private static readonly Regex SlackToken = new(@"\bxox[baprs]-[A-Za-z0-9\-]{10,}\b", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // A credentialed URI: scheme://user:pass@host (mongodb, postgres, redis, amqp, …).
     private static readonly Regex ConnectionUri = new(
-        @"\b[a-z][a-z0-9+.\-]*://[^\s:@/]+:[^\s:@/]+@[^\s/]+", RegexOptions.Compiled);
+        @"\b[a-z][a-z0-9+.\-]*://[^\s:@/]+:[^\s:@/]+@[^\s/]+", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only: a "key = value" credential assignment (password/secret/token/api key …).
     private static readonly Regex SecretAssignment = new(
         @"(?i)\b(?:pass(?:word|wd)?|pwd|secret|token|api[_\- ]?key|access[_\- ]?key|client[_\- ]?secret)\b\s*[=:]\s*[""']?[^\s""';,}{]{6,}",
-        RegexOptions.Compiled);
+        RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // Aggressive-only: a long high-entropy token (base64/hex-ish). Entropy-gated below.
     private static readonly Regex HighEntropyToken = new(
-        @"(?<![A-Za-z0-9+/_\-])[A-Za-z0-9+/_\-]{32,}={0,2}(?![A-Za-z0-9+/_\-])", RegexOptions.Compiled);
+        @"(?<![A-Za-z0-9+/_\-])[A-Za-z0-9+/_\-]{32,}={0,2}(?![A-Za-z0-9+/_\-])", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
 
     // ---- rule table (priority order: specific patterns claim their text first) ----
 
@@ -220,6 +220,7 @@ public sealed class StandardRedactor : IRedactor
         // grabbing the trailing octet of a claimed IP). Masking preserves length, so match
         // offsets still map 1:1 onto the original text.
         var work = text.ToCharArray();
+        var workModified = false;
 
         // Deny-list terms win over the pattern categories.
         foreach (var term in _options.DenyTerms)
@@ -227,12 +228,15 @@ public sealed class StandardRedactor : IRedactor
             if (string.IsNullOrEmpty(term)) continue;
             for (var i = 0; (i = text.IndexOf(term, i, StringComparison.OrdinalIgnoreCase)) >= 0; i += term.Length)
                 if (TryClaim(i, term.Length, RedactionCategories.Custom, claimed, spans))
+                {
                     Mask(work, i, term.Length);
+                    workModified = true;
+                }
         }
 
         // Reuse one string view of the masked buffer across rules, rebuilding it only after a
         // rule actually masked something (most rules match nothing on a given text).
-        var current = new string(work);
+        var current = workModified ? new string(work) : text;
 
         // Caller's custom rules run before the built-ins, so a domain pattern claims its text
         // ahead of a looser built-in.
@@ -295,7 +299,7 @@ public sealed class StandardRedactor : IRedactor
         return masked;
     }
 
-    private const char MaskChar = '￿';   // non-word, non-digit — matches no pattern
+    private const char MaskChar = '\uFFFD';   // non-word, non-digit — matches no pattern
 
     // Claim [start, start+length) unless it overlaps an already-claimed (higher-priority)
     // range. Returns true when the claim was taken.
@@ -354,11 +358,27 @@ public sealed class StandardRedactor : IRedactor
     private string StableCode(string value)
     {
         var salted = (_options.TokenSalt ?? "") + "\0" + value;
-        using var sha = SHA256.Create();
-        var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(salted));
-        var sb = new StringBuilder(8);
-        for (var i = 0; i < 4; i++) sb.Append(hash[i].ToString("x2"));
-        return sb.ToString();
+        byte[] hash;
+#if NET8_0_OR_GREATER
+        hash = SHA256.HashData(Encoding.UTF8.GetBytes(salted));
+#else
+        using (var sha = SHA256.Create())
+            hash = sha.ComputeHash(Encoding.UTF8.GetBytes(salted));
+#endif
+        return Hex4Bytes(hash);
+    }
+
+    private static string Hex4Bytes(byte[] bytes)
+    {
+        const string hexChars = "0123456789abcdef";
+        char[] chars = new char[8];
+        for (int i = 0; i < 4; i++)
+        {
+            byte val = bytes[i];
+            chars[i * 2] = hexChars[val >> 4];
+            chars[i * 2 + 1] = hexChars[val & 0x0F];
+        }
+        return new string(chars);
     }
 
     private string TokenFor(string category)
@@ -398,25 +418,64 @@ public sealed class StandardRedactor : IRedactor
 
     private static double ShannonEntropy(string s)
     {
-        var counts = new Dictionary<char, int>();
-        foreach (var c in s) counts[c] = counts.GetValueOrDefault(c) + 1;
+        Span<int> counts = stackalloc int[128];
+        Dictionary<char, int>? nonAsciiCounts = null;
+
+        foreach (var c in s)
+        {
+            if (c < 128)
+            {
+                counts[c]++;
+            }
+            else
+            {
+                nonAsciiCounts ??= new Dictionary<char, int>();
+                nonAsciiCounts[c] = nonAsciiCounts.GetValueOrDefault(c) + 1;
+            }
+        }
 
         double entropy = 0;
-        foreach (var count in counts.Values)
+        double len = s.Length;
+
+        for (int i = 0; i < 128; i++)
         {
-            double p = (double)count / s.Length;
-            entropy -= p * Math.Log(p, 2);
+            int count = counts[i];
+            if (count > 0)
+            {
+                double p = count / len;
+                entropy -= p * Math.Log(p, 2);
+            }
         }
+
+        if (nonAsciiCounts is not null)
+        {
+            foreach (var count in nonAsciiCounts.Values)
+            {
+                double p = count / len;
+                entropy -= p * Math.Log(p, 2);
+            }
+        }
+
         return entropy;
     }
 
     private static bool IsLuhnCard(Match m)
     {
-        var digits = m.Value.Where(char.IsDigit).ToArray();
-        return digits.Length is >= 13 and <= 16 && LuhnValid(digits);
+        ReadOnlySpan<char> val = m.Value.AsSpan();
+        Span<char> digits = stackalloc char[16];
+        int count = 0;
+        foreach (char c in val)
+        {
+            if (char.IsDigit(c))
+            {
+                if (count >= 16) return false;
+                digits[count++] = c;
+            }
+        }
+        return count is >= 13 and <= 16 && LuhnValid(digits.Slice(0, count));
     }
 
-    private static bool LuhnValid(char[] digits)
+    private static bool LuhnValid(ReadOnlySpan<char> digits)
     {
         int sum = 0;
         bool alt = false;
