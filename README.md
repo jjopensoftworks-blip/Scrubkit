@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml/badge.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
-[![Downloads](https://img.shields.io/badge/downloads-17.3k%20total-blue.svg)](https://www.nuget.org/packages/Scrubkit)
+[![Downloads](https://img.shields.io/badge/downloads-22.1k%20total-blue.svg)](https://www.nuget.org/packages/Scrubkit)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](LICENSE)
 
 **Point at a folder, get a clean table of file text + metadata back — 100% offline.**
