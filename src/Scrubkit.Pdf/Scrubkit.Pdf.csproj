@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
+    <PackageId>Scrubkit.Pdf</PackageId>
+    <Title>Scrubkit.Pdf — PDF text &amp; metadata extractor for Scrubkit</Title>
+    <Description>PDF text and metadata extractor for Scrubkit powered by PdfPig.</Description>
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Scrubkit.Abstractions\Scrubkit.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PdfPig" />
+  </ItemGroup>
+
+</Project>

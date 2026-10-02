@@ -1,21 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Meta-package: ships no code of its own, just pulls in the whole family as
-         dependencies. Multi-targets so netstandard2.0 consumers get everything except
-         Parquet (which is modern .NET only, referenced below for net8.0/net10.0). -->
     <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
     <PackageId>Scrubkit.All</PackageId>
     <Title>Scrubkit.All — the whole Scrubkit family in one reference</Title>
-    <Description>Convenience meta-package that references the entire Scrubkit family: the core (PDF/Office/text/image EXIF + CSV/JSON output), the extractor add-ons (.eml/.msg email, OpenDocument, .epub, legacy binary Office .doc/.xls/.ppt), the AddScrubkit dependency-injection integration, the Microsoft.Extensions.AI local redaction integration, the Semantic Kernel vector store integration, and — on net8.0/net10.0 — Parquet output. Install this to get everything out of the box; install the individual packages instead if you want a lean footprint. No code of its own.</Description>
+    <Description>Convenience meta-package that references the entire Scrubkit family: core engine, PDF extractor, Image EXIF extractor, email (.eml/.msg), OpenDocument, .epub, legacy binary Office (.doc/.xls/.ppt), Parquet, DI integration, Microsoft.Extensions.AI, and Semantic Kernel. Ships .AddAllExtractors() auto-registration.</Description>
     <PackageTags>scrubkit;bundle;meta;all;extraction;text-extraction;pdf;office;email;epub;opendocument;legacyoffice;parquet;offline;rag;ingestion;ai;microsoft-extensions-ai;semantic-kernel</PackageTags>
-
-    <PackageValidationBaselineVersion></PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <!-- The full family. Scrubkit.Abstractions flows transitively through these. -->
   <ItemGroup>
     <ProjectReference Include="..\Scrubkit\Scrubkit.csproj" />
+    <ProjectReference Include="..\Scrubkit.Pdf\Scrubkit.Pdf.csproj" />
+    <ProjectReference Include="..\Scrubkit.Images\Scrubkit.Images.csproj" />
     <ProjectReference Include="..\Scrubkit.Email\Scrubkit.Email.csproj" />
     <ProjectReference Include="..\Scrubkit.OpenDocument\Scrubkit.OpenDocument.csproj" />
     <ProjectReference Include="..\Scrubkit.Epub\Scrubkit.Epub.csproj" />

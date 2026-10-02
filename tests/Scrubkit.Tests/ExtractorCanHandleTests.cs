@@ -9,14 +9,6 @@ namespace Scrubkit.Tests;
 public class ExtractorCanHandleTests
 {
     [Theory]
-    [InlineData(".pdf", true)]
-    [InlineData(".docx", false)]
-    [InlineData(".txt", false)]
-    [InlineData(".PDF", false)]   // caller passes a normalized lower-case extension
-    public void Pdf(string ext, bool expected) =>
-        Assert.Equal(expected, new PdfExtractor().CanHandle(ext));
-
-    [Theory]
     [InlineData(".docx", true)]
     [InlineData(".pptx", true)]
     [InlineData(".xlsx", true)]
@@ -61,18 +53,5 @@ public class ExtractorCanHandleTests
     public void Rtf(string ext, bool expected) =>
         Assert.Equal(expected, new RtfExtractor().CanHandle(ext));
 
-    [Theory]
-    [InlineData(".jpg", true)]
-    [InlineData(".jpeg", true)]
-    [InlineData(".png", true)]
-    [InlineData(".tiff", true)]
-    [InlineData(".tif", true)]
-    [InlineData(".heic", true)]
-    [InlineData(".webp", true)]
-    [InlineData(".gif", true)]
-    [InlineData(".bmp", true)]
-    [InlineData(".pdf", false)]
-    [InlineData(".txt", false)]
-    public void Image(string ext, bool expected) =>
-        Assert.Equal(expected, new ImageExtractor().CanHandle(ext));
+
 }

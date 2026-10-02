@@ -1,5 +1,7 @@
 // Copyright © 2026 jjopensoftworks-blip
 
+using System.Collections.Generic;
+
 namespace Scrubkit;
 
 /// <summary>Camera/software metadata from images (EXIF only — no pixels, no OCR).</summary>

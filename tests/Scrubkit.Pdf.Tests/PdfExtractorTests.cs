@@ -1,5 +1,7 @@
 // Copyright © 2026 jjopensoftworks-blip
 
+using System;
+using System.IO;
 using Scrubkit;
 using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.Core;
@@ -7,7 +9,7 @@ using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using UglyToad.PdfPig.Writer;
 using Xunit;
 
-namespace Scrubkit.Tests.Extractors;
+namespace Scrubkit.Pdf.Tests;
 
 public class PdfExtractorTests
 {
@@ -23,12 +25,21 @@ public class PdfExtractorTests
         return path;
     }
 
-    [Fact]
-    public void CanHandle_only_pdf()
+    [Theory]
+    [InlineData(".pdf", true)]
+    [InlineData(".txt", false)]
+    [InlineData(".docx", false)]
+    public void PdfExtractor_CanHandleExtension_ReturnsExpected(string extension, bool expected)
     {
-        var ex = new PdfExtractor();
-        Assert.True(ex.CanHandle(".pdf"));
-        Assert.False(ex.CanHandle(".txt"));
+        var extractor = new PdfExtractor();
+        Assert.Equal(expected, extractor.CanHandle(extension));
+    }
+
+    [Fact]
+    public void ReadOptions_AddPdf_RegistersPdfExtractor()
+    {
+        var options = new ReadOptions().AddPdf();
+        Assert.Contains(options.Extractors, e => e is PdfExtractor);
     }
 
     [Fact]

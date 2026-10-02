@@ -10,13 +10,15 @@ namespace Scrubkit;
 public static class ScrubkitAllExtensions
 {
     /// <summary>
-    /// Registers all available Scrubkit format extractors (<c>Email</c>, <c>OpenDocument</c>, <c>EPUB</c>, <c>LegacyOffice</c>) to <see cref="ReadOptions.Extractors"/>.
+    /// Registers all available Scrubkit format extractors (<c>Pdf</c>, <c>Images</c>, <c>Email</c>, <c>OpenDocument</c>, <c>EPUB</c>, <c>LegacyOffice</c>) to <see cref="ReadOptions.Extractors"/>.
     /// </summary>
     /// <param name="options">The <see cref="ReadOptions"/> instance.</param>
     /// <returns>The <see cref="ReadOptions"/> instance for fluent chaining.</returns>
     public static ReadOptions AddAllExtractors(this ReadOptions options)
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
+        options.AddPdf();
+        options.AddImages();
         options.AddEmail();
         options.AddOpenDocument();
         options.AddEpub();
