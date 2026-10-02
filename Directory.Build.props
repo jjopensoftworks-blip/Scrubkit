@@ -46,7 +46,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>2.0.0 — Modular Zero-Dependency Core Split. Extracted Scrubkit.Pdf (PdfPig) and Scrubkit.Images (MetadataExtractor) into dedicated add-on packages; core Scrubkit is 100% zero-dependency (Office OOXML, HTML, RTF, PlainText). Added fluent .AddPdf(), .AddImages(), and .AddAllExtractors(), 575+ tests, and updated dependencies. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>2.1.0 — Multi-Targeting Expansion &amp; Tool Enhancements. Added explicit .NET 9.0 (STS) alongside .NET 8.0 (LTS), .NET 10.0, and .NET Standard 2.0 across all 14 packages; enabled Scrubkit.Pdf and Scrubkit.Images out of the box in Scrubkit.Tool CLI; updated test suites and docs. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion;vector-database;semantic-kernel;text-chunking;offline-rag;document-parser;data-prep;secrets-detection;gpt-sanitize</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->

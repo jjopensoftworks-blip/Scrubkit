@@ -4,7 +4,7 @@
     <!-- Modern .NET TFMs: it references Scrubkit.Parquet for Parquet output, and a global
          tool doesn't need netstandard reach. -->
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
 
     <!-- Ship as a dotnet global/local tool: `dotnet tool install -g Scrubkit.Tool` → `scrubkit`. -->
     <PackAsTool>true</PackAsTool>
@@ -31,6 +31,8 @@
     <!-- The core plus every extractor add-on and Parquet output, so the CLI covers the whole
          family out of the box. -->
     <ProjectReference Include="..\Scrubkit\Scrubkit.csproj" />
+    <ProjectReference Include="..\Scrubkit.Pdf\Scrubkit.Pdf.csproj" />
+    <ProjectReference Include="..\Scrubkit.Images\Scrubkit.Images.csproj" />
     <ProjectReference Include="..\Scrubkit.Email\Scrubkit.Email.csproj" />
     <ProjectReference Include="..\Scrubkit.OpenDocument\Scrubkit.OpenDocument.csproj" />
     <ProjectReference Include="..\Scrubkit.Epub\Scrubkit.Epub.csproj" />
