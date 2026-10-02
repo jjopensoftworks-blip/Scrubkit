@@ -7,6 +7,29 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 2.0.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.0.0` &nbsp;·&nbsp; 📅 2026-10-02
+
+&nbsp;
+
+---
+
+Major Architecture Evolution — Modular Core Split 2.0. Core `Scrubkit` is now a lean, zero-external-dependency engine. PDF and Image EXIF extraction are extracted into dedicated modular packages (`Scrubkit.Pdf` and `Scrubkit.Images`).
+
+### 🚀 Modular Architecture & New Packages
+
+- **Zero-Dependency Core `Scrubkit`**: Core engine features built-in BCL extractors for Word (`.docx`), Excel (`.xlsx`), PowerPoint (`.pptx`), HTML (`.html`), RTF (`.rtf`), and Plain Text (`.txt`) with zero third-party dependencies.
+- **New Package `Scrubkit.Pdf`**: PDF document text and metadata extractor powered by `PdfPig`. Provides fluent `.AddPdf()` registration extension for `ReadOptions`.
+- **New Package `Scrubkit.Images`**: Image EXIF metadata extractor powered by `MetadataExtractor`. Provides fluent `.AddImages()` registration extension for `ReadOptions`.
+- **Fluent Registration Extensions**: Standardized `.AddPdf()`, `.AddImages()`, `.AddEmail()`, `.AddOpenDocument()`, `.AddEpub()`, and `.AddLegacyOffice()` across format packages.
+- **Updated `Scrubkit.All` Meta-Bundle**: Bundles the full 14-package family and ships `.AddAllExtractors()` extension method to auto-register all format extractors with a single call.
+
+### 🧪 Test Suite & Dependency Modernization
+
+- Expanded test suite with comprehensive theory test suites covering pattern redactions, concurrency scaling, buffer clipping, hashing, and escaping — reaching **575+ passing tests** across .NET 8 and .NET 10.
+- Updated dependencies to latest stable releases: `PdfPig` (0.1.16), `MinVer` (8.0.0), `Microsoft.SourceLink.GitHub` (10.0.401), `Microsoft.NET.Test.Sdk` (18.10.1), `xunit.runner.visualstudio` (4.0.0), and BCL / DI / Logging abstractions (10.0.12).
+
 ## 1.12.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v1.12.0` &nbsp;·&nbsp; 📅 2026-08-24

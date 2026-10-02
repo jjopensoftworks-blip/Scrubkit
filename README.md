@@ -22,7 +22,7 @@ Explore complete Scrubkit documentation, integration recipes, and API references
 | **🌐 Official Website** | Interactive product overview, performance benchmarks, and architecture. | [**Visit Site →**](https://jjopensoftworks-blip.github.io/Scrubkit/) |
 | **🤖 RAG & AI Recipes** | End-to-end recipes for `Microsoft.Extensions.AI`, `Semantic Kernel`, vector stores, and Parquet. | [**View RAG Recipes →**](https://jjopensoftworks-blip.github.io/Scrubkit/recipes.html) \| [**Markdown**](docs/RAG-INGESTION-RECIPES.md) |
 | **💻 CLI Command Guide** | Zero-code folder scanning via `scrubkit scan`, output formatting, and CI secret scanning. | [**View CLI Guide →**](src/Scrubkit.Tool/README.md) |
-| **📦 Package Family** | Full matrix of all 12 Scrubkit packages (`Core`, `Abstractions`, `Email`, `Parquet`, etc.). | [**Explore Packages →**](https://jjopensoftworks-blip.github.io/Scrubkit/#packages) |
+| **📦 Package Family** | Full matrix of all 14 Scrubkit packages (`Core`, `Abstractions`, `Pdf`, `Images`, `Email`, `Parquet`, etc.). | [**Explore Packages →**](https://jjopensoftworks-blip.github.io/Scrubkit/#packages) |
 | **🧪 Interactive Demo** | Runnable demo console application on synthetic sample files. | [**Run Playground →**](samples/Scrubkit.Playground) |
 | **📝 Release History** | Version changelogs, feature additions, and API update notes. | [**View Changelog →**](https://jjopensoftworks-blip.github.io/Scrubkit/changelog.html) |
 

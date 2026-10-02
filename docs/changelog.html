@@ -83,7 +83,7 @@
 <div class="mb-12">
 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm mb-4">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Latest Release: v1.12.0 (Stable)
+                    Latest Release: v2.0.0 (Stable)
                 </span>
 <h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Release History</h1>
 <p class="font-body-lg text-body-lg text-text-muted max-w-3xl leading-relaxed">
@@ -93,11 +93,31 @@
 
 <div class="space-y-8">
 
+<!-- v2.0.0 -->
+<section id="v2-0-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-electric-blue">v2.0.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-10-02</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Modular Zero-Dependency Core Split &amp; Fluent Extractor Registry</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Zero-Dependency Core <code>Scrubkit</code>:</strong> Core engine features built-in BCL extractors for Word (<code>.docx</code>), Excel (<code>.xlsx</code>), PowerPoint (<code>.pptx</code>), HTML (<code>.html</code>), RTF (<code>.rtf</code>), and Plain Text (<code>.txt</code>) with zero third-party dependencies.</li>
+        <li><strong>New Package <code>Scrubkit.Pdf</code>:</strong> Extracted PDF document parser into a modular package powered by <code>PdfPig</code> with fluent <code>options.AddPdf()</code> registration.</li>
+        <li><strong>New Package <code>Scrubkit.Images</code>:</strong> Extracted image EXIF parser into a modular package powered by <code>MetadataExtractor</code> with fluent <code>options.AddImages()</code> registration.</li>
+        <li><strong>Unified <code>.AddAllExtractors()</code>:</strong> The <code>Scrubkit.All</code> meta-package bundles all 14 packages and provides a one-line <code>options.AddAllExtractors()</code> method to auto-register all formats.</li>
+        <li><strong>575+ Test Suite:</strong> Added comprehensive theory test suites covering concurrency, boundaries, and escaping across .NET 8 and .NET 10.</li>
+        <li><strong>Dependency Modernization:</strong> Upgraded <code>PdfPig</code> to 0.1.16, <code>MinVer</code> to 8.0.0, <code>Microsoft.SourceLink.GitHub</code> to 10.0.401, <code>Microsoft.NET.Test.Sdk</code> to 18.10.1, and <code>xunit.runner.visualstudio</code> to 4.0.0.</li>
+    </ul>
+</section>
+
 <!-- v1.12.0 -->
 <section id="v1-12-0" class="bento-card p-bento-padding rounded-xl">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div class="flex items-center gap-3">
-            <h2 class="font-headline-md text-headline-md text-electric-blue">v1.12.0</h2>
+            <h2 class="font-headline-md text-headline-md text-on-surface">v1.12.0</h2>
             <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
         </div>
         <span class="text-xs text-text-muted">2026-08-24</span>
