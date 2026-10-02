@@ -45,11 +45,6 @@
         "resolved": "1.3.1",
         "contentHash": "DOdDQiO8YZ5rBtVLY+6CmR1yp9WYoJRgEEktPBrR0tEj9QO2djA/zv0O3DX0OZpEAfosbY8pytQ9tQUogwQsEA=="
       },
-      "XmpCore": {
-        "type": "Transitive",
-        "resolved": "6.1.10.1",
-        "contentHash": "/Tp2/e39e7z8hLtS4TXt0FNNZHbf5yNFfHS0/59soXlgOzZlyRZivvzWpvujyaWkTWWgecp/1nHxkuc5vntn7A=="
-      },
       "ZstdSharp.Port": {
         "type": "Transitive",
         "resolved": "0.8.8",
@@ -58,8 +53,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -91,15 +84,6 @@
         "dependencies": {
           "Parquet.Net": "[6.0.3, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
-        }
-      },
-      "MetadataExtractor": {
-        "type": "CentralTransitive",
-        "requested": "[2.9.3, )",
-        "resolved": "2.9.3",
-        "contentHash": "7dBcqlPC2Zc/bsZtXnv8nCWe5h5WsLHszzHtxnpcsVy4MwlD3KQ3wVNoiYBm0a3rzt5hRwAosPvLPhlXrV5lyg==",
-        "dependencies": {
-          "XmpCore": "6.1.10.1"
         }
       },
       "Microsoft.Bcl.AsyncInterfaces": {
@@ -167,12 +151,6 @@
           "Snappier": "1.3.1",
           "ZstdSharp.Port": "0.8.8"
         }
-      },
-      "PdfPig": {
-        "type": "CentralTransitive",
-        "requested": "[0.1.15, )",
-        "resolved": "0.1.15",
-        "contentHash": "Bf0NO4o2ZSVnemMyj21KDU1sfSgmamFC0pD4aAv19CDNXQsoO1Z6O99gNqpiK/XWWZ5d5i7JkQoT7PUBxEPz5g=="
       }
     },
     "net8.0": {
@@ -224,11 +202,6 @@
         "resolved": "9.0.5",
         "contentHash": "WoI5or8kY2VxFdDmsaRZ5yaYvvb+4MCyy66eXo79Cy1uMa7qXeGIlYmZx7R9Zy5S4xZjmqvkk2V8L6/vDwAAEA=="
       },
-      "XmpCore": {
-        "type": "Transitive",
-        "resolved": "6.1.10.1",
-        "contentHash": "/Tp2/e39e7z8hLtS4TXt0FNNZHbf5yNFfHS0/59soXlgOzZlyRZivvzWpvujyaWkTWWgecp/1nHxkuc5vntn7A=="
-      },
       "ZstdSharp.Port": {
         "type": "Transitive",
         "resolved": "0.8.8",
@@ -237,8 +210,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -270,15 +241,6 @@
         "dependencies": {
           "Parquet.Net": "[6.0.3, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
-        }
-      },
-      "MetadataExtractor": {
-        "type": "CentralTransitive",
-        "requested": "[2.9.3, )",
-        "resolved": "2.9.3",
-        "contentHash": "7dBcqlPC2Zc/bsZtXnv8nCWe5h5WsLHszzHtxnpcsVy4MwlD3KQ3wVNoiYBm0a3rzt5hRwAosPvLPhlXrV5lyg==",
-        "dependencies": {
-          "XmpCore": "6.1.10.1"
         }
       },
       "Microsoft.Bcl.AsyncInterfaces": {
@@ -347,12 +309,6 @@
           "Snappier": "1.3.1",
           "ZstdSharp.Port": "0.8.8"
         }
-      },
-      "PdfPig": {
-        "type": "CentralTransitive",
-        "requested": "[0.1.15, )",
-        "resolved": "0.1.15",
-        "contentHash": "Bf0NO4o2ZSVnemMyj21KDU1sfSgmamFC0pD4aAv19CDNXQsoO1Z6O99gNqpiK/XWWZ5d5i7JkQoT7PUBxEPz5g=="
       }
     }
   }

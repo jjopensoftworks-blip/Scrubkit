@@ -56,11 +56,6 @@
           "Microsoft.TestPlatform.ObjectModel": "18.8.1"
         }
       },
-      "XmpCore": {
-        "type": "Transitive",
-        "resolved": "6.1.10.1",
-        "contentHash": "/Tp2/e39e7z8hLtS4TXt0FNNZHbf5yNFfHS0/59soXlgOzZlyRZivvzWpvujyaWkTWWgecp/1nHxkuc5vntn7A=="
-      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -104,8 +99,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -118,15 +111,6 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )",
           "Scrubkit": "[1.0.0, )"
-        }
-      },
-      "MetadataExtractor": {
-        "type": "CentralTransitive",
-        "requested": "[2.9.3, )",
-        "resolved": "2.9.3",
-        "contentHash": "7dBcqlPC2Zc/bsZtXnv8nCWe5h5WsLHszzHtxnpcsVy4MwlD3KQ3wVNoiYBm0a3rzt5hRwAosPvLPhlXrV5lyg==",
-        "dependencies": {
-          "XmpCore": "6.1.10.1"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -143,12 +127,6 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.5"
         }
-      },
-      "PdfPig": {
-        "type": "CentralTransitive",
-        "requested": "[0.1.15, )",
-        "resolved": "0.1.15",
-        "contentHash": "Bf0NO4o2ZSVnemMyj21KDU1sfSgmamFC0pD4aAv19CDNXQsoO1Z6O99gNqpiK/XWWZ5d5i7JkQoT7PUBxEPz5g=="
       }
     },
     "net8.0": {
@@ -211,11 +189,6 @@
         "resolved": "9.0.5",
         "contentHash": "WoI5or8kY2VxFdDmsaRZ5yaYvvb+4MCyy66eXo79Cy1uMa7qXeGIlYmZx7R9Zy5S4xZjmqvkk2V8L6/vDwAAEA=="
       },
-      "XmpCore": {
-        "type": "Transitive",
-        "resolved": "6.1.10.1",
-        "contentHash": "/Tp2/e39e7z8hLtS4TXt0FNNZHbf5yNFfHS0/59soXlgOzZlyRZivvzWpvujyaWkTWWgecp/1nHxkuc5vntn7A=="
-      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -259,8 +232,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -273,15 +244,6 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.5, )",
           "Microsoft.Extensions.Logging.Abstractions": "[9.0.5, )",
           "Scrubkit": "[1.0.0, )"
-        }
-      },
-      "MetadataExtractor": {
-        "type": "CentralTransitive",
-        "requested": "[2.9.3, )",
-        "resolved": "2.9.3",
-        "contentHash": "7dBcqlPC2Zc/bsZtXnv8nCWe5h5WsLHszzHtxnpcsVy4MwlD3KQ3wVNoiYBm0a3rzt5hRwAosPvLPhlXrV5lyg==",
-        "dependencies": {
-          "XmpCore": "6.1.10.1"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -299,12 +261,6 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.5",
           "System.Diagnostics.DiagnosticSource": "9.0.5"
         }
-      },
-      "PdfPig": {
-        "type": "CentralTransitive",
-        "requested": "[0.1.15, )",
-        "resolved": "0.1.15",
-        "contentHash": "Bf0NO4o2ZSVnemMyj21KDU1sfSgmamFC0pD4aAv19CDNXQsoO1Z6O99gNqpiK/XWWZ5d5i7JkQoT7PUBxEPz5g=="
       }
     }
   }
