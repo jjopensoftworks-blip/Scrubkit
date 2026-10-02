@@ -155,14 +155,14 @@
 </div>
 <div class="bento-card p-bento-padding text-center">
 <p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter">99%+</p>
-<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">covered · 480+ tests</p>
+<p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">covered · 575+ tests</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
 <p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter">100%</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">offline · no telemetry</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
-<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">12</p>
+<p class="font-headline-lg text-headline-lg md:text-5xl text-tertiary tracking-tighter">14</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">NuGet packages</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
@@ -174,7 +174,7 @@
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">open source</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
-<p class="font-headline-lg text-headline-lg md:text-5xl text-electric-blue tracking-tighter">480+</p>
+<p class="font-headline-lg text-headline-lg md:text-5xl text-electric-blue tracking-tighter">575+</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest">automated tests</p>
 </div>
 </div>
@@ -339,20 +339,20 @@
 <div class="h-[1px] flex-1 bg-surface-border"></div>
 </div>
 <p class="text-center text-text-muted font-body-md max-w-2xl mx-auto mb-10">
-                    Start with the core package — it reads PDF, Office, text, and image EXIF out of the box.
-                    Reach for an optional add-on when you need more formats. Every add-on references only
-                    <code>Scrubkit.Abstractions</code>, so it stays lightweight and pulls in no heavy dependencies.
-                    Want it all in one reference? Grab <code>Scrubkit.All</code>.
+                    Start with the core package — it reads Office (Word, Excel, PowerPoint), HTML, RTF, and plain text with <strong>zero external dependencies</strong>.
+                    Reach for an optional add-on when you need PDF, image EXIF, email, OpenDocument, EPUB, or legacy binary Office. Every add-on references only
+                    <code>Scrubkit.Abstractions</code>, keeping it lightweight.
+                    Want it all in one reference? Grab <code>Scrubkit.All</code> with <code>.AddAllExtractors()</code>.
                 </p>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-container-gap">
 <!-- Core -->
 <a href="https://www.nuget.org/packages/Scrubkit" class="bento-card p-bento-padding flex flex-col hover:border-electric-blue/40 transition-all">
 <div class="flex items-center justify-between mb-4">
 <span class="material-symbols-outlined text-electric-blue text-[28px]">deployed_code</span>
-<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Core</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Core · Zero-Dep</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">The engine — <code>FolderScrubber</code> with built-in PDF, Office, text, and image-EXIF extractors. Everything most projects need.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">The zero-dependency engine — <code>FolderScrubber</code> with built-in Office (Word/Excel/PowerPoint), HTML, RTF, and plain text extractors. Pure BCL, 0 external dependencies.</p>
 <img class="h-5 self-start" alt="Scrubkit on NuGet" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
 </a>
 <!-- All (bundle) -->
@@ -362,7 +362,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Bundle</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.All</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">One reference that pulls in the whole family — core, every extractor add-on, DI, Microsoft.Extensions.AI, Semantic Kernel, and (on net8.0/net10.0) Parquet. Install this to read everything out of the box.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">One reference that pulls in the whole 14-package family — core, PDF, image EXIF, email, OpenDocument, EPUB, legacy Office, DI, AI, Semantic Kernel, and Parquet. Ships <code>.AddAllExtractors()</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.All on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.All?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
 </a>
 <!-- Abstractions -->
@@ -374,6 +374,26 @@
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Abstractions</h3>
 <p class="text-text-muted font-body-md text-sm mb-4 flex-1">Dependency-free contracts — <code>IFileExtractor</code>, <code>FileRecord</code>, <code>ReadOptions</code>. Reference this to author your own add-on.</p>
 <img class="h-5 self-start" alt="Scrubkit.Abstractions on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Abstractions?style=flat-square&amp;color=adc6ff&amp;label=nuget"/>
+</a>
+<!-- Pdf -->
+<a href="https://www.nuget.org/packages/Scrubkit.Pdf" class="bento-card p-bento-padding flex flex-col hover:border-error-red/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-error-red text-[28px]">picture_as_pdf</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-error-red bg-error-red/10 px-2 py-0.5 rounded">Add-on</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Pdf</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">PDF document text and metadata extractor powered by <code>PdfPig</code>. Registers with <code>options.AddPdf()</code>.</p>
+<img class="h-5 self-start" alt="Scrubkit.Pdf on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Pdf?style=flat-square&amp;color=EF4444&amp;label=nuget"/>
+</a>
+<!-- Images -->
+<a href="https://www.nuget.org/packages/Scrubkit.Images" class="bento-card p-bento-padding flex flex-col hover:border-warning-amber/40 transition-all">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-warning-amber text-[28px]">image</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-warning-amber bg-warning-amber/10 px-2 py-0.5 rounded">Add-on</span>
+</div>
+<h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Images</h3>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Image EXIF metadata extractor powered by <code>MetadataExtractor</code>. Registers with <code>options.AddImages()</code>.</p>
+<img class="h-5 self-start" alt="Scrubkit.Images on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Images?style=flat-square&amp;color=D97706&amp;label=nuget"/>
 </a>
 <!-- Email -->
 <a href="https://www.nuget.org/packages/Scrubkit.Email" class="bento-card p-bento-padding flex flex-col hover:border-secondary/40 transition-all">
@@ -619,7 +639,7 @@
 <span class="material-symbols-outlined text-secondary text-[14px]">lock</span> 100% Offline
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-electric-blue text-[14px]">dataset</span> 12 Extractors
+<span class="material-symbols-outlined text-electric-blue text-[14px]">dataset</span> 14 Extractors
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
 <span class="material-symbols-outlined text-tertiary text-[14px]">tune</span> Opt-in Redaction
@@ -632,7 +652,7 @@
 <span>View Repository</span>
 <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
 </a>
-<span class="font-label-sm text-xs text-text-muted">v1.11.0 · Stable</span>
+<span class="font-label-sm text-xs text-text-muted">v2.0.0 · Stable</span>
 </div>
 </div>
 

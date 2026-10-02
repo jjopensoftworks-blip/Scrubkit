@@ -11,14 +11,16 @@ runs offline — no network calls. Packages, grouped by role:
 - **`Scrubkit.Abstractions`** — contracts only (`IFileExtractor`, `IRedactor`, `FileRecord`,
   `ReadOptions`, `ExtractedContent`, `RedactionResult`/`RedactionSpan`, `RedactionCategories`,
   `ScrubDiagnostic`, `Buckets`, enums). No heavy deps. **Add-ons reference only this.**
-- **`Scrubkit`** — the core: `FolderScrubber`, built-in extractors, `StandardRedactor`,
-  `TableWriter` (CSV/JSON). Depends on Abstractions + **PdfPig** (PDF) + **MetadataExtractor**
-  (image EXIF).
-- **Extractor add-ons** (each references only Abstractions, zero heavy deps): `Scrubkit.Email`
-  (`.eml/.msg`), `Scrubkit.OpenDocument` (`.odt/.ods/.odp`), `Scrubkit.Epub` (`.epub`),
-  `Scrubkit.LegacyOffice` (binary `.doc/.xls/.ppt`). All read their formats with the BCL
-  (`System.IO.Compression` + `XDocument`/regex; OLE2/CFBF + record parsing for `.msg` and
-  legacy Office).
+- **`Scrubkit`** — the core: `FolderScrubber`, zero-dependency built-in extractors (Office OOXML, HTML, RTF, PlainText),
+  `StandardRedactor`, `TableWriter` (CSV/JSON/JSONL). Depends only on Abstractions. Pure BCL, 0 external dependencies.
+- **Extractor add-ons**:
+  - `Scrubkit.Pdf` (`.pdf` via PdfPig with `.AddPdf()`).
+  - `Scrubkit.Images` (image EXIF via MetadataExtractor with `.AddImages()`).
+  - Zero-dep add-ons (each references only Abstractions): `Scrubkit.Email`
+    (`.eml/.msg`), `Scrubkit.OpenDocument` (`.odt/.ods/.odp`), `Scrubkit.Epub` (`.epub`),
+    `Scrubkit.LegacyOffice` (binary `.doc/.xls/.ppt`). All read their formats with the BCL
+    (`System.IO.Compression` + `XDocument`/regex; OLE2/CFBF + record parsing for `.msg` and
+    legacy Office).
 - **Integration:** `Scrubkit.Extensions.DependencyInjection` — `services.AddScrubkit(...)`;
   references the core + `Microsoft.Extensions.DependencyInjection.Abstractions` (+ Logging).
 - **AI Integration:** `Scrubkit.Extensions.MicrosoftExtensionsAI` — local PII/secret redaction
@@ -26,10 +28,8 @@ runs offline — no network calls. Packages, grouped by role:
   `netstandard2.0;net8.0;net10.0`.
 - **Output:** `Scrubkit.Parquet` — Parquet output via Parquet.Net; multi-targets `net8.0;net10.0` (the rest
   multi-target `netstandard2.0;net8.0;net10.0`). CSV/JSON output stays zero-dep in the core.
-- **Bundle:** `Scrubkit.All` — a **meta-package** with no code that references the whole family
-  (core + all extractor add-ons + DI + Parquet) so consumers can install everything in one
-  reference. `IncludeBuildOutput=false`, package validation off, `NoWarn=NU5128`; Parquet is
-  referenced on modern .NET TFMs (net8.0/net10.0).
+- **Bundle:** `Scrubkit.All` — a meta-package referencing the whole 14-package family
+  (core + all extractor add-ons + DI + AI + Semantic Kernel + Parquet) shipping `.AddAllExtractors()`.
 
 Everything stays in the flat `Scrubkit` namespace regardless of package or folder (including
 the DI extension methods and the `AddScrubkit` entry point), so consuming code is identical.
@@ -42,7 +42,7 @@ package; zero-dep ones could too, but stay lightweight.
 
 ```
 dotnet build Scrubkit.slnx -c Release        # build all packages (all TFMs)
-dotnet test  Scrubkit.slnx -c Release        # run the xUnit suite (~320 tests)
+dotnet test  Scrubkit.slnx -c Release        # run the xUnit suite (~575+ tests)
 dotnet pack  Scrubkit.slnx -c Release -o artifacts   # produce .nupkg + .snupkg
 dotnet run --project samples/Scrubkit.Playground     # runnable demo (synthetic-PII folder)
 dotnet run -c Release --project benchmarks/Scrubkit.Benchmarks   # BenchmarkDotNet throughput
