@@ -103,6 +103,8 @@ internal static class Cli
         if (opts.Manifest is not null) readOptions.ExcludePaths.Add(opts.Manifest);
 
         // Register every add-on extractor so the CLI handles the whole format family.
+        readOptions.AddPdf();
+        readOptions.AddImages();
         readOptions.Extractors.Add(new EmailExtractor());
         readOptions.Extractors.Add(new OpenDocumentExtractor());
         readOptions.Extractors.Add(new EpubExtractor());

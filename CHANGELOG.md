@@ -7,6 +7,27 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 2.1.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.1.0` &nbsp;·&nbsp; 📅 2026-10-02
+
+&nbsp;
+
+---
+
+Multi-Targeting Expansion & CLI Enhancements — Expanded target frameworks across the entire 14-package ecosystem to explicitly target **.NET 9.0 (STS)** alongside **.NET 8.0 (LTS)**, **.NET 10.0**, and **.NET Standard 2.0**. Enhanced the `Scrubkit.Tool` CLI to automatically support PDF and image EXIF metadata out of the box.
+
+### 🌐 Multi-Targeting & Framework Support
+- **Explicit .NET 9.0 Targeting**: Added `net9.0` to `<TargetFrameworks>` across all 14 library packages, tool, samples, and test projects. Ensures direct native compilation for modern .NET 9 consumers with clear badges on NuGet.org.
+- **Verified .NET 10.0 Support**: Maintained active multi-targeting for next-generation .NET 10 runtime across all packages.
+- **Universal .NET Standard 2.0 Reach**: Maintained backwards compatibility with .NET Framework 4.6.1+, Mono, and existing legacy runtimes.
+
+### 🛠️ CLI (`Scrubkit.Tool`) Out-of-the-Box Extractor Integration
+- **Direct PDF & Image Support**: Integrated `Scrubkit.Pdf` and `Scrubkit.Images` into `Scrubkit.Tool` so `scrubkit scan <folder>` parses `.pdf` documents and image EXIF metadata by default with zero manual registration needed.
+
+### 🧪 Test Suite & CI
+- Test runner matrix expanded to execute all 575+ tests across `.NET 8.0`, `.NET 9.0`, and `.NET 10.0` runtimes simultaneously.
+
 ## 2.0.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.0.0` &nbsp;·&nbsp; 📅 2026-10-02
