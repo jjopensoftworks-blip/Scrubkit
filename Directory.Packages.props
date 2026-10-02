@@ -28,7 +28,7 @@
   <ItemGroup>
     <!-- Build/tooling (dev-only, PrivateAssets=all at the reference site) -->
     <PackageVersion Include="MinVer" Version="7.0.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.301" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.401" />
     <PackageVersion Include="PolySharp" Version="1.16.0" />
   </ItemGroup>
 
