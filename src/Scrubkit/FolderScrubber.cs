@@ -31,15 +31,13 @@ public sealed class FolderScrubber
         _redactor = _options.Redactor
             ?? (_options.Redaction != RedactionLevel.Off ? new StandardRedactor(_options.Redaction) : null);
 
-        // Registered add-ons first (can override), then the built-ins.
+        // Registered add-ons first (can override), then the zero-dependency built-ins.
         _extractors = new List<IFileExtractor>(_options.Extractors)
         {
-            new PdfExtractor(),
             new OfficeExtractor(),
             new HtmlExtractor(),
             new RtfExtractor(),
             new PlainTextExtractor(),
-            new ImageExtractor(),
         };
 
         // Normalize the exclusion set to full paths once, so a run never ingests its own output.

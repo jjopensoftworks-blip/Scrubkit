@@ -180,9 +180,7 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
           "Microsoft.Bcl.AsyncInterfaces": "[10.0.10, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -223,6 +221,13 @@
           "Scrubkit": "[1.0.0, )"
         }
       },
+      "scrubkit.images": {
+        "type": "Project",
+        "dependencies": {
+          "MetadataExtractor": "[2.9.3, )",
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
       "scrubkit.legacyoffice": {
         "type": "Project",
         "dependencies": {
@@ -232,6 +237,13 @@
       "scrubkit.opendocument": {
         "type": "Project",
         "dependencies": {
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
+      "scrubkit.pdf": {
+        "type": "Project",
+        "dependencies": {
+          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -421,8 +433,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -463,6 +473,13 @@
           "Scrubkit": "[1.0.0, )"
         }
       },
+      "scrubkit.images": {
+        "type": "Project",
+        "dependencies": {
+          "MetadataExtractor": "[2.9.3, )",
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
       "scrubkit.legacyoffice": {
         "type": "Project",
         "dependencies": {
@@ -479,6 +496,13 @@
         "type": "Project",
         "dependencies": {
           "Parquet.Net": "[6.0.3, )",
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
+      "scrubkit.pdf": {
+        "type": "Project",
+        "dependencies": {
+          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -661,8 +685,6 @@
       "scrubkit": {
         "type": "Project",
         "dependencies": {
-          "MetadataExtractor": "[2.9.3, )",
-          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },
@@ -703,6 +725,13 @@
           "Scrubkit": "[1.0.0, )"
         }
       },
+      "scrubkit.images": {
+        "type": "Project",
+        "dependencies": {
+          "MetadataExtractor": "[2.9.3, )",
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
       "scrubkit.legacyoffice": {
         "type": "Project",
         "dependencies": {
@@ -719,6 +748,13 @@
         "type": "Project",
         "dependencies": {
           "Parquet.Net": "[6.0.3, )",
+          "Scrubkit.Abstractions": "[1.0.0, )"
+        }
+      },
+      "scrubkit.pdf": {
+        "type": "Project",
+        "dependencies": {
+          "PdfPig": "[0.1.15, )",
           "Scrubkit.Abstractions": "[1.0.0, )"
         }
       },

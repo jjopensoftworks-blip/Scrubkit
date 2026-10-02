@@ -1,5 +1,6 @@
 // Copyright © 2026 jjopensoftworks-blip
 
+using System.Collections.Generic;
 using System.Text;
 
 namespace Scrubkit;

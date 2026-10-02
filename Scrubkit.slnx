@@ -6,6 +6,8 @@
   <Folder Name="/src/">
     <Project Path="src/Scrubkit.Abstractions/Scrubkit.Abstractions.csproj" />
     <Project Path="src/Scrubkit/Scrubkit.csproj" />
+    <Project Path="src/Scrubkit.Pdf/Scrubkit.Pdf.csproj" />
+    <Project Path="src/Scrubkit.Images/Scrubkit.Images.csproj" />
     <Project Path="src/Scrubkit.Email/Scrubkit.Email.csproj" />
     <Project Path="src/Scrubkit.OpenDocument/Scrubkit.OpenDocument.csproj" />
     <Project Path="src/Scrubkit.Epub/Scrubkit.Epub.csproj" />
@@ -20,6 +22,8 @@
   <Folder Name="/tests/">
     <Project Path="tests/Scrubkit.Tests/Scrubkit.Tests.csproj" />
     <Project Path="tests/Scrubkit.Tests.NetStd20/Scrubkit.Tests.NetStd20.csproj" />
+    <Project Path="tests/Scrubkit.Pdf.Tests/Scrubkit.Pdf.Tests.csproj" />
+    <Project Path="tests/Scrubkit.Images.Tests/Scrubkit.Images.Tests.csproj" />
     <Project Path="tests/Scrubkit.Email.Tests/Scrubkit.Email.Tests.csproj" />
     <Project Path="tests/Scrubkit.OpenDocument.Tests/Scrubkit.OpenDocument.Tests.csproj" />
     <Project Path="tests/Scrubkit.Epub.Tests/Scrubkit.Epub.Tests.csproj" />
