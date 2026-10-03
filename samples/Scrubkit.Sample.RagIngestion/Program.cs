@@ -72,7 +72,34 @@ public static class Program
             File.WriteAllText(jsonPath, TableWriter.ToJson(records));
             Console.WriteLine($"\n[Step 4] Saved RAG ingestion manifest to: {jsonPath}");
 
-            Console.WriteLine("\n[Summary] Pipeline complete! Scrubkit successfully scrubbed PII, normalized text without allocations, and generated RAG vector chunks.");
+            // 6. Vector Store Payload Preparation (Qdrant & PostgreSQL pgvector)
+            Console.WriteLine("\n[Step 5] Vector Database Payloads Ready for Ingestion:");
+            Console.WriteLine("  --- Qdrant PointStruct (REST / gRPC) Payload Preview ---");
+            foreach (var chunk in allChunks.Take(2))
+            {
+                var qdrantPayload = new
+                {
+                    id = Guid.NewGuid().ToString(),
+                    vector = new float[] { 0.012f, -0.045f, 0.089f, 0.124f }, // sample 1536/3072-dim embedding
+                    payload = new Dictionary<string, object>
+                    {
+                        ["file_name"] = chunk.Name,
+                        ["file_path"] = chunk.Path,
+                        ["chunk_index"] = chunk.Index,
+                        ["offset"] = chunk.StartOffset,
+                        ["text"] = chunk.Text,
+                        ["type"] = chunk.TypeBucket.ToString()
+                    }
+                };
+                Console.WriteLine("  " + JsonSerializer.Serialize(qdrantPayload, new JsonSerializerOptions { WriteIndented = false }));
+            }
+
+            Console.WriteLine("\n  --- PostgreSQL + pgvector SQL Insert Preview ---");
+            var sampleChunk = allChunks.First();
+            Console.WriteLine($"  INSERT INTO document_chunks (id, file_name, file_path, chunk_index, content, embedding)");
+            Console.WriteLine($"  VALUES ('{Guid.NewGuid()}', '{sampleChunk.Name}', '{sampleChunk.Path.Replace("'", "''")}', {sampleChunk.Index}, '{sampleChunk.Text.Replace("'", "''")}', '[0.012,-0.045,0.089,0.124]');");
+
+            Console.WriteLine("\n[Summary] Pipeline complete! Scrubkit successfully scrubbed PII, normalized text without allocations, generated RAG vector chunks, and formatted vector database payloads.");
         }
         finally
         {

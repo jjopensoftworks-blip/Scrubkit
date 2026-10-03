@@ -214,6 +214,157 @@
     </div>
 </section>
 
+<!-- Recipe 5 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2 flex items-center gap-2">
+            <span>5. Qdrant Vector Database Ingestion</span>
+            <span class="px-2 py-0.5 rounded text-xs bg-emerald-500/10 text-emerald-400 font-label-sm">Vector DB</span>
+        </h3>
+        <p class="text-text-muted mb-6">Stream sanitized document chunks into <strong>Qdrant</strong> vector database with rich document metadata payload using the official <code>Qdrant.Client</code>:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Qdrant.Client;
+<span class="text-secondary">using</span> Qdrant.Client.Grpc;
+<span class="text-secondary">using</span> Microsoft.Extensions.AI;
+<span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-secondary">var</span> qdrant = <span class="text-secondary">new</span> <span class="text-tertiary">QdrantClient</span>(<span class="text-secondary">"localhost"</span>, port: <span class="text-tertiary">6334</span>);
+<span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard });
+<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">800</span>, OverlapChars = <span class="text-tertiary">80</span> });
+
+<span class="text-secondary">var</span> points = <span class="text-secondary">new</span> <span class="text-tertiary">List</span>&lt;<span class="text-tertiary">PointStruct</span>&gt;();
+
+<span class="text-secondary">await foreach</span> (<span class="text-secondary">var</span> doc <span class="text-secondary">in</span> scrubber.<span class="text-electric-blue">ReadStreamAsync</span>(<span class="text-secondary">@"C:\KnowledgeBase"</span>))
+{
+    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(doc))
+    {
+        <span class="text-text-muted">// Generate embedding vector using your preferred model (e.g. OpenAI, Ollama, ONNX)</span>
+        <span class="text-secondary">float</span>[] vector = <span class="text-secondary">await</span> embeddingGenerator.<span class="text-electric-blue">GenerateEmbeddingVectorAsync</span>(chunk.Text);
+
+        <span class="text-secondary">var</span> point = <span class="text-secondary">new</span> <span class="text-tertiary">PointStruct</span>
+        {
+            Id = (<span class="text-secondary">ulong</span>)<span class="text-tertiary">Guid</span>.<span class="text-electric-blue">NewGuid</span>().<span class="text-electric-blue">GetHashCode</span>(),
+            Vectors = vector,
+            Payload =
+            {
+                [<span class="text-secondary">"file_name"</span>] = chunk.Name,
+                [<span class="text-secondary">"file_path"</span>] = chunk.Path,
+                [<span class="text-secondary">"chunk_index"</span>] = chunk.Index,
+                [<span class="text-secondary">"type"</span>] = chunk.TypeBucket.<span class="text-electric-blue">ToString</span>(),
+                [<span class="text-secondary">"text"</span>] = chunk.Text
+            }
+        };
+        points.<span class="text-electric-blue">Add</span>(point);
+    }
+}
+
+<span class="text-text-muted">// Batch upsert into Qdrant collection</span>
+<span class="text-secondary">await</span> qdrant.<span class="text-electric-blue">UpsertAsync</span>(<span class="text-secondary">"scrubkit_documents"</span>, points);</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe 6 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2 flex items-center gap-2">
+            <span>6. PostgreSQL with pgvector (Npgsql)</span>
+            <span class="px-2 py-0.5 rounded text-xs bg-electric-blue/10 text-electric-blue font-label-sm">PostgreSQL</span>
+        </h3>
+        <p class="text-text-muted mb-6">Store redacted document chunks and vector embeddings directly in PostgreSQL using <strong>Npgsql</strong> and the <code>pgvector</code> extension:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Npgsql;
+<span class="text-secondary">using</span> Pgvector;
+<span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-text-muted">/* SQL DDL Setup:
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE doc_chunks (
+    id UUID PRIMARY KEY,
+    file_name TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    chunk_index INT NOT NULL,
+    content TEXT NOT NULL,
+    embedding vector(1536)
+);
+*/</span>
+
+<span class="text-secondary">await using var</span> dataSource = <span class="text-tertiary">NpgsqlDataSource</span>.<span class="text-electric-blue">Create</span>(connString);
+<span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard });
+<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">1000</span>, OverlapChars = <span class="text-tertiary">100</span> });
+
+<span class="text-secondary">await using var</span> cmd = dataSource.<span class="text-electric-blue">CreateCommand</span>(
+    <span class="text-secondary">"INSERT INTO doc_chunks (id, file_name, file_path, chunk_index, content, embedding) "</span> +
+    <span class="text-secondary">"VALUES ($1, $2, $3, $4, $5, $6)"</span>);
+
+<span class="text-secondary">await foreach</span> (<span class="text-secondary">var</span> doc <span class="text-secondary">in</span> scrubber.<span class="text-electric-blue">ReadStreamAsync</span>(<span class="text-secondary">@"C:\Data\LegalDocs"</span>))
+{
+    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(doc))
+    {
+        <span class="text-secondary">var</span> vector = <span class="text-secondary">new</span> <span class="text-tertiary">Vector</span>(<span class="text-secondary">await</span> embeddingClient.<span class="text-electric-blue">GetEmbeddingAsync</span>(chunk.Text));
+
+        cmd.Parameters.<span class="text-electric-blue">Clear</span>();
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(<span class="text-tertiary">Guid</span>.<span class="text-electric-blue">NewGuid</span>());
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(chunk.Name);
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(chunk.Path);
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(chunk.Index);
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(chunk.Text);
+        cmd.Parameters.<span class="text-electric-blue">AddWithValue</span>(vector);
+
+        <span class="text-secondary">await</span> cmd.<span class="text-electric-blue">ExecuteNonQueryAsync</span>();
+    }
+}</pre>
+        </div>
+    </div>
+</section>
+
+<!-- Recipe 7 -->
+<section class="mb-12">
+    <div class="bento-card p-bento-padding">
+        <h3 class="font-headline-md text-headline-md text-on-surface mb-2 flex items-center gap-2">
+            <span>7. Pinecone Vector Database Batch Ingestion</span>
+            <span class="px-2 py-0.5 rounded text-xs bg-tertiary/10 text-tertiary font-label-sm">Pinecone</span>
+        </h3>
+        <p class="text-text-muted mb-6">Batch upsert sanitized RAG windows into <strong>Pinecone</strong> with automatic chunk positioning and metadata tracking:</p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Pinecone;
+<span class="text-secondary">using</span> Scrubkit;
+
+<span class="text-secondary">var</span> pinecone = <span class="text-secondary">new</span> <span class="text-tertiary">PineconeClient</span>(apiKey);
+<span class="text-secondary">var</span> index = <span class="text-secondary">await</span> pinecone.<span class="text-electric-blue">GetIndexAsync</span>(<span class="text-secondary">"scrubkit-rag"</span>);
+
+<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard })
+    .<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\Documents"</span>);
+
+<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">600</span>, OverlapChars = <span class="text-tertiary">60</span> });
+<span class="text-secondary">var</span> vectors = <span class="text-secondary">new</span> <span class="text-tertiary">List</span>&lt;<span class="text-tertiary">Vector</span>&gt;();
+
+<span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> doc <span class="text-secondary">in</span> records)
+{
+    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(doc))
+    {
+        <span class="text-secondary">float</span>[] embedding = <span class="text-secondary">await</span> embedder.<span class="text-electric-blue">EmbedAsync</span>(chunk.Text);
+
+        vectors.<span class="text-electric-blue">Add</span>(<span class="text-secondary">new</span> <span class="text-tertiary">Vector</span>
+        {
+            Id = <span class="text-secondary">$"</span>{doc.Name}_{chunk.Index}<span class="text-secondary">"</span>,
+            Values = embedding,
+            Metadata = <span class="text-secondary">new</span> <span class="text-tertiary">Metadata</span>
+            {
+                [<span class="text-secondary">"file_name"</span>] = chunk.Name,
+                [<span class="text-secondary">"chunk_index"</span>] = chunk.Index,
+                [<span class="text-secondary">"text"</span>] = chunk.Text
+            }
+        });
+    }
+}
+
+<span class="text-text-muted">// Upsert all vectors in batches</span>
+<span class="text-secondary">await</span> index.<span class="text-electric-blue">UpsertAsync</span>(vectors);</pre>
+        </div>
+    </div>
+</section>
+
 </main>
 </body>
 </html>
