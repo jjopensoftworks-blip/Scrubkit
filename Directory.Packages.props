@@ -16,7 +16,7 @@
     <!-- DI integration package (AddScrubkit); Abstractions is the runtime dep, the full
          package is used by its test project for a concrete container. -->
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
     <!-- Microsoft.Extensions.AI integration (Scrubkit.Extensions.MicrosoftExtensionsAI) -->
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="9.5.0" />
@@ -42,7 +42,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
   </ItemGroup>
 
 </Project>
