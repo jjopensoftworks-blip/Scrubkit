@@ -7,6 +7,21 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 2.4.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.4.0` &nbsp;·&nbsp; 📅 2026-11-22
+
+&nbsp;
+
+---
+
+Compliance Redaction Presets & Turnkey GitHub Action — Added built-in redaction presets (`ForSecretsOnly`, `ForPciDss`, `ForGdpr`, `ForHipaa`) on `StandardRedactorOptions`, the `--preset` flag in `Scrubkit.Tool`, and a root `action.yml` for GitHub Actions CI/CD integration.
+
+### 🚀 Features
+- **Compliance & Domain Redaction Presets (`StandardRedactorOptions`)**: Added factory presets `ForSecretsOnly()`, `ForPciDss()`, `ForGdpr(tokenSalt)`, and `ForHipaa(tokenSalt)` for one-line secret scanning, payment card masking, and joinable pseudonymization.
+- **CLI `--preset` Support (`Scrubkit.Tool`)**: Added `--preset <secrets|pci|gdpr|hipaa>` to `scrubkit scan`.
+- **GitHub Actions Integration (`action.yml`)**: Added root composite `action.yml` enabling one-step offline secret/PII scanning and RAG corpus preprocessing in GitHub Actions workflows.
+
 ## 2.3.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.3.0` &nbsp;·&nbsp; 📅 2026-11-21

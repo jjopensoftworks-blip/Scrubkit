@@ -84,7 +84,7 @@
 <div class="mb-12">
 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm mb-4">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Latest Release: v2.3.0 (Stable)
+                    Latest Release: v2.4.0 (Stable)
                 </span>
 <h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Release History</h1>
 <p class="font-body-lg text-body-lg text-text-muted max-w-3xl leading-relaxed">
@@ -93,6 +93,23 @@
 </div>
 
 <div class="space-y-8">
+
+<!-- v2.4.0 -->
+<section id="v2-4-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-electric-blue">v2.4.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-11-22</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Compliance Redaction Presets &amp; Turnkey GitHub Action</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>Redaction Presets:</strong> Added <code>StandardRedactorOptions.ForSecretsOnly()</code>, <code>ForPciDss()</code>, <code>ForGdpr()</code>, and <code>ForHipaa()</code> factory presets.</li>
+        <li><strong>CLI Preset Flag (<code>--preset</code>):</strong> Added <code>--preset &lt;secrets|pci|gdpr|hipaa&gt;</code> to <code>Scrubkit.Tool</code>.</li>
+        <li><strong>GitHub Action (<code>action.yml</code>):</strong> Added turnkey GitHub Action support for CI/CD secret &amp; PII scanning and RAG preprocessing.</li>
+    </ul>
+</section>
 
 <!-- v2.3.0 -->
 <section id="v2-3-0" class="bento-card p-bento-padding rounded-xl">

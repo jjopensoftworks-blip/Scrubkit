@@ -42,6 +42,7 @@ scrubkit scan ./docs --since state.txt --manifest state.txt --out delta.jsonl
 | `--format <fmt>` | `csv`, `json`, `jsonl`, or `parquet`. Default: inferred from `--out`'s extension, else `csv`. |
 | `--out <file>` | Write to a file instead of stdout. Required for `parquet`. |
 | `--redact[=<level>]` | Redact PII + secrets. Level `standard` (default) or `aggressive`. Omit to extract without redacting. |
+| `--preset <name>` | Built-in redaction preset: `secrets`, `pci`, `gdpr`, or `hipaa`. |
 | `--rules <file>` | JSON file of custom redaction rules + allow/deny/disable lists (implies `--redact`). Format below. |
 | `--fail-on-redaction` | Exit with code `2` if any PII or secret is redacted (CI/CD gate; implies `--redact` when no level is set). |
 | `--no-recurse` | Only the top folder (default: recurse all nested). |

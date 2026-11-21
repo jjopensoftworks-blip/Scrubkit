@@ -85,6 +85,10 @@ internal static class Cli
                 return 1;
             }
         }
+        else if (opts.Preset is not null)
+        {
+            rulesRedactor = new StandardRedactor(opts.Preset);
+        }
 
         var readOptions = new ReadOptions
         {
@@ -287,6 +291,7 @@ OPTIONS
   --out <file>          Write to a file instead of stdout. Required for parquet.
   --redact[=<level>]    Redact PII + secrets. Level: standard (default) or aggressive.
                         Omit the flag to extract without redacting.
+  --preset <name>       Built-in redaction preset: secrets, pci, gdpr, or hipaa.
   --rules <file>        JSON file of custom redaction rules + allow/deny/disable lists
                         (implies --redact). See the format in the Scrubkit.Tool README.
   --fail-on-redaction   Exit with code 2 if any PII or secret is redacted (CI/CD gate;
@@ -330,6 +335,7 @@ internal sealed class Options
     public string? Since { get; private set; }
     public string? Manifest { get; private set; }
     public string? Rules { get; private set; }
+    public StandardRedactorOptions? Preset { get; private set; }
     public bool FailOnRedaction { get; private set; }
     public List<string> Include { get; } = new();
     public int? MaxFiles { get; private set; }
@@ -380,6 +386,9 @@ internal sealed class Options
                     break;
                 case "--rules":
                     opts.Rules = Value(key, inlineValue, args, ref i);
+                    break;
+                case "--preset":
+                    opts.Preset = ParsePreset(Value(key, inlineValue, args, ref i));
                     break;
                 case "--fail-on-redaction":
                     opts.FailOnRedaction = true;
@@ -454,6 +463,15 @@ internal sealed class Options
         "aggressive" => RedactionLevel.Aggressive,
         "off" => RedactionLevel.Off,
         _ => throw new ArgumentException($"unknown redaction level '{value}'. Use standard or aggressive."),
+    };
+
+    private static StandardRedactorOptions ParsePreset(string value) => value.ToLowerInvariant() switch
+    {
+        "secrets" or "secrets-only" => StandardRedactorOptions.ForSecretsOnly(),
+        "pci" or "pci-dss" => StandardRedactorOptions.ForPciDss(),
+        "gdpr" => StandardRedactorOptions.ForGdpr(),
+        "hipaa" => StandardRedactorOptions.ForHipaa(),
+        _ => throw new ArgumentException($"unknown preset '{value}'. Use secrets, pci, gdpr, or hipaa."),
     };
 
     private static int ParseInt(string key, string value) =>
