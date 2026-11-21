@@ -7,30 +7,44 @@ By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Getting started
 
-Requires the .NET SDK (8.0 or newer — see [`global.json`](global.json)).
+Requires the .NET SDK (see [`global.json`](global.json)).
 
 ```bash
-dotnet build Scrubkit.slnx -c Release     # build all packages (netstandard2.0 + net8.0 + net10.0)
-dotnet test  Scrubkit.slnx -c Release     # run the test suite
-dotnet run --project samples/Scrubkit.Playground   # try it on a generated demo folder
+dotnet build Scrubkit.slnx -c Release     # build all 14 packages (netstandard2.0 + net8.0 + net10.0)
+dotnet test  Scrubkit.slnx -c Release     # run the xUnit suite (575+ tests across net8.0/net10.0)
+dotnet run --project samples/Scrubkit.Playground         # try it on a generated demo folder
+dotnet run --project samples/Scrubkit.Sample.RagIngestion # RAG ingestion + chunking + manifest demo
 ```
 
 ## Repository layout
 
-```
-src/Scrubkit.Abstractions   contracts only — no heavy dependencies
-src/Scrubkit                the core: FolderScrubber, built-in extractors, StandardRedactor
-tests/Scrubkit.Tests        xUnit tests
-samples/Scrubkit.Playground runnable demo
+```text
+src/Scrubkit.Abstractions                     contracts only — zero dependencies
+src/Scrubkit                                  zero-dep core: FolderScrubber, Office/HTML/RTF/Text extractors, StandardRedactor, Chunker, Manifest, TableWriter
+src/Scrubkit.Pdf                              PDF text + metadata extractor via PdfPig (.AddPdf())
+src/Scrubkit.Images                           Image EXIF metadata extractor via MetadataExtractor (.AddImages())
+src/Scrubkit.Email                            Zero-dep .eml and .msg email extractors (.AddEmail())
+src/Scrubkit.OpenDocument                     Zero-dep .odt/.ods/.odp OpenDocument extractor (.AddOpenDocument())
+src/Scrubkit.Epub                             Zero-dep .epub eBook extractor (.AddEpub())
+src/Scrubkit.LegacyOffice                     Zero-dep binary .doc/.xls/.ppt OLE2 extractor (.AddLegacyOffice())
+src/Scrubkit.Extensions.DependencyInjection   services.AddScrubkit(...) + ILogger diagnostic bridge
+src/Scrubkit.Extensions.MicrosoftExtensionsAI IChatClient & IEmbeddingGenerator local redaction middleware
+src/Scrubkit.Extensions.SemanticKernel        ISemanticTextMemory & IVectorStoreRecordCollection ingestion
+src/Scrubkit.Parquet                          Apache Parquet columnar output via Parquet.Net
+src/Scrubkit.All                              Meta-bundle referencing all libraries + .AddAllExtractors()
+src/Scrubkit.Tool                             Global CLI dotnet tool (`scrubkit`)
+tests/                                        xUnit test projects (plus Scrubkit.Tests.NetStd20 contract check)
+samples/                                      Runnable Playground and RagIngestion sample apps
+benchmarks/                                   BenchmarkDotNet throughput suite (run on demand)
 ```
 
 ## Conventions
 
-- **Keep the Abstractions boundary.** `IFileExtractor`, `IRedactor`, `FileRecord`,
+- **Keep the Abstractions and zero-dep Core boundaries.** `IFileExtractor`, `IRedactor`, `FileRecord`,
   `ReadOptions`, and friends live in `Scrubkit.Abstractions`, which must stay
-  **dependency-free**. Never add PdfPig/MetadataExtractor (or other heavy deps) there —
-  they belong in `Scrubkit` (core) or in an add-on package. Everything stays in the flat
-  `Scrubkit` namespace.
+  **dependency-free**. The core `Scrubkit` package also has **zero third-party dependencies**.
+  Third-party dependencies belong strictly in dedicated add-on packages (`Scrubkit.Pdf`, `Scrubkit.Images`, `Scrubkit.Parquet`).
+  Everything stays in the flat `Scrubkit` namespace.
 - **Release builds are strict.** `TreatWarningsAsErrors` is on for Release (what CI runs),
   so fix warnings. Style is enforced by [`.editorconfig`](.editorconfig) (file-scoped
   namespaces, etc.).
@@ -52,8 +66,8 @@ Versions are centralized (Central Package Management) and locked:
 ## Extending Scrubkit
 
 - **New format** — implement `IFileExtractor` (referencing only `Scrubkit.Abstractions`)
-  and register it via `ReadOptions.Extractors`. Registered extractors are tried *before*
-  the built-ins, so you can override one. See the package README for a worked example.
+  and register it via `ReadOptions.Extractors` or a fluent `.Add*()` extension. Registered
+  extractors are tried *before* the built-ins, so you can override one.
 - **Stronger scrubbing** — implement `IRedactor` and set `ReadOptions.Redactor`.
 
 Please add tests for new extractors/redactors. Prefer synthesizing fixtures in-test (see
@@ -61,23 +75,23 @@ Please add tests for new extractors/redactors. Prefer synthesizing fixtures in-t
 
 ## Tests & coverage
 
-`dotnet test -c Release` must be green. CI also enforces a **line-coverage floor** via
+`dotnet test -c Release` must be green. CI also enforces a **99.5% line-coverage floor** via
 [`build/coverage-gate.py`](build/coverage-gate.py), so cover new code.
 
 ## Pull requests
 
-- Branch off `main`; keep PRs focused.
-- Ensure `dotnet build -c Release` and `dotnet test -c Release` pass locally.
+- Always create a fresh branch off `main` (`feature/<name>`, `fix/<name>`, or `chore/<name>`); never commit directly to `main`.
+- Ensure `dotnet build Scrubkit.slnx -c Release` and `dotnet test Scrubkit.slnx -c Release` pass locally.
 - Describe the change and link any related issue.
 
 ## Releasing (maintainers)
 
-Versions come from Git tags via MinVer — nothing to bump in a file. Tag `main` and push:
+Versions come from Git tags via MinVer — nothing to bump in a file. After a PR merges into `main`, pull `main`, tag, and push:
 
 ```bash
-git tag v1.0.0 && git push origin v1.0.0
+git tag v2.2.0 && git push origin v2.2.0
 ```
 
-The release workflow builds, tests, packs, and publishes both packages to NuGet via
+The release workflow builds, tests, packs, and publishes all 14 packages to NuGet via
 Trusted Publishing (OIDC). A one-time nuget.org policy + `NUGET_USER` repo variable are
 required first.

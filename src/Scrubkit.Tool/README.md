@@ -2,9 +2,9 @@
 
 The **`scrubkit`** command-line tool — run [Scrubkit](https://www.nuget.org/packages/Scrubkit)
 from any shell or CI, no code required. Point it at a folder and it extracts text + metadata
-from PDFs, Office / OpenDocument, email, EPUB, and text / image files, optionally redacts PII
+from PDFs (`Scrubkit.Pdf`), Office / OpenDocument / legacy binary Office, email (`.eml`/`.msg`), EPUB, and text / image EXIF (`Scrubkit.Images`) files out of the box, optionally redacts PII
 and secrets, and writes a **CSV / JSON / JSON Lines / Parquet** table. Everything runs on your
-machine — **no network calls**.
+machine — **no network calls**. Multi-targets `net8.0` and `net10.0`.
 
 ## Install
 

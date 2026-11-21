@@ -4,16 +4,12 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE)
 
 Add-on [`IFileExtractor`](https://www.nuget.org/packages/Scrubkit.Abstractions)s for
-[**Scrubkit**](https://www.nuget.org/packages/Scrubkit) that read **`.eml`** (MIME email)
-and **`.msg`** (Outlook / OLE2) files — fully offline, with **no dependencies beyond
-`Scrubkit.Abstractions`**.
+[**Scrubkit**](https://www.nuget.org/packages/Scrubkit) that read **`.eml`**
+and **`.msg`** (Outlook) email files — fully offline, with **no dependencies beyond
+`Scrubkit.Abstractions`**. Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`.
 
 - **Fields → metadata** — `From`, `To`, `Cc`, `Subject`, `Date`.
-- **Body → text** — for `.eml`, prefers the `text/plain` part, falls back to `text/html`;
-  for `.msg`, reads the message body property.
-- **Understands real email** — `.eml`: multipart messages, `base64` and `quoted-printable`
-  transfer encodings, common charsets, and RFC 2047 encoded-word headers. `.msg`: a built-in
-  compound-file reader that pulls the MAPI property streams (Unicode, with ANSI fallback).
+- **Body → text** — extracts clean readable text from message bodies.
 - **Skips noise** — attachments and non-text parts are ignored.
 
 ## Install
@@ -24,15 +20,13 @@ dotnet add package Scrubkit.Email
 
 ## Use it
 
-Register the extractors via `ReadOptions.Extractors`. Registered extractors are tried before
-the built-ins, so `.eml` and `.msg` files are routed here:
+Register both `.eml` and `.msg` extractors with `.AddEmail()` (or manually via `ReadOptions.Extractors`):
 
 ```csharp
 using Scrubkit;
 
-var options = new ReadOptions();
-options.Extractors.Add(new EmailExtractor());   // .eml
-options.Extractors.Add(new MsgExtractor());     // .msg
+var options = new ReadOptions()
+    .AddEmail(); // Registers EmailExtractor (.eml) and MsgExtractor (.msg)
 
 var scrubber = new FolderScrubber(options);
 

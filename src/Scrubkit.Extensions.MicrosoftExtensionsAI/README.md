@@ -5,7 +5,7 @@
 
 `Microsoft.Extensions.AI` integration for [**Scrubkit**](https://www.nuget.org/packages/Scrubkit) — local, offline PII and secret redaction middleware for `IChatClient` and `IEmbeddingGenerator`.
 
-It runs fully offline inside your process to scan and mask sensitive data before it is sent to external/cloud AI models.
+It runs fully offline inside your process to scan and mask sensitive data before it is sent to external/cloud AI models. Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`.
 
 ## Install
 

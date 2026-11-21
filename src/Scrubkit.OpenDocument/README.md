@@ -6,15 +6,14 @@
 An add-on [`IFileExtractor`](https://www.nuget.org/packages/Scrubkit.Abstractions) for
 [**Scrubkit**](https://www.nuget.org/packages/Scrubkit) that reads **OpenDocument Format**
 files from LibreOffice / OpenOffice — fully offline, with **no dependencies beyond
-`Scrubkit.Abstractions`**.
+`Scrubkit.Abstractions`**. Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`.
 
 - **`.odt`** — text documents
 - **`.ods`** — spreadsheets
 - **`.odp`** — presentations
 
 Body text becomes `Text`; the `Title` / `Author` / `Subject` document properties become
-`Metadata`. ODF is a zip of XML, so this reads it with the BCL — the same technique the
-built-in Office (OOXML) extractor uses — and pulls in nothing extra.
+`Metadata`, with zero external dependencies.
 
 ## Install
 
@@ -24,14 +23,13 @@ dotnet add package Scrubkit.OpenDocument
 
 ## Use it
 
-Register the extractor via `ReadOptions.Extractors`. Registered extractors are tried before
-the built-ins, so `.odt`/`.ods`/`.odp` files are routed here:
+Register the extractor with `.AddOpenDocument()` (or manually via `ReadOptions.Extractors`):
 
 ```csharp
 using Scrubkit;
 
-var options = new ReadOptions();
-options.Extractors.Add(new OpenDocumentExtractor());
+var options = new ReadOptions()
+    .AddOpenDocument(); // Registers OpenDocumentExtractor (.odt, .ods, .odp)
 
 var scrubber = new FolderScrubber(options);
 

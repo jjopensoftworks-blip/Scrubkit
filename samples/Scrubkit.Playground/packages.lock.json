@@ -22,17 +22,6 @@
       "scrubkit.abstractions": {
         "type": "Project"
       }
-    },
-    "net9.0": {
-      "scrubkit": {
-        "type": "Project",
-        "dependencies": {
-          "Scrubkit.Abstractions": "[1.0.0, )"
-        }
-      },
-      "scrubkit.abstractions": {
-        "type": "Project"
-      }
     }
   }
 }

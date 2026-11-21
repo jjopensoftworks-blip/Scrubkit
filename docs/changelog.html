@@ -105,9 +105,9 @@
     </div>
     <h3 class="font-headline-md text-on-surface text-lg mb-2">Multi-Targeting Expansion &amp; CLI Out-of-the-Box Extractor Integration</h3>
     <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
-        <li><strong>Explicit .NET 9.0 Targeting:</strong> Added <code>net9.0</code> to target frameworks across all 14 packages, tool, samples, and test suites alongside <code>net8.0</code>, <code>net10.0</code>, and <code>netstandard2.0</code>.</li>
+        <li><strong>LTS &amp; Standard Multi-Targeting:</strong> Targets <code>net8.0</code> (LTS), <code>net10.0</code> (LTS), and <code>netstandard2.0</code> across all 14 packages, tool, samples, and test suites.</li>
         <li><strong>Scrubkit.Tool Out-of-the-Box PDFs &amp; Images:</strong> Integrated <code>Scrubkit.Pdf</code> and <code>Scrubkit.Images</code> directly into the global CLI so <code>scrubkit scan</code> processes PDFs and image EXIF metadata by default.</li>
-        <li><strong>Unified 100% Test Suite Pass:</strong> All 575+ tests executing and passing across .NET 8, .NET 9, and .NET 10 runtimes.</li>
+        <li><strong>Unified 100% Test Suite Pass:</strong> All 575+ tests executing and passing across .NET 8 and .NET 10 LTS runtimes.</li>
     </ul>
 </section>
 
@@ -127,12 +127,11 @@
     </div>
     <h3 class="font-headline-md text-on-surface text-lg mb-2">Modular Zero-Dependency Core Split &amp; Fluent Extractor Registry</h3>
     <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
-        <li><strong>Zero-Dependency Core <code>Scrubkit</code>:</strong> Core engine features built-in BCL extractors for Word (<code>.docx</code>), Excel (<code>.xlsx</code>), PowerPoint (<code>.pptx</code>), HTML (<code>.html</code>), RTF (<code>.rtf</code>), and Plain Text (<code>.txt</code>) with zero third-party dependencies.</li>
-        <li><strong>New Package <code>Scrubkit.Pdf</code>:</strong> Extracted PDF document parser into a modular package powered by <code>PdfPig</code> with fluent <code>options.AddPdf()</code> registration.</li>
-        <li><strong>New Package <code>Scrubkit.Images</code>:</strong> Extracted image EXIF parser into a modular package powered by <code>MetadataExtractor</code> with fluent <code>options.AddImages()</code> registration.</li>
+        <li><strong>Zero-Dependency Core <code>Scrubkit</code>:</strong> Core engine features built-in extractors for Word (<code>.docx</code>), Excel (<code>.xlsx</code>), PowerPoint (<code>.pptx</code>), HTML (<code>.html</code>), RTF (<code>.rtf</code>), and Plain Text (<code>.txt</code>) with zero third-party dependencies.</li>
+        <li><strong>New Package <code>Scrubkit.Pdf</code>:</strong> Extracted PDF document parser into a modular package with fluent <code>options.AddPdf()</code> registration.</li>
+        <li><strong>New Package <code>Scrubkit.Images</code>:</strong> Extracted image EXIF parser into a modular package with fluent <code>options.AddImages()</code> registration.</li>
         <li><strong>Unified <code>.AddAllExtractors()</code>:</strong> The <code>Scrubkit.All</code> meta-package bundles all 14 packages and provides a one-line <code>options.AddAllExtractors()</code> method to auto-register all formats.</li>
         <li><strong>575+ Test Suite:</strong> Added comprehensive theory test suites covering concurrency, boundaries, and escaping across .NET 8 and .NET 10.</li>
-        <li><strong>Dependency Modernization:</strong> Upgraded <code>PdfPig</code> to 0.1.16, <code>MinVer</code> to 8.0.0, <code>Microsoft.SourceLink.GitHub</code> to 10.0.401, <code>Microsoft.NET.Test.Sdk</code> to 18.10.1, and <code>xunit.runner.visualstudio</code> to 4.0.0.</li>
     </ul>
 </section>
 
@@ -145,10 +144,10 @@
         </div>
         <span class="text-xs text-text-muted">2026-08-24</span>
     </div>
-    <h3 class="font-headline-md text-on-surface text-lg mb-2">Engine Hardening, Micro-Optimizations & RAG Recipes</h3>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Engine Hardening, Performance &amp; RAG Recipes</h3>
     <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
-        <li><strong>Zero-Allocation Text Normalization:</strong> Optimized whitespace scanning with <code>Span&lt;T&gt;</code> to achieve zero string allocations for clean inputs.</li>
-        <li><strong>ReDoS Resilience:</strong> Enforced explicit 1-second execution timeouts across all built-in regex redaction rules.</li>
+        <li><strong>High-Throughput Text Normalization:</strong> Optimized whitespace normalization for low-allocation document processing.</li>
+        <li><strong>Regex Safety Timeouts:</strong> Enforced execution timeouts across built-in redaction rules.</li>
         <li><strong>RAG Ingestion Sample:</strong> Published <code>Scrubkit.Sample.RagIngestion</code> and developer guides for <code>Microsoft.Extensions.AI</code>, <code>SemanticKernel</code>, vector databases, and Parquet.</li>
     </ul>
 </section>
@@ -365,5 +364,13 @@
 </div>
 
 </main>
+<!-- JJ OpenSoftworks Ecosystem Links -->
+<div class="bg-surface-deep border-t border-surface-border px-margin-page py-3 text-center text-xs text-text-muted">
+  <span class="text-on-surface font-semibold">JJ OpenSoftworks Ecosystem:</span>
+  <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📄 ShreePdf (.NET PDF Engine)</a> •
+  <a href="https://apps.microsoft.com/detail/9MSPJ2M5MFHS" target="_blank" class="text-electric-blue hover:underline ml-3">🖥️ ShreePdf Viewer (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/FileOrganizerAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📁 FileOrganizerAI (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/CropAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">🌾 CropAI (Android)</a>
+</div>
 </body>
 </html>

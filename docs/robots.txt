@@ -1,0 +1,44 @@
+# ==============================================================================
+# ALLOW SEARCH ENGINE CRAWLERS
+# ==============================================================================
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Google-InspectionTool
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: Baiduspider
+Allow: /
+
+# ==============================================================================
+# BLOCK ALL AI TRAINING SCRAPERS & COMMERCIAL DATA MINERS
+# ==============================================================================
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: FacebookBot
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: PerplexityBot
+User-agent: Amazonbot
+User-agent: Applebot-Extended
+User-agent: cohere-ai
+User-agent: Diffbot
+User-agent: Omgilibot
+User-agent: Scrapy
+User-agent: Kangaroo Bot
+User-agent: Timpibot
+User-agent: VelenPublicWebCrawler
+User-agent: Webzio-Extended
+Disallow: /
+
+# ==============================================================================
+# SITEMAP
+# ==============================================================================
+Sitemap: https://jjopensoftworks-blip.github.io/Scrubkit/sitemap.xml
+

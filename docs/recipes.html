@@ -118,8 +118,8 @@
 <span class="text-secondary">using</span> Scrubkit;
 
 <span class="text-text-muted">// Wrap base client with Scrubkit redaction middleware</span>
-<span class="text-tertiary">IChatClient</span> redactingClient = baseClient.<span class="text-electric-blue">AsRedacting</span>(
-    level: <span class="text-tertiary">RedactionLevel</span>.Standard
+<span class="text-tertiary">IChatClient</span> redactingClient = baseClient.<span class="text-electric-blue">UseRedaction</span>(
+    <span class="text-secondary">new</span> <span class="text-tertiary">StandardRedactor</span>(<span class="text-secondary">new</span> <span class="text-tertiary">StandardRedactorOptions</span> { Level = <span class="text-tertiary">RedactionLevel</span>.Standard })
 );
 
 <span class="text-text-muted">// Prompts are sanitized BEFORE leaving your boundary</span>
@@ -143,7 +143,7 @@
     Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard,
     ComputeContentHash = <span class="text-secondary">true</span>,
     MaxDegreeOfParallelism = <span class="text-tertiary">Environment</span>.ProcessorCount
-};
+}.<span class="text-electric-blue">AddAllExtractors</span>();
 
 <span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(options);
 <span class="text-tertiary">IReadOnlyList</span>&lt;<span class="text-tertiary">FileRecord</span>&gt; records = <span class="text-secondary">await</span> scrubber.<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\documents"</span>);
@@ -176,23 +176,15 @@
             <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Microsoft.SemanticKernel.Memory;
 <span class="text-secondary">using</span> Scrubkit;
 
-<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard })
-    .<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\kb"</span>);
+<span class="text-secondary">var</span> scrubber = <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(
+    <span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard }.<span class="text-electric-blue">AddAllExtractors</span>());
 
-<span class="text-secondary">var</span> chunker = <span class="text-secondary">new</span> <span class="text-tertiary">Chunker</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">1000</span>, OverlapChars = <span class="text-tertiary">100</span> });
-
-<span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> record <span class="text-secondary">in</span> records)
-{
-    <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(record))
-    {
-        <span class="text-secondary">await</span> memory.<span class="text-electric-blue">SaveInformationAsync</span>(
-            collection: <span class="text-secondary">"knowledge-base"</span>,
-            text: chunk.Text,
-            id: <span class="text-secondary">$"</span>{chunk.Name}_{chunk.Index}<span class="text-secondary">"</span>,
-            description: <span class="text-secondary">$"Ingested from {chunk.Path}"</span>
-        );
-    }
-}</pre>
+<span class="text-text-muted">// Scans, redacts, chunks, and saves directly into Semantic Memory</span>
+<span class="text-tertiary">IReadOnlyList</span>&lt;<span class="text-secondary">string</span>&gt; ids = <span class="text-secondary">await</span> memory.<span class="text-electric-blue">ImportFolderAsync</span>(
+    collection: <span class="text-secondary">"knowledge-base"</span>,
+    scrubber: scrubber,
+    folderPath: <span class="text-secondary">@"C:\data\kb"</span>,
+    chunkOptions: <span class="text-secondary">new</span> <span class="text-tertiary">ChunkOptions</span> { MaxChars = <span class="text-tertiary">1000</span>, OverlapChars = <span class="text-tertiary">100</span> });</pre>
         </div>
     </div>
 </section>
@@ -204,12 +196,12 @@
         <p class="text-text-muted mb-6">Serialize sanitized records to columnar Parquet files using <code>Scrubkit.Parquet</code> for large-scale offline dataset preparation:</p>
         <div class="code-container rounded border border-surface-border p-6 font-code-md">
             <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-secondary">using</span> Scrubkit;
-<span class="text-secondary">using</span> Scrubkit.Parquet;
 
-<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(<span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard })
+<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(
+    <span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard }.<span class="text-electric-blue">AddAllExtractors</span>())
     .<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\ingest"</span>);
 
-<span class="text-secondary">await</span> <span class="text-tertiary">ParquetTableWriter</span>.<span class="text-electric-blue">WriteAsync</span>(records, <span class="text-secondary">@"C:\data\output\sanitized_ingestion.parquet"</span>);</pre>
+<span class="text-secondary">await</span> <span class="text-tertiary">ParquetTableWriter</span>.<span class="text-electric-blue">WriteFileAsync</span>(records, <span class="text-secondary">@"C:\data\output\sanitized_ingestion.parquet"</span>);</pre>
         </div>
     </div>
 </section>
@@ -238,7 +230,7 @@
 {
     <span class="text-secondary">foreach</span> (<span class="text-secondary">var</span> chunk <span class="text-secondary">in</span> chunker.<span class="text-electric-blue">Chunk</span>(doc))
     {
-        <span class="text-text-muted">// Generate embedding vector using your preferred model (e.g. OpenAI, Ollama, ONNX)</span>
+        <span class="text-text-muted">// Generate embedding vector using your preferred embedding provider</span>
         <span class="text-secondary">float</span>[] vector = <span class="text-secondary">await</span> embeddingGenerator.<span class="text-electric-blue">GenerateEmbeddingVectorAsync</span>(chunk.Text);
 
         <span class="text-secondary">var</span> point = <span class="text-secondary">new</span> <span class="text-tertiary">PointStruct</span>
@@ -365,6 +357,62 @@ CREATE TABLE doc_chunks (
     </div>
 </section>
 
+<!-- Recipe 8: End-to-End Scrubkit + LLM + ShreePdf -->
+<section id="shreepdf-pipeline" class="mb-12">
+    <div class="bento-card p-bento-padding border-electric-blue/40 bg-gradient-to-br from-[#0F172A] to-[#131c38]">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+            <h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+                <span>8. Full AI Pipeline: Folder → Scrubkit → LLM → ShreePdf Executive Report</span>
+            </h3>
+            <span class="px-2.5 py-1 rounded text-xs bg-electric-blue/20 text-electric-blue border border-electric-blue/40 font-label-sm">Input + Output Stack</span>
+        </div>
+        <p class="text-text-muted mb-6">
+            Every enterprise .NET AI pipeline needs <strong>safe document ingestion</strong> (<code>Scrubkit</code>) and <strong>polished executive PDF output</strong> (<a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue underline hover:text-white"><code>ShreePdf</code></a>). Ingest a folder offline, scrub PII before hitting your LLM, and turn the LLM's Markdown response directly into a themed vector PDF with KPI cards and auto-fit pagination:
+        </p>
+        <div class="code-container rounded border border-surface-border p-6 font-code-md mb-6">
+            <pre class="overflow-x-auto text-sm text-on-surface"><span class="text-text-muted">// dotnet add package Scrubkit.All</span>
+<span class="text-text-muted">// dotnet add package ShreePdf</span>
+<span class="text-secondary">using</span> Microsoft.Extensions.AI;
+<span class="text-secondary">using</span> Scrubkit;
+<span class="text-secondary">using</span> ShreePdf.Fluent;
+
+<span class="text-text-muted">// 1. INGEST &amp; REDACT: Extract text from PDF, Word, Excel &amp; Email offline + scrub PII/secrets</span>
+<span class="text-secondary">var</span> options = <span class="text-secondary">new</span> <span class="text-tertiary">ReadOptions</span> { Redaction = <span class="text-tertiary">RedactionLevel</span>.Standard }.<span class="text-electric-blue">AddAllExtractors</span>();
+<span class="text-secondary">var</span> records = <span class="text-secondary">await</span> <span class="text-secondary">new</span> <span class="text-tertiary">FolderScrubber</span>(options).<span class="text-electric-blue">ReadAsync</span>(<span class="text-secondary">@"C:\data\quarterly-filings"</span>);
+<span class="text-secondary">int</span> piiScrubbed = records.<span class="text-electric-blue">Sum</span>(r =&gt; r.Redactions.Values.<span class="text-electric-blue">Sum</span>());
+
+<span class="text-text-muted">// 2. SUMMARIZE: Send sanitized text to your IChatClient (zero sensitive PII leaked)</span>
+<span class="text-secondary">string</span> context = <span class="text-secondary">string</span>.<span class="text-electric-blue">Join</span>(<span class="text-secondary">"\n\n"</span>, records.<span class="text-electric-blue">Select</span>(r =&gt; <span class="text-secondary">$"### {r.Name}\n{r.Text}"</span>));
+<span class="text-tertiary">ChatResponse</span> summary = <span class="text-secondary">await</span> chatClient.<span class="text-electric-blue">GetResponseAsync</span>(
+    <span class="text-secondary">$"Write a Markdown executive briefing with key metrics and risks:\n{context}"</span>);
+
+<span class="text-text-muted">// 3. PUBLISH: Render LLM Markdown to a vector PDF via ShreePdf (5ms vector engine, 0 Chromium)</span>
+<span class="text-tertiary">Document</span>.<span class="text-electric-blue">FromMarkdown</span>(summary.Text, <span class="text-tertiary">ThemePresets</span>.SaaSAnalytics)
+    .<span class="text-electric-blue">AddStatCards</span>(
+        <span class="text-secondary">new</span> <span class="text-tertiary">StatCard</span>(<span class="text-secondary">"Files Analyzed"</span>, records.Count.<span class="text-electric-blue">ToString</span>(), <span class="text-secondary">"100% Offline"</span>, deltaPositive: <span class="text-secondary">true</span>),
+        <span class="text-secondary">new</span> <span class="text-tertiary">StatCard</span>(<span class="text-secondary">"PII Redacted"</span>, piiScrubbed.<span class="text-electric-blue">ToString</span>(), <span class="text-secondary">"Zero Leaks"</span>, deltaPositive: <span class="text-secondary">true</span>))
+    .<span class="text-electric-blue">EnableAutoFit</span>()
+    .<span class="text-electric-blue">AddPageNumber</span>(<span class="text-secondary">"Page {page} of {pages}"</span>)
+    .<span class="text-electric-blue">Save</span>(<span class="text-secondary">"Executive-Briefing.pdf"</span>);</pre>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-surface-border">
+            <span class="text-sm text-text-muted">Need Markdown-to-PDF, vector charts, QR codes, or AES-256 PDF security in .NET?</span>
+            <div class="flex gap-3">
+                <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="px-4 py-2 rounded bg-electric-blue text-surface-deep font-label-sm text-xs font-bold hover:opacity-90 transition-opacity">Explore ShreePdf Playground →</a>
+                <a href="https://www.nuget.org/packages/ShreePdf" target="_blank" class="px-4 py-2 rounded border border-surface-border text-on-surface font-label-sm text-xs hover:border-electric-blue transition-colors">NuGet: ShreePdf</a>
+            </div>
+        </div>
+    </div>
+</section>
+
 </main>
+<!-- JJ OpenSoftworks Ecosystem Links -->
+<div class="bg-surface-deep border-t border-surface-border px-margin-page py-3 text-center text-xs text-text-muted">
+  <span class="text-on-surface font-semibold">JJ OpenSoftworks Ecosystem:</span>
+  <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📄 ShreePdf (.NET PDF Engine)</a> •
+  <a href="https://apps.microsoft.com/detail/9MSPJ2M5MFHS" target="_blank" class="text-electric-blue hover:underline ml-3">🖥️ ShreePdf Viewer (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/FileOrganizerAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📁 FileOrganizerAI (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/CropAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">🌾 CropAI (Android)</a>
+</div>
 </body>
 </html>
