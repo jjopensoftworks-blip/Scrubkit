@@ -84,7 +84,7 @@
 <div class="mb-12">
 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm mb-4">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Latest Release: v2.1.0 (Stable)
+                    Latest Release: v2.3.0 (Stable)
                 </span>
 <h1 class="font-headline-lg text-headline-lg md:text-5xl mb-4 tracking-tighter">Release History</h1>
 <p class="font-body-lg text-body-lg text-text-muted max-w-3xl leading-relaxed">
@@ -93,6 +93,38 @@
 </div>
 
 <div class="space-y-8">
+
+<!-- v2.3.0 -->
+<section id="v2-3-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-electric-blue">v2.3.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-11-21</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">Single-File &amp; Stream Ingestion + CLI Secret &amp; PII Gate</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>In-Memory Stream &amp; Single-File Ingestion:</strong> Added <code>FolderScrubber.ReadFileAsync(string filePath)</code> and <code>FolderScrubber.ReadFileAsync(Stream content, string fileName)</code> for web uploads, cloud storage streams, and single-file workflows.</li>
+        <li><strong>CI/CD Redaction Gate (<code>--fail-on-redaction</code>):</strong> Added <code>--fail-on-redaction</code> to <code>Scrubkit.Tool</code> so CI pipelines exit with code <code>2</code> whenever PII or secrets are detected.</li>
+    </ul>
+</section>
+
+<!-- v2.2.0 -->
+<section id="v2-2-0" class="bento-card p-bento-padding rounded-xl">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="font-headline-md text-headline-md text-electric-blue">v2.2.0</h2>
+            <span class="px-2.5 py-0.5 rounded bg-secondary/15 text-secondary font-label-sm text-xs">STABLE</span>
+        </div>
+        <span class="text-xs text-text-muted">2026-11-21</span>
+    </div>
+    <h3 class="font-headline-md text-on-surface text-lg mb-2">LTS Target Framework Consolidation &amp; Documentation Refresh</h3>
+    <ul class="list-disc list-inside space-y-2 text-text-muted text-sm leading-relaxed">
+        <li><strong>LTS &amp; Standard Multi-Targeting:</strong> Consolidated target frameworks to <code>net8.0</code> (LTS), <code>net10.0</code> (LTS), and <code>netstandard2.0</code> across all 14 packages.</li>
+        <li><strong>NuGet &amp; RAG Recipes Update:</strong> Refreshed all 14 package READMEs and vector database / AI pipeline recipes.</li>
+    </ul>
+</section>
 
 <!-- v2.1.0 -->
 <section id="v2-1-0" class="bento-card p-bento-padding rounded-xl">

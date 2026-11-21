@@ -308,4 +308,53 @@ public class FolderScrubberTests : IDisposable
         Assert.Equal(10, rec.Text.Length);
         Assert.Contains("text-clipped", rec.Warnings);
     }
+
+    [Fact]
+    public async Task ReadFileAsync_scrubs_single_file_by_path()
+    {
+        var path = Write(Path.Combine("uploads", "contract.txt"), "Contact alice@example.com for details.");
+        var scrubber = new FolderScrubber(new ReadOptions
+        {
+            Redaction = RedactionLevel.Standard,
+            ComputeContentHash = true,
+        });
+
+        var rec = await scrubber.ReadFileAsync(path);
+
+        Assert.Equal(path, rec.Path);
+        Assert.Equal("contract.txt", rec.Name);
+        Assert.Equal("uploads", rec.Folder);
+        Assert.Equal("Text", rec.TypeBucket);
+        Assert.Contains("[EMAIL]", rec.Text);
+        Assert.DoesNotContain("alice@example.com", rec.Text);
+        Assert.NotNull(rec.ContentHash);
+    }
+
+    [Fact]
+    public async Task ReadFileAsync_scrubs_in_memory_stream()
+    {
+        var payload = System.Text.Encoding.UTF8.GetBytes("<html><body><h1>Report</h1><p>Email bob@example.com</p></body></html>");
+        using var stream = new MemoryStream(payload);
+        var scrubber = new FolderScrubber(new ReadOptions { Redaction = RedactionLevel.Standard });
+
+        var rec = await scrubber.ReadFileAsync(stream, "blobs/report.html");
+
+        Assert.Equal("blobs/report.html", rec.Path);
+        Assert.Equal("report.html", rec.Name);
+        Assert.Equal("blobs", rec.Folder);
+        Assert.Equal(".html", rec.Extension);
+        Assert.Contains("Report", rec.Text);
+        Assert.Contains("[EMAIL]", rec.Text);
+        Assert.DoesNotContain("bob@example.com", rec.Text);
+    }
+
+    [Fact]
+    public async Task ReadFileAsync_validates_arguments()
+    {
+        var scrubber = new FolderScrubber();
+        await Assert.ThrowsAsync<ArgumentException>(() => scrubber.ReadFileAsync("   "));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => scrubber.ReadFileAsync(null!, "a.txt"));
+        using var ms = new MemoryStream();
+        await Assert.ThrowsAsync<ArgumentException>(() => scrubber.ReadFileAsync(ms, ""));
+    }
 }

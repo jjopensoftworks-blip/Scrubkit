@@ -7,6 +7,30 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 2.3.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.3.0` &nbsp;·&nbsp; 📅 2026-11-21
+
+&nbsp;
+
+---
+
+Single-File & Stream Ingestion + CI/CD Secret & PII Gate — Added `FolderScrubber.ReadFileAsync` overloads for direct single-file and in-memory `Stream` extraction/redaction, plus `--fail-on-redaction` in `Scrubkit.Tool` for automated CI/CD pull-request gating.
+
+### 🚀 Features
+- **In-Memory `Stream` & Single-File Ingestion (`ReadFileAsync`)**: Added `FolderScrubber.ReadFileAsync(string filePath)` and `FolderScrubber.ReadFileAsync(Stream content, string fileName)` so ASP.NET Core web APIs (`IFormFile`), cloud blob streams, and message consumers can extract and scrub single documents directly in memory or on disk.
+- **CI/CD Secret & PII Gate (`--fail-on-redaction`)**: Added `--fail-on-redaction` to `Scrubkit.Tool` (`scrubkit scan`), returning exit code `2` whenever secrets or PII are redacted (and automatically enabling `Standard` redaction when no level is specified).
+
+## 2.2.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.2.0` &nbsp;·&nbsp; 📅 2026-11-21
+
+&nbsp;
+
+---
+
+LTS Target Framework Consolidation & Documentation Refresh — Consolidated target frameworks across all 14 packages to `.NET 8.0 (LTS)`, `.NET 10.0 (LTS)`, and `.NET Standard 2.0`, refreshed all NuGet package READMEs, and enhanced public documentation.
+
 ## 2.1.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.1.0` &nbsp;·&nbsp; 📅 2026-10-02

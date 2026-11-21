@@ -168,7 +168,7 @@ internal static class Cli
             (opts.Since is null ? "" : $", {removed} removed") +
             (opts.Out is null ? "." : $" → {opts.Out}.") +
             (opts.Manifest is not null ? $" Manifest → {opts.Manifest}." : ""));
-        return 0;
+        return opts.FailOnRedaction && redactionTotal > 0 ? 2 : 0;
     }
 
     // Load the baseline manifest for an incremental run. A missing file is not an error — it
@@ -289,6 +289,8 @@ OPTIONS
                         Omit the flag to extract without redacting.
   --rules <file>        JSON file of custom redaction rules + allow/deny/disable lists
                         (implies --redact). See the format in the Scrubkit.Tool README.
+  --fail-on-redaction   Exit with code 2 if any PII or secret is redacted (CI/CD gate;
+                        implies --redact when no level is set).
   --no-recurse          Only the top folder (default: recurse all nested folders).
   --hash                Compute a SHA-256 content hash per file.
   --include <exts>      Comma-separated extension filter, e.g. --include .pdf,.docx
@@ -328,6 +330,7 @@ internal sealed class Options
     public string? Since { get; private set; }
     public string? Manifest { get; private set; }
     public string? Rules { get; private set; }
+    public bool FailOnRedaction { get; private set; }
     public List<string> Include { get; } = new();
     public int? MaxFiles { get; private set; }
     public long? MaxBytes { get; private set; }
@@ -377,6 +380,11 @@ internal sealed class Options
                     break;
                 case "--rules":
                     opts.Rules = Value(key, inlineValue, args, ref i);
+                    break;
+                case "--fail-on-redaction":
+                    opts.FailOnRedaction = true;
+                    if (opts.Redaction == RedactionLevel.Off)
+                        opts.Redaction = RedactionLevel.Standard;
                     break;
                 case "--include":
                     foreach (var ext in Value(key, inlineValue, args, ref i).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))

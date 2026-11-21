@@ -305,4 +305,23 @@ public class CliTests
             Directory.Delete(dir, recursive: true);
         }
     }
+
+    [Fact]
+    public async Task FailOnRedaction_returns_two_when_pii_found_and_zero_when_clean()
+    {
+        var piiDir = MakeFolder();
+        var cleanDir = Path.Combine(Path.GetTempPath(), "scrubkit-clean-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(cleanDir);
+        File.WriteAllText(Path.Combine(cleanDir, "clean.txt"), "Completely safe public documentation text.");
+        try
+        {
+            Assert.Equal(2, await Cli.RunAsync(new[] { "scan", piiDir, "--fail-on-redaction" }));
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", cleanDir, "--fail-on-redaction" }));
+        }
+        finally
+        {
+            Directory.Delete(piiDir, recursive: true);
+            Directory.Delete(cleanDir, recursive: true);
+        }
+    }
 }
