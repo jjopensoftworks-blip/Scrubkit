@@ -61,8 +61,13 @@ nunit-*.xml
 
 coverage/
 
+# Local-only AI agent instructions & strategy docs (never commit to Git)
 local/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.agents/
+.agent/
 
 build/icon-source.png
-
-CLAUDE.md

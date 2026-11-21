@@ -4,12 +4,11 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE)
 
 Writes a [**Scrubkit**](https://www.nuget.org/packages/Scrubkit) `FileRecord` table to
-**Apache Parquet** (columnar) for data-lake and analytics ingestion, using
-[Parquet.Net](https://www.nuget.org/packages/Parquet.Net).
+**Apache Parquet** (columnar) for data-lake and analytics ingestion.
 
-The core `Scrubkit` package already ships **zero-dependency CSV and JSON** writers
+The core `Scrubkit` package already ships **zero-dependency CSV, JSON, and JSON Lines** writers
 (`TableWriter`). Reach for this package only when you specifically need Parquet — it keeps
-that dependency out of the core.
+that dependency out of the core. Multi-targets `net8.0` and `net10.0`.
 
 ## Install
 

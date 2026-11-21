@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--threshold", type=float, default=99.0, help="minimum line coverage %")
+    ap.add_argument("--threshold", type=float, default=99.0, help="minimum line coverage percentage")
     ap.add_argument("--dir", default="./coverage", help="directory to search for cobertura xml")
     args = ap.parse_args()
 

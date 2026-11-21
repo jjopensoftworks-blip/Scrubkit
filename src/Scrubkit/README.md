@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml/badge.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Scrubkit.svg)](https://www.nuget.org/packages/Scrubkit)
-[![Downloads](https://img.shields.io/badge/downloads-22.1k%20total-blue.svg)](https://www.nuget.org/packages/Scrubkit)
+[![Downloads](https://img.shields.io/badge/downloads-29.1k%2B%20total-blue.svg)](https://www.nuget.org/packages?q=Scrubkit)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE)
 
 **[🌐 Website](https://jjopensoftworks-blip.github.io/Scrubkit/)** · **[📦 NuGet](https://www.nuget.org/packages/Scrubkit)** · **[📝 Changelog](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md)**
@@ -21,13 +21,13 @@ natural first step for RAG ingestion, search indexing, and on-device data prep.
 
 ## Highlights
 
-- **Offline** — no network calls, no telemetry.
-- **Small, fast core** — PDF, Office, text, and image metadata out of the box.
+- **100% Offline** — no network calls, no telemetry.
+- **Zero-dependency core** — Modern Office (`.docx`, `.xlsx`, `.pptx`), HTML, RTF, and plain text out of the box with zero external dependencies; plug in modular add-ons for PDF (`.AddPdf()`), image EXIF (`.AddImages()`), email (`.AddEmail()`), OpenDocument (`.AddOpenDocument()`), EPUB (`.AddEpub()`), and legacy Office (`.AddLegacyOffice()`), or install [`Scrubkit.All`](https://www.nuget.org/packages/Scrubkit.All) for one-line `.AddAllExtractors()`.
 - **Scrub PII & secrets** — opt-in redaction of emails, cards, IPs, and secrets (API keys,
   JWTs, private keys, connection strings).
-- **RAG-ready** — a `Chunker` for overlapping windows and CSV / JSON / **JSON Lines** / Parquet output.
+- **RAG-ready** — a `Chunker` for overlapping windows and CSV / JSON / **JSON Lines** / Parquet output, plus native integrations for `Microsoft.Extensions.AI` and `Semantic Kernel`.
 - **Incremental** — re-scan only what changed via a lightweight `Manifest` (`ReadChangesAsync`).
-- **Runs from a shell** — the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI (`dotnet tool`) scans a folder with zero code.
+- **Runs from a shell** — the [`scrubkit`](https://www.nuget.org/packages/Scrubkit.Tool) CLI (`dotnet tool`) scans a folder with zero code (includes PDF and image EXIF out of the box).
 - **Pluggable** — add or override formats with `IFileExtractor`.
 - **Scales** — stream results and process files in parallel for large trees.
 - **Multi-target** — `net8.0`, `net10.0`, and `netstandard2.0`.
@@ -37,7 +37,11 @@ natural first step for RAG ingestion, search indexing, and on-device data prep.
 ## Install
 
 ```sh
+# Zero-dependency core (Office OOXML, HTML, RTF, Plain Text + PII Redactor + Chunker)
 dotnet add package Scrubkit
+
+# Or install the full bundle (adds PDF, Image EXIF, Email, OpenDocument, EPUB, LegacyOffice, AI/SK/DI, Parquet)
+dotnet add package Scrubkit.All
 ```
 
 ## Quick start
@@ -45,8 +49,13 @@ dotnet add package Scrubkit
 ```csharp
 using Scrubkit;
 
-var scrubber = new FolderScrubber(new ReadOptions { Recursion = Recursion.AllNested });
+var options = new ReadOptions { Recursion = Recursion.AllNested }
+    // .AddPdf()              // with Scrubkit.Pdf
+    // .AddImages()           // with Scrubkit.Images
+    // .AddAllExtractors()    // with Scrubkit.All
+    ;
 
+var scrubber = new FolderScrubber(options);
 IReadOnlyList<FileRecord> table = await scrubber.ReadAsync(@"C:\Docs");
 
 foreach (var r in table)
@@ -60,14 +69,17 @@ Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, `SizeBy
 
 ## Supported formats
 
-| Category      | Extensions                                       |
-| ------------- | ------------------------------------------------ |
-| Documents     | PDF, DOCX, RTF                                   |
-| Spreadsheets  | XLSX, CSV                                        |
-| Presentations | PPTX                                             |
-| Web / markup  | HTML, HTM                                        |
-| Text          | TXT, MD, LOG, JSON, XML                          |
-| Images        | JPG, PNG, TIFF, HEIC, WebP, GIF, BMP (EXIF only) |
+| Category | Extensions | Package / Registration |
+| --- | --- | --- |
+| Modern Office | DOCX, XLSX, PPTX | Built into `Scrubkit` (zero-dep) |
+| Web / markup / rich text | HTML, HTM, RTF | Built into `Scrubkit` (zero-dep) |
+| Plain text & data | TXT, MD, CSV, LOG, JSON, XML, YAML, INI | Built into `Scrubkit` (zero-dep) |
+| PDF documents | PDF | `Scrubkit.Pdf` (`.AddPdf()`) |
+| Images (EXIF metadata) | JPG, PNG, TIFF, HEIC, WebP, GIF, BMP | `Scrubkit.Images` (`.AddImages()`) |
+| Email | EML, MSG | `Scrubkit.Email` (`.AddEmail()`) |
+| OpenDocument | ODT, ODS, ODP | `Scrubkit.OpenDocument` (`.AddOpenDocument()`) |
+| eBooks | EPUB | `Scrubkit.Epub` (`.AddEpub()`) |
+| Legacy binary Office | DOC, XLS, PPT | `Scrubkit.LegacyOffice` (`.AddLegacyOffice()`) |
 
 HTML and RTF are stripped to **clean text** (tags/control words removed, entities decoded).
 Plain-text formats are read as-is — markup in XML is **not** stripped.
@@ -128,6 +140,7 @@ rows with no text skipped:
 var scrubber = new FolderScrubber(new ReadOptions
 {
     MaxTextLength = 8_000,   // keep chunks index-friendly
+    Redaction = RedactionLevel.Standard
 });
 
 var chunker = new Chunker(new ChunkOptions { MaxChars = 1_000, OverlapChars = 100 });

@@ -1,5 +1,8 @@
 # Scrubkit.Abstractions
 
+[![NuGet](https://img.shields.io/nuget/v/Scrubkit.Abstractions.svg)](https://www.nuget.org/packages/Scrubkit.Abstractions)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE)
+
 The dependency-free **contracts** for
 [Scrubkit](https://www.nuget.org/packages/Scrubkit) — interfaces and simple records,
 nothing else.
@@ -22,14 +25,15 @@ public sealed class MyExtractor : IFileExtractor
 }
 ```
 
-Everything lives in the `Scrubkit` namespace, so consuming code is identical whether you
+Everything lives in the flat `Scrubkit` namespace, so consuming code is identical whether you
 reference `Scrubkit` or `Scrubkit.Abstractions`.
 
 ---
 
 ## What's inside
 
-`IFileExtractor` · `ExtractedContent` · `IRedactor` · `RedactionResult` · `FileRecord` ·
+`IFileExtractor` · `ExtractedContent` · `IRedactor` · `RedactionResult` · `RedactionSpan` ·
+`RedactionCategories` · `FileRecord` · `Chunk` · `ManifestEntry` · `ScrubDiagnostic` ·
 `ReadOptions` · `Recursion` · `RedactionLevel` · `Buckets`
 
-Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`. Fully offline — no dependencies.
+Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`. Fully offline — zero external dependencies.

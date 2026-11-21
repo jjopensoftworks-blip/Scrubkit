@@ -84,7 +84,7 @@
     Announcing Scrubkit 2.0
   </h1>
   <p class="font-body-lg text-lg md:text-xl text-text-muted leading-relaxed max-w-2xl mx-auto">
-    A monumental architectural evolution. The core engine is now <strong>100% zero-dependency</strong>, format extractors are completely modular, and test coverage scales to <strong>575+ tests</strong> across <strong>.NET Standard 2.0, .NET 8 LTS, .NET 9, and .NET 10</strong>.
+    A monumental architectural evolution. The core engine is now <strong>100% zero-dependency</strong>, format extractors are completely modular, and test coverage scales to <strong>575+ tests</strong> across <strong>.NET Standard 2.0, .NET 8 LTS, and .NET 10 LTS</strong>.
   </p>
   <div class="mt-8 flex flex-wrap justify-center gap-4">
     <a href="#migration" class="px-6 py-3 rounded-lg bg-electric-blue text-surface-deep font-semibold hover:bg-electric-blue/90 transition-all flex items-center gap-2 shadow-lg shadow-electric-blue/20">
@@ -105,7 +105,7 @@
     </div>
     <h3 class="font-headline-md text-xl font-bold mb-2 text-on-surface">Zero External Dependencies</h3>
     <p class="text-sm text-text-muted leading-relaxed">
-      The core <code>Scrubkit</code> package has shed all third-party dependencies. Built entirely on pure .NET BCL: Word, Excel, PowerPoint (OOXML), HTML, RTF, and Plain Text. Zero package bloat.
+      The core <code>Scrubkit</code> package has shed all third-party dependencies: Word, Excel, PowerPoint (OOXML), HTML, RTF, and Plain Text out of the box with zero package bloat.
     </p>
   </div>
 
@@ -115,7 +115,7 @@
     </div>
     <h3 class="font-headline-md text-xl font-bold mb-2 text-on-surface">Modular Add-On Packages</h3>
     <p class="text-sm text-text-muted leading-relaxed">
-      Heavy parsers are now decoupled into dedicated opt-in packages: <code>Scrubkit.Pdf</code> (PdfPig) and <code>Scrubkit.Images</code> (MetadataExtractor), giving you surgical control over application binary size.
+      Specialized parsers are now decoupled into dedicated opt-in packages: <code>Scrubkit.Pdf</code> and <code>Scrubkit.Images</code>, giving you surgical control over application binary size.
     </p>
   </div>
 
@@ -125,7 +125,7 @@
     </div>
     <h3 class="font-headline-md text-xl font-bold mb-2 text-on-surface">575+ Automated Tests</h3>
     <p class="text-sm text-text-muted leading-relaxed">
-      Massive test expansion with comprehensive theory suites covering edge cases, ReDoS regex timeouts, span normalizations, and concurrent streams with 99%+ code coverage.
+      Comprehensive test suites covering edge cases, regex safety timeouts, fast text normalizations, and concurrent streams with 99%+ code coverage.
     </p>
   </div>
 
@@ -139,7 +139,7 @@
   </div>
   
   <p class="text-text-muted text-sm leading-relaxed mb-6">
-    In Scrubkit 1.x, the core package bundled <code>PdfPig</code> (for PDF text) and <code>MetadataExtractor</code> (for EXIF image metadata). While convenient, it pulled third-party assemblies into applications that only needed plain text, Office, or email processing. In <strong>Scrubkit 2.0</strong>, the core is 100% clean BCL, with every heavy parser extracted into its own package.
+    In Scrubkit 1.x, the core package bundled PDF and EXIF image extraction directly. While convenient, it included extra dependencies in applications that only needed plain text, Office, or email processing. In <strong>Scrubkit 2.0</strong>, the core has zero external dependencies, with PDF and Image EXIF extracted into dedicated modular packages.
   </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,14 +148,14 @@
     <div class="bg-surface-deep p-6 rounded-lg border border-surface-border">
       <div class="flex items-center justify-between mb-4">
         <span class="font-label-sm text-xs uppercase tracking-wider text-text-muted font-bold">Scrubkit 1.x (Monolithic Core)</span>
-        <span class="text-xs px-2 py-0.5 rounded bg-error-red/20 text-error-red font-mono">2 Third-Party Deps</span>
+        <span class="text-xs px-2 py-0.5 rounded bg-error-red/20 text-error-red font-mono">Bundled Parsers</span>
       </div>
       <ul class="space-y-2 text-xs font-mono text-text-muted">
         <li class="flex items-center gap-2"><span class="text-secondary">✔</span> Office OOXML (docx, xlsx, pptx)</li>
         <li class="flex items-center gap-2"><span class="text-secondary">✔</span> HTML &amp; RTF clean-text</li>
         <li class="flex items-center gap-2"><span class="text-secondary">✔</span> Plain text (txt, md, json, etc.)</li>
-        <li class="flex items-center gap-2 text-warning-amber"><span class="text-warning-amber">⚠</span> PdfPig (transitive in core)</li>
-        <li class="flex items-center gap-2 text-warning-amber"><span class="text-warning-amber">⚠</span> MetadataExtractor (transitive in core)</li>
+        <li class="flex items-center gap-2 text-warning-amber"><span class="text-warning-amber">⚠</span> PDF parser bundled in core</li>
+        <li class="flex items-center gap-2 text-warning-amber"><span class="text-warning-amber">⚠</span> Image EXIF parser bundled in core</li>
       </ul>
     </div>
 
@@ -167,8 +167,8 @@
       </div>
       <ul class="space-y-2 text-xs font-mono text-text-muted">
         <li class="flex items-center gap-2 text-secondary"><span class="text-secondary">✔</span> <strong>Scrubkit (Core):</strong> Zero third-party dependencies</li>
-        <li class="flex items-center gap-2"><span class="text-electric-blue">+</span> <strong>Scrubkit.Pdf:</strong> Dedicated add-on via PdfPig</li>
-        <li class="flex items-center gap-2"><span class="text-electric-blue">+</span> <strong>Scrubkit.Images:</strong> Dedicated add-on via MetadataExtractor</li>
+        <li class="flex items-center gap-2"><span class="text-electric-blue">+</span> <strong>Scrubkit.Pdf:</strong> Dedicated PDF add-on (<code>.AddPdf()</code>)</li>
+        <li class="flex items-center gap-2"><span class="text-electric-blue">+</span> <strong>Scrubkit.Images:</strong> Dedicated EXIF add-on (<code>.AddImages()</code>)</li>
         <li class="flex items-center gap-2"><span class="text-electric-blue">+</span> <strong>Scrubkit.All:</strong> Meta-package with <code>.AddAllExtractors()</code></li>
       </ul>
     </div>
@@ -294,12 +294,12 @@ var scrubber = new FolderScrubber(options);</code></pre>
     <div class="bento-card p-4 rounded-lg">
       <span class="text-xs uppercase font-label-sm font-bold text-error-red">Add-on</span>
       <h4 class="font-code-md text-sm font-bold text-on-surface mt-1">Scrubkit.Pdf</h4>
-      <p class="text-xs text-text-muted mt-1">PDF document text &amp; metadata via PdfPig.</p>
+      <p class="text-xs text-text-muted mt-1">PDF document text &amp; metadata extractor (<code>.AddPdf()</code>).</p>
     </div>
     <div class="bento-card p-4 rounded-lg">
       <span class="text-xs uppercase font-label-sm font-bold text-warning-amber">Add-on</span>
       <h4 class="font-code-md text-sm font-bold text-on-surface mt-1">Scrubkit.Images</h4>
-      <p class="text-xs text-text-muted mt-1">Image EXIF metadata via MetadataExtractor.</p>
+      <p class="text-xs text-text-muted mt-1">Image EXIF metadata extractor (<code>.AddImages()</code>).</p>
     </div>
     <div class="bento-card p-4 rounded-lg">
       <span class="text-xs uppercase font-label-sm font-bold text-secondary">Add-on</span>
@@ -358,6 +358,13 @@ var scrubber = new FolderScrubber(options);</code></pre>
 <footer class="pt-12 border-t border-surface-border text-center text-xs text-text-muted">
   <p>© 2026 jjopensoftworks-blip. Licensed under <a href="https://mozilla.org/MPL/2.0/" class="text-electric-blue hover:underline">MPL-2.0</a>.</p>
   <p class="mt-2">100% Offline · No Telemetry · Privacy by Design</p>
+  <div class="mt-4 pt-4 border-t border-surface-border">
+    <span class="text-on-surface font-semibold">JJ OpenSoftworks Ecosystem:</span>
+    <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📄 ShreePdf (.NET PDF Engine)</a> •
+    <a href="https://apps.microsoft.com/detail/9MSPJ2M5MFHS" target="_blank" class="text-electric-blue hover:underline ml-3">🖥️ ShreePdf Viewer (Windows)</a> •
+    <a href="https://jjopensoftworks-blip.github.io/FileOrganizerAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📁 FileOrganizerAI (Windows)</a> •
+    <a href="https://jjopensoftworks-blip.github.io/CropAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">🌾 CropAI (Android)</a>
+  </div>
 </footer>
 
 </main>

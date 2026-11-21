@@ -6,7 +6,7 @@
 `Microsoft.Extensions.DependencyInjection` integration for
 [**Scrubkit**](https://www.nuget.org/packages/Scrubkit) — register a configured
 `FolderScrubber` for constructor injection in ASP.NET Core, worker services, and any other
-generic host.
+generic host. Multi-targets `net8.0`, `net10.0`, and `netstandard2.0`.
 
 ## Install
 

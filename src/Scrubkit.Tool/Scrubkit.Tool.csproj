@@ -4,7 +4,7 @@
     <!-- Modern .NET TFMs: it references Scrubkit.Parquet for Parquet output, and a global
          tool doesn't need netstandard reach. -->
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
 
     <!-- Ship as a dotnet global/local tool: `dotnet tool install -g Scrubkit.Tool` → `scrubkit`. -->
     <PackAsTool>true</PackAsTool>

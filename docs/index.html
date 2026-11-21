@@ -2,11 +2,76 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Scrubkit — offline text + metadata extraction for .NET</title>
-<meta name="description" content="Point Scrubkit at a folder and get back a clean table of file text + metadata — 100% offline. PDF, Office, text, and image EXIF, for RAG ingestion, search indexing, and data prep."/>
-<meta property="og:title" content="Scrubkit — offline text + metadata extraction for .NET"/>
-<meta property="og:description" content="Point at a folder, get a clean table of file text + metadata back — fully offline."/>
+<title>Scrubkit — Offline Document Text Extraction &amp; PII Redaction for .NET RAG &amp; AI</title>
+<meta name="description" content="Point Scrubkit at a folder and get back a clean table of file text + metadata — 100% offline. Extracts PDF, Word, Excel, PowerPoint, Email (.eml/.msg), OpenDocument, EPUB, Legacy Office, and Image EXIF with built-in PII/secret redaction and RAG chunking for .NET 8, .NET 10, and .NET Standard 2.0."/>
+<meta name="keywords" content="Scrubkit, dotnet text extraction, csharp pdf to text, offline rag ingestion dotnet, pii redaction c#, secret scanner dotnet, semantic kernel document loader, microsoft.extensions.ai redaction middleware, docx xlsx eml msg parser c#, JJ OpenSoftworks"/>
+<meta name="author" content="JJ OpenSoftworks"/>
+<link rel="canonical" href="https://jjopensoftworks-blip.github.io/Scrubkit/"/>
+<meta name="google-site-verification" content="google909fa6d2d0d9e6a4"/>
+<meta name="google-site-verification" content="googled927a6d838887049"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1"/>
+<meta name="tdm-reservation" content="1"/>
+<meta property="og:site_name" content="Scrubkit"/>
+<meta property="og:title" content="Scrubkit — Offline Text Extraction &amp; PII Redaction for .NET"/>
+<meta property="og:description" content="Point at a folder, get a clean table of file text + metadata back — 100% offline. 14 modular NuGet packages for .NET RAG, Semantic Kernel, and Microsoft.Extensions.AI."/>
 <meta property="og:image" content="https://raw.githubusercontent.com/jjopensoftworks-blip/Scrubkit/main/assets/social-preview.png"/>
+<meta property="og:url" content="https://jjopensoftworks-blip.github.io/Scrubkit/"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Scrubkit",
+    "operatingSystem": ".NET 8.0, .NET 10.0, .NET Standard 2.0, Windows, Linux, macOS",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "downloadUrl": "https://www.nuget.org/packages/Scrubkit",
+    "description": "100% offline document text and metadata extraction, RAG text chunking, and PII/secret redaction engine for .NET across 14 modular NuGet packages.",
+    "url": "https://jjopensoftworks-blip.github.io/Scrubkit/",
+    "author": {
+      "@type": "Organization",
+      "name": "JJ OpenSoftworks",
+      "url": "https://github.com/jjopensoftworks-blip"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What file formats does Scrubkit extract in .NET?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Scrubkit extracts clean text and metadata from Modern Office (.docx, .xlsx, .pptx), HTML, RTF, and Plain Text (.txt, .md, .csv, .json, .xml, .log) with zero external dependencies in the core package, plus PDF (.pdf), Image EXIF (.jpg, .png, .tiff, .heic, .webp), Email (.eml, .msg), OpenDocument (.odt, .ods, .odp), EPUB (.epub), and Legacy Binary Office (.doc, .xls, .ppt) via modular add-ons or Scrubkit.All."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Scrubkit make any network calls or send telemetry?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Scrubkit runs 100% offline inside your process with zero network calls and zero telemetry, enforced by an automated unit test that inspects assembly references."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Scrubkit integrate with Microsoft.Extensions.AI, Semantic Kernel, and ShreePdf?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Scrubkit provides Scrubkit.Extensions.MicrosoftExtensionsAI for IChatClient and IEmbeddingGenerator redaction middleware (.UseRedaction), Scrubkit.Extensions.SemanticKernel for one-line vector memory ingestion (ImportFolderAsync), and pairs directly with ShreePdf to render sanitized LLM Markdown summaries into themed vector PDFs."
+        }
+      }
+    ]
+  }
+]
+</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -74,6 +139,7 @@
 <nav class="hidden md:flex gap-8 items-center">
 <a class="font-body-md text-body-md text-emerald-400 font-semibold hover:text-white transition-colors duration-200" href="v2.html">What's New in 2.0 ✨</a>
 <a class="font-body-md text-body-md text-electric-blue border-b-2 border-electric-blue pb-1 hover:text-on-surface transition-colors duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit#readme">Documentation</a>
+<a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="recipes.html">RAG Recipes</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="#packages">Packages</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="changelog.html">Changelog</a>
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-colors duration-200" href="#ecosystem">Ecosystem</a>
@@ -100,18 +166,18 @@
 </a>
 <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/30 text-secondary font-label-sm text-xs">
 <span class="w-2 h-2 rounded-full bg-secondary"></span>
-<span>🎉 <strong>22,151+</strong> Total Downloads Milestone</span>
+<span>🎉 <strong>29,089+</strong> Total Downloads Milestone</span>
 </div>
 </div>
 <div class="flex flex-wrap gap-3 mb-6 items-center">
 <img alt="CI" src="https://github.com/jjopensoftworks-blip/Scrubkit/actions/workflows/ci.yml/badge.svg"/>
 <img alt="NuGet" src="https://img.shields.io/nuget/v/Scrubkit.svg"/>
-<img alt="Downloads" src="https://img.shields.io/badge/downloads-22.1k%20total-blue.svg"/>
+<img alt="Downloads" src="https://img.shields.io/badge/downloads-29.1k%2B%20total-blue.svg"/>
 <img alt="License MPL 2.0" src="https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg"/>
 </div>
 <h1 class="font-headline-lg text-headline-lg md:text-6xl mb-4 tracking-tighter">Scrubkit</h1>
 <p class="font-body-lg text-body-lg text-text-muted mb-8 max-w-lg leading-relaxed">
-                    Point at a folder, get a clean table of file text + metadata back — <span class="text-on-surface font-semibold">fully offline.</span> Local-first data preparation for RAG and search pipelines, on .NET 8 and .NET Standard 2.0.
+                    Point at a folder, get a clean table of file text + metadata back — <span class="text-on-surface font-semibold">fully offline.</span> Local-first data preparation and PII/secret redaction for RAG and search pipelines, on .NET 10, .NET 8, and .NET Standard 2.0.
                 </p>
 <div class="flex flex-wrap gap-4">
 <a href="https://github.com/jjopensoftworks-blip/Scrubkit#readme" class="bg-primary text-on-primary px-8 py-3 font-label-sm text-label-sm flex items-center gap-2 hover:translate-y-[-2px] transition-all">
@@ -153,7 +219,7 @@
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-container-gap">
 <div class="bento-card p-bento-padding text-center border-secondary/30 relative overflow-hidden group">
 <div class="absolute inset-0 bg-secondary/5 opacity-50 group-hover:opacity-100 transition-opacity"></div>
-<p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter relative z-10">22.1K+</p>
+<p class="font-headline-lg text-headline-lg md:text-5xl text-secondary tracking-tighter relative z-10">29.1K+</p>
 <p class="font-label-sm text-label-sm text-text-muted mt-2 uppercase tracking-widest relative z-10">NuGet downloads</p>
 </div>
 <div class="bento-card p-bento-padding text-center">
@@ -198,8 +264,8 @@
 </div>
 <div class="bento-card p-bento-padding group">
 <span class="material-symbols-outlined text-secondary mb-4 text-[32px]">bolt</span>
-<h3 class="font-headline-md text-on-surface mb-2">Fast Core</h3>
-<p class="text-text-muted font-body-md">Extraction for PDF, Office, and text via PdfPig + MetadataExtractor — a small dependency set and streaming, bounded-parallel processing.</p>
+<h3 class="font-headline-md text-on-surface mb-2">Zero-Dep Core</h3>
+<p class="text-text-muted font-body-md">Built-in Office (Word/Excel/PowerPoint), HTML, RTF, and plain text extraction with zero external dependencies, plus modular add-ons for PDF, image EXIF, email, OpenDocument, EPUB, and legacy Office.</p>
 </div>
 <div class="bento-card p-bento-padding group">
 <span class="material-symbols-outlined text-warning-amber mb-4 text-[32px]">extension</span>
@@ -359,7 +425,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded">Core · Zero-Dep</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">The zero-dependency engine — <code>FolderScrubber</code> with built-in Office (Word/Excel/PowerPoint), HTML, RTF, and plain text extractors. Pure BCL, 0 external dependencies.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">The zero-dependency core engine — <code>FolderScrubber</code> with built-in Office (Word/Excel/PowerPoint), HTML, RTF, and plain text extractors, PII redaction, and text chunking.</p>
 <img class="h-5 self-start" alt="Scrubkit on NuGet" src="https://img.shields.io/nuget/v/Scrubkit?style=flat-square&amp;color=4d8eff&amp;label=nuget"/>
 </a>
 <!-- All (bundle) -->
@@ -389,7 +455,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-error-red bg-error-red/10 px-2 py-0.5 rounded">Add-on</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Pdf</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">PDF document text and metadata extractor powered by <code>PdfPig</code>. Registers with <code>options.AddPdf()</code>.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">PDF document text and metadata extractor (Title, Author, Subject, PageCount). Registers with <code>options.AddPdf()</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.Pdf on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Pdf?style=flat-square&amp;color=EF4444&amp;label=nuget"/>
 </a>
 <!-- Images -->
@@ -399,7 +465,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-warning-amber bg-warning-amber/10 px-2 py-0.5 rounded">Add-on</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Images</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Image EXIF metadata extractor powered by <code>MetadataExtractor</code>. Registers with <code>options.AddImages()</code>.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Image EXIF metadata extractor for JPG, PNG, TIFF, HEIC, WebP, GIF, and BMP. Registers with <code>options.AddImages()</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.Images on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Images?style=flat-square&amp;color=D97706&amp;label=nuget"/>
 </a>
 <!-- Email -->
@@ -409,7 +475,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-secondary bg-secondary/10 px-2 py-0.5 rounded">Add-on</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Email</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>.eml</code> (MIME) email — headers become metadata, the body becomes text. Multipart, <code>base64</code>, and <code>quoted-printable</code> aware.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1"><code>.eml</code> and <code>.msg</code> email extractor — headers become metadata, the body becomes clean text. Registers with <code>options.AddEmail()</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.Email on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Email?style=flat-square&amp;color=4edea3&amp;label=nuget"/>
 </a>
 <!-- OpenDocument -->
@@ -439,7 +505,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-error-red bg-error-red/10 px-2 py-0.5 rounded">Add-on</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.LegacyOffice</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Pre-2007 binary Office — <code>.doc</code> / <code>.xls</code> / <code>.ppt</code> — read straight from the OLE2 compound file with the BCL. Body text plus Title, Author, and Subject. No NPOI, no interop.</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Pre-2007 Microsoft Office formats — <code>.doc</code> / <code>.xls</code> / <code>.ppt</code> — body text plus Title, Author, and Subject with zero external dependencies. Registers with <code>options.AddLegacyOffice()</code>.</p>
 <img class="h-5 self-start" alt="Scrubkit.LegacyOffice on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.LegacyOffice?style=flat-square&amp;color=EF4444&amp;label=nuget"/>
 </a>
 <!-- Dependency Injection -->
@@ -479,7 +545,7 @@
 <span class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Output</span>
 </div>
 <h3 class="font-code-md text-code-md text-on-surface mb-2">Scrubkit.Parquet</h3>
-<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Write the record table to Apache <strong>Parquet</strong> for data-lake / analytics ingestion (Parquet.Net). CSV &amp; JSON stay zero-dependency in the core; this one requires a modern .NET TFM (<code>net8.0</code> / <code>net10.0</code>).</p>
+<p class="text-text-muted font-body-md text-sm mb-4 flex-1">Write the record table to Apache <strong>Parquet</strong> for data-lake and analytics ingestion (<code>net8.0</code> / <code>net10.0</code>). CSV, JSON, and JSON Lines stay zero-dependency in the core.</p>
 <img class="h-5 self-start" alt="Scrubkit.Parquet on NuGet" src="https://img.shields.io/nuget/v/Scrubkit.Parquet?style=flat-square&amp;color=ffb95f&amp;label=nuget"/>
 </a>
 <!-- Tool (CLI) -->
@@ -499,29 +565,29 @@
                     it's tried before the built-ins, so you can add or override any format.
                 </p>
 </section>
-<!-- Try it Section -->
+<!-- Quick Install & Bundle Section -->
 <section class="grid grid-cols-1 md:grid-cols-2 gap-container-gap mb-24">
 <div class="bento-card p-bento-padding border-l-4 border-l-electric-blue">
-<h4 class="font-label-sm text-electric-blue mb-4 uppercase tracking-widest">Try Without Installing</h4>
-<p class="font-body-md text-text-muted mb-6">Run the playground demo to see the table output format immediately.</p>
+<h4 class="font-label-sm text-electric-blue mb-4 uppercase tracking-widest">All-In-One Bundle</h4>
+<p class="font-body-md text-text-muted mb-6">Install the complete 14-package suite and enable all format extractors with one call.</p>
 <div class="bg-surface-deep p-4 rounded border border-surface-border font-code-md text-sm">
-<span class="text-text-muted">dotnet run --project samples/Scrubkit.Playground</span>
+<span class="text-text-muted">dotnet add package Scrubkit.All</span>
 </div>
 </div>
 <div class="bento-card p-bento-padding border-l-4 border-l-secondary">
-<h4 class="font-label-sm text-secondary mb-4 uppercase tracking-widest">Repository Layout</h4>
+<h4 class="font-label-sm text-secondary mb-4 uppercase tracking-widest">Supported Out of the Box</h4>
 <div class="space-y-3 font-code-md text-xs text-on-surface/70">
 <div class="flex gap-4">
-<span class="text-secondary">src/Scrubkit.Abstractions</span>
-<span class="text-text-muted">contracts only</span>
+<span class="text-secondary">Documents &amp; Books</span>
+<span class="text-text-muted">PDF, DOCX, DOC, ODT, RTF, EPUB</span>
 </div>
 <div class="flex gap-4">
-<span class="text-secondary">src/Scrubkit</span>
-<span class="text-text-muted">core + built-in extractors</span>
+<span class="text-secondary">Sheets &amp; Slides</span>
+<span class="text-text-muted">XLSX, XLS, ODS, CSV, PPTX, PPT, ODP</span>
 </div>
 <div class="flex gap-4">
-<span class="text-secondary">tests/Scrubkit.Tests</span>
-<span class="text-text-muted">xUnit suite</span>
+<span class="text-secondary">Email, Web &amp; Media</span>
+<span class="text-text-muted">EML, MSG, HTML, JSON, MD, EXIF Images</span>
 </div>
 </div>
 </div>
@@ -562,104 +628,170 @@
 </div>
 </div>
 </section>
-<!-- Ecosystem / Other NuGet Packages -->
+<!-- Ecosystem / JJ OpenSoftworks Suite -->
 <section id="ecosystem" class="mb-24 scroll-mt-24">
 <div class="flex items-center gap-4 mb-8">
 <div class="h-[1px] flex-1 bg-surface-border"></div>
-<h2 class="font-headline-md text-on-surface shrink-0">jjopensoftworks-blip Ecosystem</h2>
+<h2 class="font-headline-md text-on-surface shrink-0">JJ OpenSoftworks Ecosystem</h2>
 <div class="h-[1px] flex-1 bg-surface-border"></div>
 </div>
 
 <p class="text-text-muted font-body-lg text-body-lg max-w-2xl mx-auto text-center mb-10 leading-relaxed">
-    Explore open-source .NET libraries and developer tools built and maintained by <strong class="text-on-surface">jjopensoftworks-blip</strong>. High-performance, offline-first, and designed for modern software engineering.
+    Explore our suite of high-performance .NET libraries, desktop applications, and offline-first AI utilities built by <strong class="text-on-surface">JJ OpenSoftworks</strong>.
 </p>
 
-<!-- Ecosystem Grid -->
+<!-- Ecosystem Grid (4 Cards) -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-container-gap">
 
-<!-- ShreePdf Card -->
+<!-- 1. ShreePdf Card -->
 <div class="bento-card rounded-xl p-bento-padding md:p-8 relative overflow-hidden border border-electric-blue/20 hover:border-electric-blue/50 transition-all flex flex-col justify-between group">
 <div class="absolute -right-16 -top-16 w-48 h-48 bg-electric-blue/10 rounded-full blur-2xl pointer-events-none group-hover:bg-electric-blue/20 transition-all"></div>
-
 <div>
 <div class="flex items-center justify-between gap-3 mb-4">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-electric-blue text-[32px]">picture_as_pdf</span>
 <div>
-<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-electric-blue transition-colors">ShreePdf</h3>
-<p class="font-label-sm text-xs text-text-muted">Fluent PDF Generation &amp; Layout Engine for .NET</p>
+<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-electric-blue transition-colors">ShreePdf Engine</h3>
+<p class="font-label-sm text-xs text-text-muted">Fluent Vector PDF Generation &amp; Markdown Engine for .NET 8 &amp; 10</p>
 </div>
 </div>
-<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2.5 py-1 rounded-full border border-electric-blue/20">Featured Package</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-electric-blue bg-electric-blue/10 px-2.5 py-1 rounded-full border border-electric-blue/20">NuGet Library</span>
 </div>
-
 <p class="font-body-md text-text-muted mb-6 leading-relaxed">
-    A high-performance, fluent C# PDF creation engine for generating invoices, reports, documents, and dynamic layouts with zero external heavy dependencies. Built for .NET Standard &amp; modern .NET runtimes.
+    Turn LLM Markdown, HTML, or C# fluent code directly into themed vector PDFs with native charts, QR codes, anti-orphan auto-fit pagination, AES-256 encryption, and PAdES digital signatures — zero Headless Chrome required.
 </p>
-
-<!-- Feature Pills -->
 <div class="flex flex-wrap gap-2 mb-6">
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-secondary text-[14px]">bolt</span> Fluent API
+<span class="material-symbols-outlined text-secondary text-[14px]">bolt</span> 5ms Native Vector
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-electric-blue text-[14px]">grid_view</span> Flex Layout System
+<span class="material-symbols-outlined text-electric-blue text-[14px]">markdown</span> Direct Markdown-to-PDF
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-tertiary text-[14px]">speed</span> High Performance
+<span class="material-symbols-outlined text-tertiary text-[14px]">verified_user</span> AES-256 &amp; Signatures
 </span>
 </div>
 </div>
-
 <div class="flex items-center justify-between pt-4 border-t border-surface-border mt-auto">
 <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-electric-blue hover:text-white font-label-sm text-sm group-hover:translate-x-1 transition-all">
-<span>Explore ShreePdf Landing Page</span>
+<span>Explore ShreePdf &amp; Live Playground</span>
 <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
 </a>
-<span class="font-label-sm text-xs text-text-muted">NuGet Package</span>
+<a href="https://www.nuget.org/packages/ShreePdf" target="_blank" rel="noopener noreferrer" class="font-label-sm text-xs text-text-muted hover:text-electric-blue">NuGet →</a>
 </div>
 </div>
 
-<!-- Scrubkit Card -->
+<!-- 2. ShreePdf Viewer Card -->
 <div class="bento-card rounded-xl p-bento-padding md:p-8 relative overflow-hidden border border-secondary/20 hover:border-secondary/50 transition-all flex flex-col justify-between group">
 <div class="absolute -right-16 -top-16 w-48 h-48 bg-secondary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-secondary/20 transition-all"></div>
-
 <div>
 <div class="flex items-center justify-between gap-3 mb-4">
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-secondary text-[32px]">cleaning_services</span>
+<span class="material-symbols-outlined text-secondary text-[32px]">desktop_windows</span>
 <div>
-<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-secondary transition-colors">Scrubkit</h3>
-<p class="font-label-sm text-xs text-text-muted">Offline Text &amp; Metadata Extraction for RAG &amp; Search</p>
+<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-secondary transition-colors">ShreePdf Viewer</h3>
+<p class="font-label-sm text-xs text-text-muted">Native Vector PDF Reader, Visual Diff &amp; Signature Inspector</p>
 </div>
 </div>
-<span class="font-label-sm text-[10px] uppercase tracking-widest text-secondary bg-secondary/10 px-2.5 py-1 rounded-full border border-secondary/20">Core Library</span>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-secondary bg-secondary/10 px-2.5 py-1 rounded-full border border-secondary/20">Microsoft Store</span>
 </div>
-
 <p class="font-body-md text-text-muted mb-6 leading-relaxed">
-    Walk any directory and convert raw PDF, Office, TXT, EXIF, and Email files into clean data tables with opt-in pattern redaction. Zero telemetry, 100% offline.
+    Sub-10ms native Windows desktop PDF reader featuring side-by-side visual document diffing, cryptographic signature verification, and embedded RAG AST metadata inspection.
 </p>
-
-<!-- Feature Pills -->
 <div class="flex flex-wrap gap-2 mb-6">
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-secondary text-[14px]">lock</span> 100% Offline
+<span class="material-symbols-outlined text-secondary text-[14px]">compare</span> Visual PDF Diff
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-electric-blue text-[14px]">dataset</span> 14 Extractors
+<span class="material-symbols-outlined text-electric-blue text-[14px]">workspace_premium</span> Signature Inspector
 </span>
 <span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
-<span class="material-symbols-outlined text-tertiary text-[14px]">tune</span> Opt-in Redaction
+<span class="material-symbols-outlined text-tertiary text-[14px]">data_object</span> RAG AST Viewer
 </span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-surface-border mt-auto">
+<a href="https://apps.microsoft.com/detail/9MSPJ2M5MFHS" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-secondary hover:text-white font-label-sm text-sm group-hover:translate-x-1 transition-all">
+<span>Get on Microsoft Store</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/viewer.html" target="_blank" rel="noopener noreferrer" class="font-label-sm text-xs text-text-muted hover:text-secondary">Overview →</a>
 </div>
 </div>
 
+<!-- 3. FileOrganizerAI Card -->
+<div class="bento-card rounded-xl p-bento-padding md:p-8 relative overflow-hidden border border-primary/20 hover:border-primary/50 transition-all flex flex-col justify-between group">
+<div class="absolute -right-16 -top-16 w-48 h-48 bg-primary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-primary/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between gap-3 mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[32px]">folder_managed</span>
+<div>
+<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-primary transition-colors">FileOrganizerAI</h3>
+<p class="font-label-sm text-xs text-text-muted">Offline AI Desktop File Organizer for Windows 10 &amp; 11</p>
+</div>
+</div>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20">Microsoft Store</span>
+</div>
+<p class="font-body-md text-text-muted mb-6 leading-relaxed">
+    Point it at any messy folder (Downloads, Desktop, scanner dumps) and get clean, logical category folders back in one click. Powered by instant rules and optional on-device AI with 1-click Undo and zero cloud uploads.
+</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]">lock</span> 100% Offline AI
+</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-electric-blue text-[14px]">account_tree</span> By Type &amp; By Topic
+</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-[14px]">undo</span> Instant Undo
+</span>
+</div>
+</div>
 <div class="flex items-center justify-between pt-4 border-t border-surface-border mt-auto">
-<a href="https://github.com/jjopensoftworks-blip/Scrubkit" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-secondary hover:text-white font-label-sm text-sm group-hover:translate-x-1 transition-all">
-<span>View Repository</span>
+<a href="https://jjopensoftworks-blip.github.io/FileOrganizerAIPage/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-primary hover:text-white font-label-sm text-sm group-hover:translate-x-1 transition-all">
+<span>Explore FileOrganizerAI</span>
 <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
 </a>
-<span class="font-label-sm text-xs text-text-muted">v2.0.0 · Stable</span>
+<a href="https://apps.microsoft.com/detail/9N74TVPLHM41" target="_blank" rel="noopener noreferrer" class="font-label-sm text-xs text-text-muted hover:text-primary">Microsoft Store →</a>
+</div>
+</div>
+
+<!-- 4. CropAI Card -->
+<div class="bento-card rounded-xl p-bento-padding md:p-8 relative overflow-hidden border border-tertiary/20 hover:border-tertiary/50 transition-all flex flex-col justify-between group">
+<div class="absolute -right-16 -top-16 w-48 h-48 bg-tertiary/10 rounded-full blur-2xl pointer-events-none group-hover:bg-tertiary/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between gap-3 mb-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-[32px]">eco</span>
+<div>
+<h3 class="font-headline-lg text-2xl text-on-surface group-hover:text-tertiary transition-colors">CropAI</h3>
+<p class="font-label-sm text-xs text-text-muted">Farm Field Scanner &amp; Satellite Soil Suitability Assistant</p>
+</div>
+</div>
+<span class="font-label-sm text-[10px] uppercase tracking-widest text-tertiary bg-tertiary/10 px-2.5 py-1 rounded-full border border-tertiary/20">Google Play</span>
+</div>
+<p class="font-body-md text-text-muted mb-6 leading-relaxed">
+    Walk a field boundary or drop GPS pins on Android to query open satellite soil, elevation, and climate datasets — returning instant crop suitability scores and exportable PDF/CSV field reports.
+</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[14px]">satellite_alt</span> Soil &amp; Climate Data
+</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-electric-blue text-[14px]">map</span> GPS Field Walk
+</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-deep text-xs font-label-sm text-on-surface-variant border border-surface-border flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-[14px]">download</span> PDF &amp; CSV Export
+</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-surface-border mt-auto">
+<a href="https://jjopensoftworks-blip.github.io/CropAIPage/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-tertiary hover:text-white font-label-sm text-sm group-hover:translate-x-1 transition-all">
+<span>Explore CropAI</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<a href="https://play.google.com/store/apps/details?id=com.cropai.tier" target="_blank" rel="noopener noreferrer" class="font-label-sm text-xs text-text-muted hover:text-tertiary">Google Play →</a>
 </div>
 </div>
 
@@ -670,15 +802,38 @@
 <div class="flex items-center gap-3 text-left">
 <span class="material-symbols-outlined text-tertiary text-[28px]">rocket</span>
 <div>
-<p class="font-headline-md text-base text-on-surface">More Open-Source .NET Packages Coming Soon</p>
-<p class="font-body-md text-xs text-text-muted">We are actively expanding our developer ecosystem. Have a specific library or tool request?</p>
+<p class="font-headline-md text-base text-on-surface">End-to-End .NET Document &amp; AI Pipeline</p>
+<p class="font-body-md text-xs text-text-muted">Combine <code>Scrubkit</code> (offline document ingestion &amp; PII redaction) with <code>ShreePdf</code> (Markdown-to-vector PDF output) in 20 lines of C#.</p>
 </div>
 </div>
-<a href="#about" class="shrink-0 inline-flex items-center gap-2 bg-surface-deep hover:bg-surface-container-high text-on-surface px-4 py-2 rounded-lg font-label-sm text-xs border border-surface-border transition-all">
-<span class="material-symbols-outlined text-[16px]">mail</span> Request a Package / Feature
+<a href="recipes.html#shreepdf-pipeline" class="shrink-0 inline-flex items-center gap-2 bg-surface-deep hover:bg-surface-container-high text-electric-blue px-4 py-2 rounded-lg font-label-sm text-xs border border-electric-blue/30 transition-all">
+<span class="material-symbols-outlined text-[16px]">code</span> View Full C# Pipeline Recipe →
 </a>
 </div>
 
+</section>
+
+<!-- FAQ Section for Google Rich Results -->
+<section id="faq" class="mb-24 scroll-mt-24 max-w-4xl mx-auto">
+<div class="flex items-center gap-4 mb-8">
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+<h2 class="font-headline-md text-on-surface shrink-0">Frequently Asked Questions</h2>
+<div class="h-[1px] flex-1 bg-surface-border"></div>
+</div>
+<div class="space-y-4">
+<div class="bento-card p-6">
+<h3 class="font-headline-md text-base text-electric-blue mb-2">What file formats does Scrubkit extract in .NET?</h3>
+<p class="font-body-md text-text-muted leading-relaxed">Scrubkit extracts clean text and metadata from Modern Office (<code>.docx</code>, <code>.xlsx</code>, <code>.pptx</code>), HTML, RTF, and Plain Text (<code>.txt</code>, <code>.md</code>, <code>.csv</code>, <code>.json</code>, <code>.xml</code>, <code>.log</code>) with zero external dependencies in the core package, plus PDF (<code>.pdf</code>), Image EXIF (<code>.jpg</code>, <code>.png</code>, <code>.tiff</code>, <code>.heic</code>, <code>.webp</code>), Email (<code>.eml</code>, <code>.msg</code>), OpenDocument (<code>.odt</code>, <code>.ods</code>, <code>.odp</code>), EPUB (<code>.epub</code>), and Legacy Binary Office (<code>.doc</code>, <code>.xls</code>, <code>.ppt</code>) via modular add-ons or <code>Scrubkit.All</code> (<code>.AddAllExtractors()</code>).</p>
+</div>
+<div class="bento-card p-6">
+<h3 class="font-headline-md text-base text-electric-blue mb-2">Does Scrubkit make any network calls or send telemetry?</h3>
+<p class="font-body-md text-text-muted leading-relaxed">No. Scrubkit operates 100% offline inside your process with zero network calls and zero telemetry. This offline guarantee is enforced in CI by an automated reflection test that verifies no assembly references networking APIs.</p>
+</div>
+<div class="bento-card p-6">
+<h3 class="font-headline-md text-base text-electric-blue mb-2">How does Scrubkit integrate with Microsoft.Extensions.AI, Semantic Kernel, and ShreePdf?</h3>
+<p class="font-body-md text-text-muted leading-relaxed">Use <code>Scrubkit.Extensions.MicrosoftExtensionsAI</code> to wrap any <code>IChatClient</code> or <code>IEmbeddingGenerator</code> with local PII/secret redaction middleware (<code>.UseRedaction(...)</code>), <code>Scrubkit.Extensions.SemanticKernel</code> to ingest folders directly into vector stores (<code>ImportFolderAsync</code>), and pair Scrubkit with <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue underline">ShreePdf</a> to render sanitized LLM Markdown summaries into executive vector PDFs.</p>
+</div>
+</div>
 </section>
 
 <!-- About / built by -->
@@ -817,4 +972,12 @@ function triggerEmailClient() {
 <a class="font-body-md text-body-md text-text-muted hover:text-on-surface transition-opacity duration-200" href="https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/LICENSE">License</a>
 </div>
 </footer>
+<!-- JJ OpenSoftworks Ecosystem Links -->
+<div class="bg-surface-deep border-t border-surface-border px-margin-page py-3 text-center text-xs text-text-muted">
+  <span class="text-on-surface font-semibold">JJ OpenSoftworks Ecosystem:</span>
+  <a href="https://jjopensoftworks-blip.github.io/ShreePdfPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📄 ShreePdf (.NET PDF Engine)</a> •
+  <a href="https://apps.microsoft.com/detail/9MSPJ2M5MFHS" target="_blank" class="text-electric-blue hover:underline ml-3">🖥️ ShreePdf Viewer (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/FileOrganizerAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">📁 FileOrganizerAI (Windows)</a> •
+  <a href="https://jjopensoftworks-blip.github.io/CropAIPage/" target="_blank" class="text-electric-blue hover:underline ml-3">🌾 CropAI (Android)</a>
+</div>
 </body></html>
