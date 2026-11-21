@@ -324,4 +324,28 @@ public class CliTests
             Directory.Delete(cleanDir, recursive: true);
         }
     }
+
+    [Theory]
+    [InlineData("secrets")]
+    [InlineData("pci")]
+    [InlineData("gdpr")]
+    [InlineData("hipaa")]
+    public async Task Preset_option_runs_end_to_end(string preset)
+    {
+        var dir = MakeFolder();
+        try
+        {
+            Assert.Equal(0, await Cli.RunAsync(new[] { "scan", dir, "--preset", preset }));
+        }
+        finally
+        {
+            Directory.Delete(dir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void Unknown_preset_throws()
+    {
+        Assert.Throws<ArgumentException>(() => Options.Parse(new[] { "f", "--preset", "invalid" }));
+    }
 }

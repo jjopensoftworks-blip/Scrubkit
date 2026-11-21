@@ -79,4 +79,79 @@ public sealed class StandardRedactorOptions
 
     /// <summary>Character used to mask hidden positions in a <see cref="RevealLast"/> mask. Default <c>'*'</c>.</summary>
     public char MaskChar { get; set; } = '*';
+
+    /// <summary>
+    /// Preset targeting credentials and secrets only (<see cref="RedactionCategories.PrivateKey"/>,
+    /// <see cref="RedactionCategories.ApiKey"/>, <see cref="RedactionCategories.Jwt"/>,
+    /// <see cref="RedactionCategories.ConnectionString"/>, <see cref="RedactionCategories.Secret"/>),
+    /// leaving personal PII (emails, phones, cards, SSNs, IPs, dates) untouched. Ideal for source
+    /// code and CI secret scanning.
+    /// </summary>
+    public static StandardRedactorOptions ForSecretsOnly()
+    {
+        var opts = new StandardRedactorOptions { Level = RedactionLevel.Aggressive };
+        opts.DisabledCategories.Add(RedactionCategories.Email);
+        opts.DisabledCategories.Add(RedactionCategories.Card);
+        opts.DisabledCategories.Add(RedactionCategories.Iban);
+        opts.DisabledCategories.Add(RedactionCategories.Ssn);
+        opts.DisabledCategories.Add(RedactionCategories.Ip);
+        opts.DisabledCategories.Add(RedactionCategories.Mac);
+        opts.DisabledCategories.Add(RedactionCategories.Phone);
+        opts.DisabledCategories.Add(RedactionCategories.Geo);
+        opts.DisabledCategories.Add(RedactionCategories.DateOfBirth);
+        opts.DisabledCategories.Add(RedactionCategories.LongNumber);
+        return opts;
+    }
+
+    /// <summary>
+    /// Preset tuned for payment and financial data (PCI-DSS workflows): masks payment cards with
+    /// format-preserving last-4 reveal (<c>**** **** **** 1111</c>), redacts IBANs and secrets,
+    /// and leaves general contact fields (emails, phones, IPs) untouched.
+    /// </summary>
+    public static StandardRedactorOptions ForPciDss()
+    {
+        var opts = new StandardRedactorOptions { Level = RedactionLevel.Standard };
+        opts.RevealLast[RedactionCategories.Card] = 4;
+        opts.DisabledCategories.Add(RedactionCategories.Email);
+        opts.DisabledCategories.Add(RedactionCategories.Phone);
+        opts.DisabledCategories.Add(RedactionCategories.Ip);
+        opts.DisabledCategories.Add(RedactionCategories.Mac);
+        opts.DisabledCategories.Add(RedactionCategories.Ssn);
+        return opts;
+    }
+
+    /// <summary>
+    /// Preset tuned for broad personal-data de-identification (GDPR workflows): runs at
+    /// <see cref="RedactionLevel.Aggressive"/> with deterministic <see cref="StableTokens"/> enabled
+    /// so emails, phones, IPs, dates of birth, geo coordinates, and identifiers collapse to
+    /// joinable pseudonyms.
+    /// </summary>
+    /// <param name="tokenSalt">Optional deployment secret mixed into stable token hashes.</param>
+    public static StandardRedactorOptions ForGdpr(string? tokenSalt = null) =>
+        new()
+        {
+            Level = RedactionLevel.Aggressive,
+            StableTokens = true,
+            TokenSalt = tokenSalt,
+        };
+
+    /// <summary>
+    /// Preset tuned for healthcare / PHI de-identification (HIPAA workflows): runs at
+    /// <see cref="RedactionLevel.Aggressive"/> with deterministic <see cref="StableTokens"/> enabled
+    /// and format-preserving last-4 masks on <see cref="RedactionCategories.Ssn"/> and
+    /// <see cref="RedactionCategories.Phone"/>.
+    /// </summary>
+    /// <param name="tokenSalt">Optional deployment secret mixed into stable token hashes.</param>
+    public static StandardRedactorOptions ForHipaa(string? tokenSalt = null)
+    {
+        var opts = new StandardRedactorOptions
+        {
+            Level = RedactionLevel.Aggressive,
+            StableTokens = true,
+            TokenSalt = tokenSalt,
+        };
+        opts.RevealLast[RedactionCategories.Ssn] = 4;
+        opts.RevealLast[RedactionCategories.Phone] = 4;
+        return opts;
+    }
 }

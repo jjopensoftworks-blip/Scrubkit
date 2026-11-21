@@ -91,4 +91,54 @@ public class RedactorOptionsTests
 
         Assert.Equal(viaLevel.Text, viaOptions.Text);
     }
+
+    [Fact]
+    public void ForSecretsOnly_redacts_secrets_and_keeps_personal_pii()
+    {
+        const string input = "Email jane@example.com, card 4111111111111111, AWS key AKIAIOSFODNN7EXAMPLE.";
+        var r = new StandardRedactor(StandardRedactorOptions.ForSecretsOnly()).Redact(input);
+
+        Assert.Contains("jane@example.com", r.Text);
+        Assert.Contains("4111111111111111", r.Text);
+        Assert.DoesNotContain("AKIAIOSFODNN7EXAMPLE", r.Text);
+        Assert.Contains("[API_KEY]", r.Text);
+    }
+
+    [Fact]
+    public void ForPciDss_masks_cards_preserving_last_four_and_keeps_emails()
+    {
+        const string input = "Email jane@example.com, card 4111111111111111.";
+        var r = new StandardRedactor(StandardRedactorOptions.ForPciDss()).Redact(input);
+
+        Assert.Contains("jane@example.com", r.Text);
+        Assert.Contains("************1111", r.Text);
+        Assert.DoesNotContain("4111111111111111", r.Text);
+    }
+
+    [Fact]
+    public void ForGdpr_enables_aggressive_stable_tokens()
+    {
+        const string input = "User jane@example.com and again jane@example.com.";
+        var opts = StandardRedactorOptions.ForGdpr("deploy-salt");
+        Assert.Equal(RedactionLevel.Aggressive, opts.Level);
+        Assert.True(opts.StableTokens);
+        Assert.Equal("deploy-salt", opts.TokenSalt);
+
+        var r = new StandardRedactor(opts).Redact(input);
+        Assert.DoesNotContain("jane@example.com", r.Text);
+        Assert.Matches(@"\[EMAIL_[0-9a-f]{8}\]", r.Text);
+    }
+
+    [Fact]
+    public void ForHipaa_masks_ssn_and_phone_last_four_with_stable_tokens()
+    {
+        const string input = "Patient jane@example.com, SSN 123-45-6789, phone 555-123-4567.";
+        var opts = StandardRedactorOptions.ForHipaa("hipaa-salt");
+        var r = new StandardRedactor(opts).Redact(input);
+
+        Assert.DoesNotContain("jane@example.com", r.Text);
+        Assert.Matches(@"\[EMAIL_[0-9a-f]{8}\]", r.Text);
+        Assert.Contains("***-**-6789", r.Text);
+        Assert.Contains("***-***-4567", r.Text);
+    }
 }
