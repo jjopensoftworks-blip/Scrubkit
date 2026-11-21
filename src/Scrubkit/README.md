@@ -60,6 +60,10 @@ IReadOnlyList<FileRecord> table = await scrubber.ReadAsync(@"C:\Docs");
 
 foreach (var r in table)
     Console.WriteLine($"{r.Name} — {r.TypeBucket} — {r.Text.Length} chars");
+
+// Or scrub a single file or in-memory Stream (web upload / cloud blob):
+FileRecord single = await scrubber.ReadFileAsync(@"C:\Docs\contract.docx");
+FileRecord fromStream = await scrubber.ReadFileAsync(uploadStream, "invoice.pdf");
 ```
 
 Each `FileRecord` gives you the file's `Text`, `Metadata`, `TypeBucket`, `SizeBytes`,

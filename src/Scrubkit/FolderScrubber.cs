@@ -51,6 +51,51 @@ public sealed class FolderScrubber
     private readonly HashSet<string> _excluded;
 
     /// <summary>
+    /// Scrub a single file at <paramref name="filePath"/> and return its <see cref="FileRecord"/>.
+    /// Like folder scans, per-file extraction or I/O problems do not throw and are recorded in
+    /// <see cref="FileRecord.Warnings"/>.
+    /// </summary>
+    /// <exception cref="ArgumentException"><paramref name="filePath"/> is null or whitespace.</exception>
+    public Task<FileRecord> ReadFileAsync(string filePath, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path is required.", nameof(filePath));
+
+        return Task.Run(() => ReadOne(filePath), ct);
+    }
+
+    /// <summary>
+    /// Scrub an in-memory <paramref name="content"/> stream (such as an uploaded web file, cloud
+    /// blob stream, or memory buffer) using <paramref name="fileName"/> to determine the file
+    /// extension, name, and bucket, returning its <see cref="FileRecord"/>.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"><paramref name="content"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="fileName"/> is null or whitespace.</exception>
+    public async Task<FileRecord> ReadFileAsync(Stream content, string fileName, CancellationToken ct = default)
+    {
+        if (content is null)
+            throw new ArgumentNullException(nameof(content));
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("File name is required.", nameof(fileName));
+
+        var ext = Path.GetExtension(fileName);
+        var tempPath = Path.Combine(Path.GetTempPath(), $"scrubkit-{Guid.NewGuid():N}{ext}");
+        try
+        {
+            using (var fs = new FileStream(tempPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                await content.CopyToAsync(fs, 81920, ct).ConfigureAwait(false);
+            }
+
+            return await Task.Run(() => ReadOneCore(tempPath, fileName), ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            try { File.Delete(tempPath); } catch { /* best-effort cleanup */ }
+        }
+    }
+
+    /// <summary>
     /// Scrub every eligible file under <paramref name="rootPath"/> and return the whole
     /// table. Buffers all records in memory — for large trees prefer
     /// <see cref="ReadStreamAsync"/>.
@@ -200,12 +245,15 @@ public sealed class FolderScrubber
     private IFileExtractor? ExtractorFor(string ext) =>
         _extractors.FirstOrDefault(e => e.CanHandle(ext));
 
-    private FileRecord ReadOne(string path)
+    private FileRecord ReadOne(string path) => ReadOneCore(path, null);
+
+    private FileRecord ReadOneCore(string path, string? displayPath)
     {
-        var ext = Path.GetExtension(path).ToLowerInvariant();
+        var logicalPath = displayPath ?? path;
+        var ext = Path.GetExtension(logicalPath).ToLowerInvariant();
         var bucket = Buckets.For(ext);
-        var name = Path.GetFileName(path);
-        var folder = Path.GetFileName(Path.GetDirectoryName(path)) ?? "";
+        var name = Path.GetFileName(logicalPath);
+        var folder = Path.GetFileName(Path.GetDirectoryName(logicalPath)) ?? "";
         long size = 0;
         DateTime modified = DateTime.MinValue;
         var warnings = new List<string>();
@@ -276,11 +324,11 @@ public sealed class FolderScrubber
             }
         }
 
-        Emit(path, bucket, text, warnings);
+        Emit(logicalPath, bucket, text, warnings);
 
         return new FileRecord
         {
-            Path = path,
+            Path = logicalPath,
             Name = name,
             Extension = ext,
             Folder = folder,
