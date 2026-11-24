@@ -147,7 +147,12 @@ var scrubber = new FolderScrubber(new ReadOptions
     Redaction = RedactionLevel.Standard
 });
 
-var chunker = new Chunker(new ChunkOptions { MaxChars = 1_000, OverlapChars = 100 });
+var chunker = new Chunker(new ChunkOptions
+{
+    Mode = ChunkMode.MarkdownSections, // or FixedWindow / Paragraphs
+    MaxChars = 1_000,
+    OverlapChars = 100
+});
 
 await foreach (var doc in scrubber.ReadStreamAsync(@"C:\Docs"))
 {
