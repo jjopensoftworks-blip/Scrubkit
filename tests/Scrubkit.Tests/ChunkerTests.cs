@@ -133,4 +133,66 @@ public class ChunkerTests
         Assert.Throws<ArgumentNullException>(() => new Chunker().Chunk((IEnumerable<FileRecord>)null!).ToList());
         Assert.Throws<ArgumentNullException>(() => TableWriter.ToJsonLines((IEnumerable<Chunk>)null!));
     }
+
+    [Fact]
+    public void Paragraphs_mode_prefers_paragraph_and_sentence_breaks()
+    {
+        var para1 = "First paragraph sentence one. First paragraph sentence two.";
+        var para2 = "Second paragraph has more text to split across chunks cleanly.";
+        var text = $"{para1}\n\n{para2}";
+
+        var chunks = new Chunker(new ChunkOptions
+        {
+            Mode = ChunkMode.Paragraphs,
+            MaxChars = 75,
+            OverlapChars = 25,
+        }).Chunk(Rec(text));
+
+        Assert.True(chunks.Count >= 2);
+        Assert.EndsWith("\n\n", chunks[0].Text);
+    }
+
+    [Fact]
+    public void Paragraphs_mode_snaps_to_sentence_when_no_paragraph_break()
+    {
+        var text = "Alpha sentence ends here. Beta sentence continues with extra words for windowing.";
+        var chunks = new Chunker(new ChunkOptions
+        {
+            Mode = ChunkMode.Paragraphs,
+            MaxChars = 50,
+            OverlapChars = 25,
+        }).Chunk(Rec(text));
+
+        Assert.True(chunks.Count >= 2);
+        Assert.Contains("Alpha sentence ends here.", chunks[0].Text);
+    }
+
+    [Fact]
+    public void MarkdownSections_mode_splits_on_headings_and_sets_section_breadcrumb()
+    {
+        var md = """
+                 Intro text before headings.
+                 # Overview
+                 General overview content.
+                 ## Architecture
+                 Detailed architecture notes.
+                 # Appendix
+                 Final appendix notes.
+                 """;
+
+        var rec = Rec(md);
+        var chunks = new Chunker(new ChunkOptions
+        {
+            Mode = ChunkMode.MarkdownSections,
+            MaxChars = 200,
+            OverlapChars = 20,
+        }).Chunk(rec);
+
+        Assert.Equal(4, chunks.Count);
+        Assert.False(chunks[0].Metadata.ContainsKey("Section"));
+        Assert.Equal("Overview", chunks[1].Metadata["Section"]);
+        Assert.Equal("Overview > Architecture", chunks[2].Metadata["Section"]);
+        Assert.Equal("Appendix", chunks[3].Metadata["Section"]);
+        Assert.False(rec.Metadata.ContainsKey("Section"));   // source record metadata untouched
+    }
 }

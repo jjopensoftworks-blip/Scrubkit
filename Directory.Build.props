@@ -46,7 +46,7 @@
     <!-- Per-version highlights shown in the NuGet "Release Notes" box. Update this by hand
          each release (versions themselves are tag-driven via MinVer). Full history:
          https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md -->
-    <PackageReleaseNotes>2.4.0 — Compliance Redaction Presets &amp; Turnkey GitHub Action. Added StandardRedactorOptions.ForSecretsOnly(), ForPciDss(), ForGdpr(), and ForHipaa() presets, --preset CLI flag in Scrubkit.Tool, and root action.yml for CI/CD secret &amp; PII scanning. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <PackageReleaseNotes>2.5.0 — Heading-Aware Semantic Chunking. Added ChunkMode.Paragraphs and ChunkMode.MarkdownSections to Chunker for paragraph/sentence boundary snapping and Markdown heading breadcrumb propagation in Chunk.Metadata["Section"]. Full changelog: https://github.com/jjopensoftworks-blip/Scrubkit/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PackageTags>files;extraction;text-extraction;pdf;docx;office;text;metadata;offline;rag;ingestion;vector-database;semantic-kernel;text-chunking;offline-rag;document-parser;data-prep;secrets-detection;gpt-sanitize</PackageTags>
 
     <!-- Ship XML docs + symbol packages; version comes from Git tags via MinVer. -->

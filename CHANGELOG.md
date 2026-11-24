@@ -7,6 +7,19 @@ can tell at a glance whether a release adds things or just fixes them. Versions 
 from Git tags via MinVer.
 -->
 
+## 2.5.0
+
+![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.5.0` &nbsp;·&nbsp; 📅 2026-11-25
+
+&nbsp;
+
+---
+
+Heading-Aware Semantic Chunking — Added `ChunkMode.Paragraphs` and `ChunkMode.MarkdownSections` to `Chunker` for structure-aware RAG document splitting and heading breadcrumb propagation.
+
+### 🚀 Features
+- **Semantic & Structure-Aware Chunking (`ChunkMode`)**: Added `ChunkOptions.Mode` supporting `FixedWindow` (default), `Paragraphs` (paragraph and sentence boundary snapping), and `MarkdownSections` (splits on `#`–`######` headings and populates `Chunk.Metadata["Section"]` with the active heading hierarchy).
+
 ## 2.4.0
 
 ![Stable](https://img.shields.io/badge/release-Stable-2ea44f?style=flat-square) &nbsp; 🏷️ `v2.4.0` &nbsp;·&nbsp; 📅 2026-11-22
