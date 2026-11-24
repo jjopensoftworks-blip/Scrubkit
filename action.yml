@@ -1,0 +1,63 @@
+name: 'Scrubkit Offline Secret & PII Scanner'
+description: '100% offline document text extraction, RAG preprocessing, and PII/secret redaction gate for CI/CD.'
+author: 'jjopensoftworks-blip'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Folder path to scan.'
+    required: false
+    default: '.'
+  preset:
+    description: 'Optional built-in redaction preset: secrets, pci, gdpr, or hipaa.'
+    required: false
+    default: ''
+  redact:
+    description: 'Redaction level when no preset is specified: off, standard, or aggressive.'
+    required: false
+    default: 'standard'
+  fail-on-redaction:
+    description: 'Fail the workflow step (exit code 2) if any secret or PII is redacted.'
+    required: false
+    default: 'true'
+  format:
+    description: 'Output table format: csv, json, jsonl, or parquet.'
+    required: false
+    default: 'jsonl'
+  out:
+    description: 'Optional output file path (e.g. scrubbed.jsonl).'
+    required: false
+    default: ''
+  include:
+    description: 'Optional comma-separated file extensions filter (e.g. .pdf,.docx,.md).'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Scrubkit.Tool
+      shell: bash
+      run: dotnet tool update --global Scrubkit.Tool
+
+    - name: Run Scrubkit Scan
+      shell: bash
+      run: |
+        args=("scan" "${{ inputs.path }}" "--format" "${{ inputs.format }}")
+        if [ -n "${{ inputs.preset }}" ]; then
+          args+=("--preset" "${{ inputs.preset }}")
+        elif [ "${{ inputs.redact }}" != "off" ]; then
+          args+=("--redact=${{ inputs.redact }}")
+        fi
+        if [ "${{ inputs.fail-on-redaction }}" = "true" ]; then
+          args+=("--fail-on-redaction")
+        fi
+        if [ -n "${{ inputs.out }}" ]; then
+          args+=("--out" "${{ inputs.out }}")
+        fi
+        if [ -n "${{ inputs.include }}" ]; then
+          args+=("--include" "${{ inputs.include }}")
+        fi
+        scrubkit "${args[@]}"

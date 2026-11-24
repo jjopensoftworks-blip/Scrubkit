@@ -178,6 +178,12 @@ assignments and high-entropy tokens.
 ```csharp
 var scrubber = new FolderScrubber(new ReadOptions { Redaction = RedactionLevel.Standard });
 // "AWS key AKIAIOSFODNN7EXAMPLE" → "AWS key [API_KEY]"
+
+// Or use a built-in domain preset (ForSecretsOnly, ForPciDss, ForGdpr, ForHipaa):
+var secretScrubber = new FolderScrubber(new ReadOptions
+{
+    Redactor = new StandardRedactor(StandardRedactorOptions.ForSecretsOnly())
+});
 ```
 
 Add your own **custom rules** (matched before the built-ins) plus allow/deny/disable lists via
